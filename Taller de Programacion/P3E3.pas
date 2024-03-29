@@ -25,9 +25,14 @@ type
         HD: arbol;
     end;
 
+    regsitroB = record
+        dni: integer;
+        ing: integer;
+    end;
+
     listaB = ^nodoB;
     nodoB = record
-        d: alumno;
+        d: regsitroB;
         sig: listaB;
     end;
 
@@ -109,6 +114,8 @@ begin
     writeln;
 end;
 
+
+// No se como hacer este modulo 
 {
 procedure puntoB(a: arbol; var l: listaB; max: integer);
 // Inicializar l en nil desde afuera
@@ -117,18 +124,13 @@ var
 begin
     if (a <> nil) then
     begin
-        puntoB(a^.HI, l, max);
-        if (a^.d.ing < max) then
+        if (a^.d.leg < max) then
         begin
-            new(aux);
-            aux^.d:= a^.d;
-            aux^.sig:= l;
-            l:= aux;
+            generarListaB()
         end;
-        puntoB(a^.HD, l, max);
     end;
 end;
-*Mal hecho }
+}
 
 function legajoMayor(a: arbol): integer;
 begin
@@ -221,7 +223,6 @@ procedure imprimirListaB(l: listaB);
 begin
     while (l <> nil) do
     begin
-        write(l^.d.leg); write(', ');
         write(l^.d.dni); write(', ');
         write(l^.d.ing);
         write(' --- ');
