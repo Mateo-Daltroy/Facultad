@@ -7,6 +7,14 @@ type
         cant: integer;
     end;
 	
+<<<<<<< Updated upstream
+=======
+	prestamoISBN = record
+		isbn: integer;
+		l: lista;
+	end;
+	
+>>>>>>> Stashed changes
     prestamoList = record
         socio: integer;
         fecha: string;
@@ -25,6 +33,7 @@ type
         d: prestamoList;
         sig: lista;
     end;
+<<<<<<< Updated upstream
 	
 	prestamoISBN = record
 		isbn: integer;
@@ -32,12 +41,17 @@ type
 	end;
 
     arbol2 = ^nodo3;
+=======
+
+    arbol2: ^nodo3;
+>>>>>>> Stashed changes
     nodo3 = record
         d: prestamoISBN;
         HI: arbol2;
         HD: arbol2;
     end;
 
+<<<<<<< Updated upstream
 	datoF = record
 		isbn: integer;
 		cont: integer;
@@ -49,11 +63,17 @@ type
 		sig: listaF;
 	end;
 
+=======
+>>>>>>> Stashed changes
 
 // Inicio Modulos
 
 
+<<<<<<< Updated upstream
 procedure leerPrestamo(var cod: prestamoCod; var list: prestamoList; var aux: integer);
+=======
+procedure leerPrestamo(var cod: prestamoCod; var list: prestamoList; var aux; integer);
+>>>>>>> Stashed changes
 begin
     write('Introducir codigo ISBN: ');
     readln(cod.isbn);
@@ -70,7 +90,10 @@ begin
         readln(cod.cant);
         list.cant:= cod.cant;
     end;
+<<<<<<< Updated upstream
     writeln;
+=======
+>>>>>>> Stashed changes
 end;
 
 procedure generarArbol1(var a: arbol1; p: prestamoCod);
@@ -111,7 +134,11 @@ begin
 	end
 	else if (a^.d.isbn = aux) then
 		agregarAdelante(a^.d.l, p)
+<<<<<<< Updated upstream
 	else if (a^.d.isbn > aux) then
+=======
+	else if (a^.d.isbn >= aux) then
+>>>>>>> Stashed changes
 		generarArbol2(a^.HI, p, aux)
 	else
 		generarArbol2(a^.HD, p, aux);
@@ -155,10 +182,17 @@ procedure cantPrestA1(a: arbol1; var cont: integer; busq: integer);
 begin
 	if (a <> nil) then
 	begin
+<<<<<<< Updated upstream
 		cantPrestA1(a^.HI, cont, busq);
 		if (a^.d.socio = busq) then
 			cont:= cont + 1;
 		cantPrestA1(a^.HD, cont, busq);
+=======
+		cantPrestA1(a^.HI, cont);
+		if (a^.d.socio = busq) then
+			cont:= cont + 1;
+		cantPrestA1(a^.HD, cont);
+>>>>>>> Stashed changes
 	end;
 end;
 
@@ -181,6 +215,7 @@ procedure cantPrestA2(a: arbol2; var cont: integer; busq: integer);
 begin
 	if (a <> nil) then
 	begin
+<<<<<<< Updated upstream
 		cantPrestA2(a^.HI, cont, busq);
 		cont:= cont + contarEnLista(a^.d.l, busq);
 		cantPrestA2(a^.HD, cont, busq);
@@ -295,10 +330,20 @@ begin
 		end;
 	end;
 end;
+=======
+		cantPrestA1(a^.HI, cont);
+		cont:= cont + contarEnLista(a^.d.l, busq);
+		cantPrestA1(a^.HD, cont);
+	end;
+end;
+
+// Punto F
+>>>>>>> Stashed changes
 
 // Inicio Programa Principal
 
 var
+<<<<<<< Updated upstream
 	a1: arbol1;
 	a2: arbol2;
 	cont, busq, max, min: integer;
@@ -339,3 +384,8 @@ begin
 	prestamosEntre2(a2, cont, max, min);
 	writeln(cont);
 end.
+=======
+begin
+
+end;
+>>>>>>> Stashed changes

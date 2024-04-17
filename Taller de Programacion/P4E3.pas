@@ -4,7 +4,11 @@ const
 
 type
     cantMaterias  = 1..maxMaterias;
+<<<<<<< Updated upstream
     notasPosibles = -1..10; // -1 corte
+=======
+    notasPosibles = 0..10; 
+>>>>>>> Stashed changes
 
     vectorIndiv = array [cantMaterias] of notasPosibles;
 
@@ -32,6 +36,7 @@ type
     end;
 
     vectorGen = array [cantMaterias] of lista;
+<<<<<<< Updated upstream
     
 	recordB = record
 		cod: integer;
@@ -43,6 +48,8 @@ type
 		d: recordB;
 		sig: listaB;
 	end;
+=======
+>>>>>>> Stashed changes
 
 
 // Inicio Modulos
@@ -67,7 +74,11 @@ var
 begin
     for i:= 1 to maxMaterias do
     begin
+<<<<<<< Updated upstream
         v[i]:= -1;
+=======
+        v[i]:= 0;
+>>>>>>> Stashed changes
     end;
 end;
 
@@ -127,6 +138,7 @@ begin
     end;
 end;
 
+<<<<<<< Updated upstream
 function calcularProm(v: vectorIndiv): real;
 var
 	i, tot, cont: integer;
@@ -157,18 +169,28 @@ end;
 
 procedure generarListaB(a: arbol; cod: integer; var l: listaB);
 // listaB ini en nil afuera
+=======
+procedure generarListaB(a: arbol; cod: integer; var l: listaB);
+// listaB ini en nil afuera
+// listaB no existe
+>>>>>>> Stashed changes
 begin
     if (a <> nil) then
     begin
         if (a^.d.cod > cod) then
         begin
+<<<<<<< Updated upstream
             agregarAdelanteB(l, a^.d.cod, calcularProm(a^.d.vect));
+=======
+            agregarAdelanteB(l, a^.d);
+>>>>>>> Stashed changes
             generarListaB(a^.HI, cod, l);
         end;
         generarListaB(a^.HD, cod, l);
     end;
 end;
 
+<<<<<<< Updated upstream
 procedure mostrarLista(l: listaB);
 begin
 	while (l <> nil) do
@@ -181,6 +203,8 @@ begin
 	writeln;
 end;
 
+=======
+>>>>>>> Stashed changes
 function cumpleNotas(v: vectorIndiv; n: notasPosibles):boolean;
 var
     i: cantMaterias; 
@@ -193,15 +217,26 @@ begin
             cont:= cont + 1;
     end;
     if (cont = n) then
+<<<<<<< Updated upstream
         cumpleNotas:= true
+=======
+        cumpleNotas:= true;
+>>>>>>> Stashed changes
     else
         cumpleNotas:= false;
 end;
 
+<<<<<<< Updated upstream
 procedure puntoC(a: arbol; var cont: integer; min, max: integer; nota: integer);
 // ini cont en 0;
 begin
     if (a <> nil) then;
+=======
+procedure puntoC(a: arbol; var cont: integer; min, max: integer; nota: notasPosibles);
+// ini cont en 0;
+begin
+    if (a <> nil);
+>>>>>>> Stashed changes
     begin
         if (a^.d.cod < min) then
             puntoC(a^.HD, cont, min, max, nota)
@@ -221,6 +256,7 @@ end;
 // Inicio Programa principal
 
 var
+<<<<<<< Updated upstream
 	a: arbol;
 	v: vectorGen;
 	cod, min, max, nota: integer;
@@ -243,3 +279,8 @@ begin
 	write(cod);
 	writeln(' alumnnos cumplen con las condiciones.');
 end.
+=======
+begin
+    
+end.
+>>>>>>> Stashed changes
