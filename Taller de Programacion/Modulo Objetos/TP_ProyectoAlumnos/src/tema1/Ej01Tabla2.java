@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package tema1;
+    import PaqueteLectura.GeneradorAleatorio;
 
 public class Ej01Tabla2 {
 
