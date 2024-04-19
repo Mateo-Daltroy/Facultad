@@ -26,9 +26,9 @@ public class Ej03Matrices {
         int tot = 0;
         int busq;
         boolean encontrado = false;
-        int [] vector = new int[5];
+        int [] vector = new int[5]; // Java inicializa en null
         //Paso 3. definir la matriz de enteros de 5x5 e iniciarla con nros. aleatorios 
-        int[][] matriz = new int[5][5];
+        int[][] matriz = new int[5][5]; // Java inicializa en null
         for (i = 0; i < 5; i++){
             for (j = 0; j < 5; j++){
                 matriz[i][j] = GeneradorAleatorio.generarInt(31);
