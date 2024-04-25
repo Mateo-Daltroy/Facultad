@@ -17,7 +17,7 @@ public class Demo01Libro {
         libro.setTitulo("Java: A Beginner's Guide");
         libro.setEditorial("Mcgraw-Hill");
         libro.setAñoEdicion(2014);
-        libro.setPrimerAutor("Herbert Schildt");
+        //libro.setPrimerAutor("Herbert Schildt"); Deberia ser clase autor
         libro.setISBN("978-0071809252");
         libro.setPrecio(21.72);
         System.out.println(libro.toString());
