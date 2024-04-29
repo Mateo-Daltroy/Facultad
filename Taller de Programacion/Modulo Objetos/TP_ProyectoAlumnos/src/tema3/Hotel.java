@@ -14,15 +14,15 @@ public class Hotel {
     private int dimF;
 
     public Hotel(int N) {
-        this.hab = new Habitacion [N]; // Java inicializa en null
-        for (int i = 0; i < N; i++){
+        this.hab = new Habitacion [N];
+// Esta instanciacion en for es necesaria porque Habitacion es un obj
+        for (int i = 0; i < N; i++){ 
             this.hab[i] = new Habitacion();
         }
         this.dimF = N;
     }
     
     public void agregarCliente(Persona C, int X){
-        //this.hab[X-1] = new Habitacion(); // Hacer prueba / preguntar en clase
         this.hab[X-1].setCliente(C);
         this.hab[X-1].setOcupado(true);
     }
