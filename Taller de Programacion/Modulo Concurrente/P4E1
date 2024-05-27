@@ -1,0 +1,99 @@
+programa P4E1
+areas
+  Tanda1: AreaPC(1, 1, 1, 100)
+  Tanda2: AreaPC(2, 1, 2, 100)
+  Tanda3: AreaPC(3, 1, 3, 100)
+  Base: AreaP(100, 100, 100, 100)
+robots
+  robot cliente
+  variables
+    cant, ID, caAux, avAux: numero
+    ack: boolean
+  comenzar
+    RecibirMensaje(ID, Serv)
+    mientras (PosCa < 100)
+      Random(cant, 1, 4)
+      EnviarMensaje(ID, Serv)
+      EnviarMensaje(cant, Serv)
+      caAux:= PosCa + 1
+      avAux:= PosAv
+      EnviarMensaje(caAux, Serv)
+      EnviarMensaje(avAux, Serv)
+      RecibirMensaje(ack, Serv)
+      Pos(PosAv, PosCa + 1)
+      repetir cant
+        tomarFlor
+      Pos(PosAv, PosCa - 1)
+      si (PosCa = 1)
+        cant:= cant - 1
+        depositarFlor
+      mientras (cant > 0) & (PosCa < 100)
+        mover
+        depositarFlor
+        cant:= cant - 1
+    caAux:= 0
+    EnviarMensaje(ID, Serv)
+    EnviarMensaje(caAux, Serv)
+  fin
+  robot servidor
+  variables
+    cont, cant, IDaux, caAux, avAux: numero
+  comenzar
+    EnviarMensaje(1, R1)
+    EnviarMensaje(2, R2)
+    EnviarMensaje(3, R3)
+    cont:= 0
+    mientras (cont < 3)
+      RecibirMensaje(IDaux, *)
+      si (IDaux = 1)
+        RecibirMensaje(cant, R1)
+        si (cant = 0)
+          cont:= cont + 1
+        sino
+          RecibirMensaje(caAux, R1)
+          RecibirMensaje(avAux, R1)
+      sino
+        si (IDaux = 2)
+          RecibirMensaje(cant, R2)
+          si (cant = 0)
+            cont:= cont + 1
+          sino
+            RecibirMensaje(caAux, R2)
+            RecibirMensaje(avAux, R2)
+        sino
+          RecibirMensaje(cant, R3)
+          si (cant = 0)
+            cont:= cont + 1
+          sino
+            RecibirMensaje(caAux, R3)
+            RecibirMensaje(avAux, R3)
+      si (cant <> 0)
+        Pos(avAux, caAux)
+        repetir cant
+          depositarFlor
+        Pos(100, 100)
+        si (IDaux = 1)
+          EnviarMensaje(V, R1)
+        sino
+          si (IDaux = 2)
+            EnviarMensaje(V, R2)
+          sino
+            EnviarMensaje(V, R3)
+    Informar(cont)
+  fin
+variables
+  Serv: servidor
+  R1, R2, R3: cliente
+comenzar
+  AsignarArea(Serv, Tanda1)
+  AsignarArea(Serv, Tanda2)
+  AsignarArea(Serv, Tanda3)
+  AsignarArea(Serv, Base)
+  AsignarArea(R1, Tanda1)
+  AsignarArea(R2, Tanda2)
+  AsignarArea(R3, Tanda3)
+  Iniciar(Serv, 100, 100)
+  Iniciar(R1, 1, 1)
+  Iniciar(R2, 2, 1)
+  Iniciar(R3, 3, 1)
+fin

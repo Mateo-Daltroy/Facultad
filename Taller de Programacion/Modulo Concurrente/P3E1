@@ -1,0 +1,80 @@
+programa P3E1
+procesos
+  proceso juntarFlores(ES cont: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cont:= cont + 1
+  fin
+  proceso juntarPapeles(ES cont: numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      cont:= cont + 1
+  fin
+areas
+  Floreria: AreaPC(1, 1, 5, 10)
+  Papeleria: AreaPC(6, 1, 10, 9)
+  Base: AreaC(6, 10, 10, 10)
+robots
+  robot florero
+  variables
+    cont, avIni, caIni, av, ca: numero
+  comenzar
+    cont:= 0
+    avIni:= PosAv
+    caIni:= PosCa
+    repetir 5
+      Random(av, 1, 5)
+      Random(ca, 1, 10)
+      BloquearEsquina(av, ca)
+      Pos(av, ca)
+      juntarFlores(cont)
+      Pos(avIni, caIni)
+      LiberarEsquina(av, ca)
+    BloquearEsquina(10, 10)
+    Pos(10, 10)
+    repetir cont
+      depositarFlor
+    Pos(avIni, caIni)
+    LiberarEsquina(10, 10)
+  fin
+  robot papelero
+  variables
+    cont, avIni, caIni, av, ca: numero
+  comenzar
+    cont:= 0
+    avIni:= PosAv
+    caIni:= PosCa
+    repetir 3
+      Random(av, 6, 10)
+      Random(ca, 1, 9)
+      BloquearEsquina(av, ca)
+      Pos(av, ca)
+      juntarPapeles(cont)
+      Pos(avIni, caIni)
+      LiberarEsquina(av, ca)
+    BloquearEsquina(10, 10)
+    Pos(10, 10)
+    repetir cont
+      depositarPapel
+    Pos(avIni, caIni)
+    LiberarEsquina(10, 10)
+  fin
+variables
+  F1, F2: florero
+  P1, P2: papelero
+comenzar
+  AsignarArea(F1, Floreria)
+  AsignarArea(F2, Floreria)
+  AsignarArea(P1, Papeleria)
+  AsignarArea(P2, Papeleria)
+  AsignarArea(F1, Base)
+  AsignarArea(F2, Base)
+  AsignarArea(P1, Base)
+  AsignarArea(P2, Base)
+  Iniciar(F1, 6, 10)
+  Iniciar(F2, 7, 10)
+  Iniciar(P1, 8, 10)
+  Iniciar(P2, 9, 10)
+fin

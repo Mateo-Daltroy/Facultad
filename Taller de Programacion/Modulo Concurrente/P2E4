@@ -1,0 +1,120 @@
+programa P2E4
+procesos
+  proceso limpiarEsquina(ES cont: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cont:= cont + 1
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      cont:= cont + 1
+  fin
+  proceso reemplazo(E auxId: numero; E auxCant: numero; ES maxID: numero; ES maxCant: numero)
+  comenzar
+    si (auxCant > maxCant)
+      maxID:= auxID
+      maxCant:= auxCant
+  fin
+areas
+  Zona: AreaPC(25, 25, 75, 75)
+  B1: AreaP(25, 1, 25, 1)
+  B2: AreaP(30, 1, 30, 1)
+  B3: AreaP(35, 1, 35, 1)
+  B4: AreaP(40, 1, 40, 1)
+  Ofi: AreaP(1, 1, 1, 1)
+robots
+  robot jefe
+  variables
+    max, av, ca, maxID, auxCant, auxID: numero
+    aux: boolean
+  comenzar
+    EnviarMensaje(1, R1)
+    EnviarMensaje(2, R2)
+    EnviarMensaje(3, R3)
+    EnviarMensaje(4, R4)
+    max:= -1
+    repetir 10
+      av:= Random(50) + 25
+      ca:= Random(50) + 25
+      auxCant:= Random(4)
+      EnviarMensaje(auxCant, av) // cambiar por si(auxCant = id) entonces enviar(R(id), av) etc
+      {Uso auxCant fuera de su aplicacion porque se escribe antes de ser leido por primera vez}
+      EnviarMensaje(auxCant, ca)
+      RecibirMensaje(aux, auxCant)
+    {Mucha repeticion de codigo}
+    {pero no existe "i"}
+    EnviarMensaje(-1, R1)
+    RecibirMensaje(auxCant, R1)
+    reemplazo(1, auxCant, maxID, max)
+    EnviarMensaje(-1, R2)
+    RecibirMensaje(auxCant, R2)
+    reemplazo(2, auxCant, maxID, max)
+    EnviarMensaje(-1, R3)
+    RecibirMensaje(auxCant, R3)
+    reemplazo(3, auxCant, maxID, max)
+    EnviarMensaje(-1, R4)
+    RecibirMensaje(auxCant, R4)
+    reemplazo(4, auxCant, maxID, max)
+    si(max = 1)
+      EnviarMensaje(V, R1)
+      EnviarMensaje(F, R2)
+      EnviarMensaje(F, R3)
+      EnviarMensaje(F, R4)
+    sino
+      EnviarMensaje(F, R1)
+      si (max = 2)
+        EnviarMensaje(V, R2)
+        EnviarMensaje(F, R3)
+        EnviarMensaje(F, R4)
+      sino
+        EnviarMensaje(F, R2)
+        si (max = 3)
+          EnviarMensaje(V, R3)
+          EnviarMensaje(F, R4)
+        sino
+          EnviarMensaje(F, R3)
+          EnviarMensaje(V, R4)
+  fin
+  robot recolector
+  variables
+    id, cont, av, ca, avIni, caIni: numero
+    gane: boolean
+  comenzar
+    cont:= 0
+    av:= 0
+    avIni:= PosAv
+    caIni:= PosCa
+    RecibirMensaje(id, J)
+    mientras (av <> -1)
+      RecibirMensaje(av, J)
+      si (av = -1)
+        EnviarMensaje(cont, J)
+      sino
+        RecibirMensaje(ca, J)
+        Pos(av, ca)
+        limpiarEsquina(cont)
+        Pos(avIni, avCa)
+        EnviarMensaje(V, J)
+    RecibirMensaje(gane, J)
+    si (gane = V)
+      Pos(50, 50)
+  fin
+variables
+  R1, R2, R3, R4: recolector
+  J: jefe
+comenzar
+  AsignarArea(R1, Zona)
+  AsignarArea(R2, Zona)
+  AsignarArea(R3, Zona)
+  AsignarArea(R4, Zona)
+  AsignarArea(J, Ofi)
+  AsignarArea(R1, B1)
+  AsignarArea(R2, B2)
+  AsignarArea(R3, B3)
+  AsignarArea(R4, B4)
+  Iniciar(J, 1, 1)
+  Iniciar(R1, 25, 1)
+  Iniciar(R2, 30, 1)
+  Iniciar(R3, 35, 1)
+  Iniciar(R4, 40, 1)
+fin

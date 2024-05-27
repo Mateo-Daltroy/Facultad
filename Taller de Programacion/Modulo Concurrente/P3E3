@@ -1,0 +1,89 @@
+programa P3E3
+procesos
+areas
+robots
+{Robots programados, falta todo lo demas}
+  robot jefe
+  variables
+    maxID, maxCant, auxID, auxCant, av, ca: numero
+    vacio: boolean
+  comenzar
+    {Setting}
+    Random(av, 2, 10)
+    Random(ca, 2, 10)
+    EnviarMensaje(ca, R1)
+    EnviarMensaje(ca, R2)
+    EnviarMensaje(ca, R3)
+    EnviarMensaje(ca, R4)
+    EnviarMensaje(av, R1)
+    EnviarMensaje(av, R2)
+    EnviarMensaje(av, R3)
+    EnviarMensaje(av, R4)
+    {Loop hasta que este vacio}
+    vacio:= F
+    mientras (vacio = F)
+      RecibirMensaje(vacio, *)
+    repetir 3
+      RecibirMensaje(vacio, *) {el resto de los robots se dan cuenta de que la esquina esta vacia}
+    {Les da ID a los robots y les avisa que devuelvan sus datos}
+    EnviarMensaje(1, R1)
+    EnviarMensaje(2, R2)
+    EnviarMensaje(3, R3)
+    EnviarMensaje(4, R4)
+    {Reportaje final}
+    maxCant:= -1
+    repetir 4
+      RecibirMensaje(auxID, *)
+      si (auxID = 1)
+        RecibirMensaje(auxCant, R1)
+        si (auxCant > maxCant)
+          maxID:= auxID
+          maxCant:= auxCant
+      sino
+        si (auxID = 2)
+          RecibirMensaje(auxCant, R2)
+          si (auxCant > maxCant)
+            maxID:= auxID
+            maxCant:= auxCant
+        sino
+          si (auxID = 3)
+            RecibirMensaje(auxCant, R3)
+            si (auxCant > maxCant)
+              maxID:= auxID
+              maxCant:= auxCant
+          sino
+            RecibirMensaje(auxCant, R4)
+            si (auxCant > maxCant)
+              maxID:= auxID
+              maxCant:= auxCant
+    Informar(maxID)
+  fin
+  robot recolector
+  variables
+    ID, cont, av, ca, avIni, caIni: numero
+    vacio: boolean
+  comenzar
+    avIni:= PosAv
+    caIni:= PosCa
+    cont:= 0
+    RecibirMensaje(ca, J)
+    RecibirMensaje(av, J)
+    vacio:= F
+    mientras (vacio = F)
+      BloquearEsquina(av, ca)
+      Pos(av, ca)
+      si (HayFlorEnLaEsquina)
+        tomarFlor
+        cont:= cont + 1
+      sino
+        vacio:= V
+      Pos(avIni, caIni)
+      LiberarEsquina(av, ca)
+    EnviarMensaje(vacio, J)
+    RecibirMensaje(ID, J)
+    EnviarMensaje(ID, J)
+    EnviarMensaje(cont, J)
+  fin
+variables
+comenzar
+fin

@@ -1,0 +1,138 @@
+programa P3E2
+procesos
+  proceso juntarFlores (ES cont: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cont:= cont + 1
+  fin
+  proceso juntarPapeles (ES cont: numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      cont:= cont + 1
+  fin
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+areas
+  Ciudad: AreaC(1, 1, 31, 31)
+robots
+  robot corredor1
+  variables
+    ID, cont, flo: numero
+  comenzar
+    cont:= 5
+    flo:= 0
+    {Recorrido pt.1}
+    repetir 4
+      repetir cont
+        mover
+      juntarFlores(flo)
+      derecha
+      repetir cont
+        mover
+      juntarFlores(flo)
+      izquierda
+      cont:= cont - 1
+    mover
+    juntarFlores(flo)
+    derecha
+    {Esquina posible choque}
+    BloquearEsquina(PosAv+1, PosCa)
+    RecibirMensaje(ID, J)
+    EnviarMensaje(ID, J)
+    mover
+    juntarFlores(flo)
+    repetir 2
+      derecha
+    mover
+    LiberarEsquina(PosAv+1, PosCa)
+    {Recorrido pt.2}
+    cont:= 2
+    repetir 4
+      repetir cont
+        mover
+      derecha
+      juntarFlores(flo)
+      repetir cont
+        mover
+      izquierda
+      juntarFlores(flo)
+      cont:= cont + 1
+    Informar(flo)
+    EnviarMensaje(0, J)
+    {avisa que termino su recorrido a Jefe}
+  fin
+  robot corredor2
+  variables
+    ID, cont, pap: numero
+  comenzar
+    cont:= 5
+    pap:= 0
+    {Recorrido pt.1}
+    repetir 4
+      repetir cont
+        mover
+      juntarPapeles(pap)
+      izquierda
+      repetir cont
+        mover
+      juntarPapeles(pap)
+      derecha
+      cont:= cont - 1
+    mover
+    juntarPapeles(pap)
+    izquierda
+    {Esquina posible choque}
+    BloquearEsquina(PosAv-1, PosCa)
+    RecibirMensaje(ID, J)
+    EnviarMensaje(ID, J)
+    mover
+    juntarPapeles(pap)
+    repetir 2
+      derecha
+    mover
+    LiberarEsquina(PosAv-1, PosCa)
+    {Recorrido pt.2}
+    cont:= 2
+    repetir 4
+      repetir cont
+        mover
+      izquierda
+      juntarPapeles(pap)
+      repetir cont
+        mover
+      derecha
+      juntarPapeles(pap)
+      cont:= cont + 1
+    Informar(pap)
+    EnviarMensaje(0, J)
+    {avisa que termino su recorrido a Jefe}
+  fin
+  robot jefe
+  variables
+    ganador, aux: numero
+  comenzar
+    EnviarMensaje(1, R1)
+    EnviarMensaje(2, R2)
+    RecibirMensaje(ganador, *)
+    repetir 3
+      RecibirMensaje(aux, *)
+      {Recibe perdedor y checkeos de fin de carrera}
+    Informar(ganador)
+  fin
+variables
+  R1: corredor1
+  R2: corredor2
+  J: jefe
+comenzar
+  AsignarArea(J, Ciudad)
+  AsignarArea(R1, Ciudad)
+  AsignarArea(R2, Ciudad)
+  Iniciar(R1, 1, 1)
+  Iniciar(R2, 31, 1)
+  Iniciar(J, 15, 1)
+fin
