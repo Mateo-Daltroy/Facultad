@@ -1,0 +1,121 @@
+programa parcial2023
+procesos
+  proceso juntarPapeles
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  proceso escalon(ES esquinas:numero)
+  variables
+    alto,ancho:numero
+  comenzar
+    Random(alto,1,3)
+    Random(ancho,2,4)
+    repetir alto
+      si(HayPapelEnLaEsquina)
+        juntarPapeles
+        esquinas:=esquinas+1
+      mover
+    irEsquina(PosAv,PosCa)
+    derecha
+    repetir ancho
+      si(HayPapelEnLaEsquina)
+        juntarPapeles
+        esquinas:=esquinas+1
+      mover
+    irEsquina(PosAv,PosCa)
+    izquierda
+  fin
+  proceso irEsquina(E av:numero;E ca:numero)
+  comenzar
+    mientras(HayPapelEnLaBolsa)
+      BloquearEsquina(99,99)
+      Pos(99,99)
+      depositarPapel
+      Pos(av,ca)
+      LiberarEsquina(99,99)
+  fin
+  proceso sincronizacion
+  variables
+    ok:boolean
+  comenzar
+    repetir 3
+      RecibirMensaje(ok,*)
+    EnviarMensaje(V,robot1)
+    EnviarMensaje(V,robot2)
+    EnviarMensaje(V,robot3)
+  fin
+  proceso calcularEsquinas
+  variables
+    quienSoy,esq,esqTot:numero
+  comenzar
+    repetir 3
+      RecibirMensaje(quienSoy,*)
+      si(quienSoy=1)
+        RecibirMensaje(esq,robot1)
+        esqTot:= esqTot+esq
+      sino
+        si(quienSoy=2)
+          RecibirMensaje(esq,robot2)
+          esqTot:= esqTot+esq
+        sino
+          RecibirMensaje(esq,robot3)
+          esqTot:= esqTot+esq
+    Informar(esqTot)
+  fin
+areas
+  area1:AreaP(2,1,18,13)
+  area2:AreaP(32,1,48,13)
+  area3:AreaP(62,1,78,13)
+  area4:AreaP(1,1,1,13)
+  esquina:AreaC(99,99,99,99)
+robots
+  robot tipo1
+  variables
+    quienSoy,esquinas: numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(quienSoy,robotjefe)
+    esquinas:=0
+    repetir 4
+      escalon(esquinas)
+      EnviarMensaje(V,robotjefe)
+      RecibirMensaje(ok,robotjefe)
+    EnviarMensaje(quienSoy,robotjefe)
+    EnviarMensaje(esquinas,robotjefe)
+  fin
+  robot tipo2
+  comenzar
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(2,robot2)
+    EnviarMensaje(3,robot3)
+    repetir 4
+      sincronizacion
+    Pos(99,99)
+    juntarPapeles
+    calcularEsquinas
+  fin
+variables
+  robot1:tipo1
+  robot2:tipo1
+  robot3:tipo1
+  robotjefe:tipo2
+comenzar
+  AsignarArea(robot1,esquina)
+  AsignarArea(robot2,esquina)
+  AsignarArea(robot3,esquina)
+  AsignarArea(robotjefe,esquina)
+  AsignarArea(robot1,area1)
+  AsignarArea(robot2,area2)
+  AsignarArea(robot3,area3)
+  AsignarArea(robotjefe,area4)
+  Iniciar(robot1,2,1)
+  Iniciar(robot2,32,1)
+  Iniciar(robot3,62,1)
+  Iniciar(robotjefe,1,1)
+fin

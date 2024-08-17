@@ -1,0 +1,92 @@
+programa P5E5
+procesos
+  proceso enviarReady(E ID: numero; E cant: numero)
+  comenzar
+    si (ID = 1)
+      EnviarMensaje(cant, R1)
+    sino
+      si (ID = 2)
+        EnviarMensaje(cant, R2)
+      sino
+        EnviarMensaje(cant, R3)
+  fin
+  proceso cumplirPedido (E cant: numero)
+  comenzar
+    Pos(100, 1)
+    repetir cant
+      depositarPapel
+    Pos(13, 1)
+  fin
+  proceso recibirFin (E ID: numero)
+  variables
+    aux: boolean
+  comenzar
+    si (ID = 1)
+      RecibirMensaje(aux, R1)
+    sino
+      si (ID = 2)
+        RecibirMensaje(aux, R2)
+      sino
+        RecibirMensaje(aux, R3)
+  fin
+  proceso buscarPedido(E cant: numero; E avIni: numero; E caIni: numero)
+  comenzar
+    repetir cant
+      Pos(100, 1)
+      tomarPapel
+      Pos(avIni, caIni)
+      depositarPapel
+{Este modulo no necesita bloqueos dado que cuando recibe la cantidad de papeles, el servidor ya termino}
+{y no va a volver hasta que el cliente de este modulo informe que finalizo}
+  fin
+areas
+  Almacen: AreaC(100, 1, 100, 1)
+  BaseS: AreaP(13, 1, 13, 1)
+  Base1: AreaP(10, 1, 10, 1)
+  Base2: AreaP(11, 1, 11, 1)
+  Base3: AreaP(12, 1, 12, 1)
+robots
+  robot servidor
+  variables
+    ID, cant: numero
+  comenzar
+    EnviarMensaje(1, R1)
+    EnviarMensaje(2, R2)
+    EnviarMensaje(3, R3)
+    repetir 12
+      RecibirMensaje(ID, *)
+      Random(cant, 1, 5)
+      cumplirPedido(cant)
+      enviarReady(ID, cant)
+      recibirFin(ID)
+  fin
+  robot cliente
+  variables
+    ID, cant, avIni, caIni: numero
+  comenzar
+    avIni:= PosAv
+    caIni:= PosCa
+    RecibirMensaje(ID, Serv)
+    repetir 4
+      EnviarMensaje(ID, Serv)
+      RecibirMensaje(cant, Serv)
+      buscarPedido(cant, avIni, caIni)
+      EnviarMensaje(V, Serv)
+  fin
+variables
+  R1, R2, R3: cliente
+  Serv: servidor
+comenzar
+  AsignarArea(Serv, Almacen)
+  AsignarArea(R1, Almacen)
+  AsignarArea(R2, Almacen)
+  AsignarArea(R3, Almacen)
+  AsignarArea(Serv, BaseS)
+  AsignarArea(R1, Base1)
+  AsignarArea(R2, Base2)
+  AsignarArea(R3, Base3)
+  Iniciar(Serv, 13, 1)
+  Iniciar(R1, 10, 1)
+  Iniciar(R2, 11, 1)
+  Iniciar(R3, 12, 1)
+fin

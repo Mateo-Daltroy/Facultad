@@ -1,0 +1,128 @@
+programa P6P17
+procesos
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  proceso juntarPapeles(ES cont: numero; ES esq: numero)
+  comenzar
+    si (HayPapelEnLaEsquina)
+      esq:= esq + 1
+      mientras (HayPapelEnLaEsquina)
+        tomarPapel
+        cont:= cont + 1
+  fin
+  proceso depositarPapeles(E cont: numero; E av: numero; E ca: numero)
+  comenzar
+    repetir cont
+      BloquearEsquina(99, 99)
+      Pos(99, 99)
+      depositarPapel
+      Pos(av, ca)
+      LiberarEsquina(99, 99)
+  fin
+  proceso recorrido(E alto: numero; E ancho: numero; ES tot: numero; ES esq: numero)
+  variables
+    cont: numero
+  comenzar
+    cont:= 0
+    repetir alto
+      mover
+      juntarPapeles(cont, esq)
+    derecha
+    depositarPapeles(cont, PosAv, PosCa)
+    tot:= tot + cont
+    cont:= 0
+    repetir ancho
+      mover
+      juntarPapeles(cont, esq)
+    izquierda
+    depositarPapeles(cont, PosAv, PosCa)
+    tot:= tot + cont
+  fin
+  proceso recibirBarrera(ES tot: numero)
+  variables
+    cont: numero
+  comenzar
+    RecibirMensaje(cont, R1)
+    tot:= tot + cont
+    RecibirMensaje(cont, R2)
+    tot:= tot + cont
+    RecibirMensaje(cont, R3)
+    tot:= tot + cont
+    EnviarMensaje(V, R1)
+    EnviarMensaje(V, R2)
+    EnviarMensaje(V, R3)
+  fin
+  proceso recibirEsquinas(ES esq: numero)
+  variables
+    aux: numero
+  comenzar
+    repetir 3
+      RecibirMensaje(aux, *)
+      esq:= esq + aux
+  fin
+  proceso buscarPapeles(E tot: numero)
+  comenzar
+    Pos(99, 99)
+    repetir tot
+      tomarPapel
+  fin
+areas
+  Area1: AreaP(2, 1, 18, 13)
+  Area2: AreaP(32, 1, 48, 13)
+  Area3: AreaP(62, 1, 78, 13)
+  Base: AreaC(99, 99, 99, 99)
+  Ofi: AreaP(1, 1, 1, 1)
+robots
+  robot papelero
+  variables
+    tot, alto, ancho, ID, esq: numero
+    ok: boolean
+  comenzar
+    esq:= 0
+    tot:= 0
+    RecibirMensaje(ID, J)
+    juntarPapeles(tot, esq)
+    repetir 4
+      Random(alto, 1, 3)
+      Random(ancho, 2, 4)
+      recorrido(alto, ancho, tot, esq)
+      EnviarMensaje(tot, J)
+      RecibirMensaje(ok, J)
+      tot:= 0
+    EnviarMensaje(esq, J)
+  fin
+  robot fiscalizador
+  variables
+    esq, tot, bloq: numero
+  comenzar
+    EnviarMensaje(1, R1)
+    EnviarMensaje(2, R2)
+    EnviarMensaje(3, R3)
+    esq:= 0
+    tot:= 0
+    repetir 4
+      recibirBarrera(tot)
+    recibirEsquinas(esq)
+    buscarPapeles(tot)
+    Informar(esq)
+  fin
+variables
+  R1, R2, R3: papelero
+  J: fiscalizador
+comenzar
+  AsignarArea(R1, Base)
+  AsignarArea(R2, Base)
+  AsignarArea(R3, Base)
+  AsignarArea(J, Base)
+  AsignarArea(R1, Area1)
+  AsignarArea(R2, Area2)
+  AsignarArea(R3, Area3)
+  AsignarArea(J, Ofi)
+  Iniciar(J, 1, 1)
+  Iniciar(R1, 2, 1)
+  Iniciar(R2, 32, 1)
+  Iniciar(R3, 62, 1)
+fin

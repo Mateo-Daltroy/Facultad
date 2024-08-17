@@ -1,0 +1,107 @@
+programa P6P16
+procesos
+  proceso juntarFlores (ES cont: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cont:= cont + 1
+  fin
+  proceso pasarChoque(E ca: numero; ES cont: numero)
+  comenzar
+    BloquearEsquina(6, ca)
+    mover
+    juntarFlores(cont)
+    mover
+    LiberarEsquina(6, ca)
+    juntarFlores(cont)
+  fin
+  proceso recorridoCa (ES cont: numero)
+  comenzar
+    repetir 58
+      juntarFlores(cont)
+      si ((PosAv + 1) = 6)
+        pasarChoque(PosCa, cont)
+        EnviarMensaje(2, J) {2, en referencia al ID}
+      mover
+  fin
+  {Como no quiero que F1 se pregunte constantemente si esta recorriendo una calle}
+  {o si el F2 esta recorriendo una avenida, divido el recorrido en dos modulos}
+  proceso recorridoAv (E ca: numero; ES cont: numero)
+  comenzar
+    repetir 58
+      juntarFlores(cont)
+      si ((PosCa + 1) = ca)
+        pasarChoque(ca, cont)
+        EnviarMensaje(1, J) {1, en referencia al ID}
+      mover
+  fin
+areas
+  TandaCruce: AreaPC(6, 2, 6, 50)
+  Base1: AreaP(6, 1, 6, 1)
+  Tanda1: AreaP(6, 51, 6, 61) {se mueve 60 pasos (6,1) -> (6, 61)}
+  Tanda2pre: AreaP(1, 2, 5, 50)
+  Tanda2post: AreaP(7, 2, 61, 50)
+  Ofi: AreaP(100, 100, 100, 100)
+robots
+  robot recolector
+  variables
+    ca, cont, ID: numero
+  comenzar
+    cont:= 0
+    RecibirMensaje(ID, J) {ID determina si recorre calle o av}
+    RecibirMensaje(ca, J)
+    si (ID = 2)
+      derecha {ID 2 recorre calle}
+      Pos(1, ca)
+      recorridoCa(cont)
+    sino
+      recorridoAv(ca, cont)
+    EnviarMensaje(ID, J)
+    EnviarMensaje(cont, J)
+  fin
+  robot fiscalizador
+  variables
+    ganador, ca, aux, cant: numero
+  comenzar
+    EnviarMensaje(1, F1)
+    EnviarMensaje(2, F2)
+    Random(ca, 2, 50)
+    EnviarMensaje(ca, F1)
+    EnviarMensaje(ca, F2)
+    RecibirMensaje(ganador, *)
+    si (ganador = 1) 
+      RecibirMensaje(aux, F2)
+    sino
+      RecibirMensaje(aux, F1)
+    {Cubre la leve posibilidad de que el ganador termine sus 60 esquinas}
+    {antes de que el perdedor llegue al cruce}
+    repetir 2
+      RecibirMensaje(aux, *)
+      si (aux = ganador)
+        si (ganador = 1)
+          RecibirMensaje(cant, F1)
+        sino
+          RecibirMensaje(cant, F2)
+      sino {recibe el ultimo mensaje del perdedor}
+        si (ganador = 1)
+          RecibirMensaje(aux, F2)
+        sino
+          RecibirMensaje(aux, F1)
+    Informar(ganador)
+    Informar(cant)
+  fin
+variables
+  F1, F2: recolector
+  J: fiscalizador
+comenzar
+  AsignarArea(F1, TandaCruce)
+  AsignarArea(F1, Tanda1)
+  AsignarArea(F1, Base1)
+  AsignarArea(F2, TandaCruce)
+  AsignarArea(F2, Tanda2pre)
+  AsignarArea(F2, Tanda2post)
+  AsignarArea(J, Ofi)
+  Iniciar(J, 100, 100)
+  Iniciar(F1, 6, 1)
+  Iniciar(F2, 1, 2)
+fin

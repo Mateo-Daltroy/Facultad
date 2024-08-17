@@ -1,0 +1,88 @@
+programa P4E4
+procesos
+  proceso tarea1
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso tarea2
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso tarea3
+  comenzar
+    mientras (HayPapelEnLaBolsa)
+      depositarPapel
+    mientras (HayFlorEnLaBolsa)
+      depositarFlor
+  fin
+areas
+  AreaValida: AreaPC(2, 2, 100, 100)
+  Ofi: AreaP(1, 1, 1, 1)
+  Area1: AreaP(2, 1, 2, 1)
+  Area2: AreaP(3, 1, 3, 1)
+robots
+  robot trabajador
+  variables
+    ID, av, ca, tarea, avIni, caIni:numero
+  comenzar
+    avIni:= PosAv
+    caIni:= PosCa
+    RecibirMensaje(ID, J)
+    RecibirMensaje(tarea, J)
+    mientras(tarea <> 4)
+      RecibirMensaje(av, J)
+      RecibirMensaje(ca, J)
+      BloquearEsquina(av, ca)
+      Pos(av, ca)
+      si (tarea = 1)
+        tarea1
+      sino
+        si (tarea = 2)
+          tarea2
+        sino
+          tarea3
+      Pos(avIni, caIni)
+      LiberarEsquina(av, ca)
+      EnviarMensaje(V, J)
+      RecibirMensaje(tarea, J)
+  fin
+  robot jefe
+  variables
+    tarea, ID, av, ca: numero
+    aux: boolean
+  comenzar
+    EnviarMensaje(1, R1)
+    EnviarMensaje(2, R2)
+    repetir 10
+      Random(tarea, 1, 3)
+      Random(ID, 1, 2)
+      Random(av, 2, 100)
+      Random(ca, 2, 100)
+      si (ID = 1)
+        EnviarMensaje(tarea, R1)
+        EnviarMensaje(av, R1)
+        EnviarMensaje(ca, R1)
+        RecibirMensaje(aux, R1)
+      sino
+        EnviarMensaje(tarea, R2)
+        EnviarMensaje(av, R2)
+        EnviarMensaje(ca, R2)
+        RecibirMensaje(aux, R2)
+    EnviarMensaje(4, R1)
+    EnviarMensaje(4, R2)
+  fin
+variables
+  J: jefe
+  R1, R2: trabajador
+comenzar
+  AsignarArea(R1, AreaValida)
+  AsignarArea(R2, AreaValida)
+  AsignarArea(R1, Area1)
+  AsignarArea(R2, Area2)
+  AsignarArea(J, Ofi)
+  Iniciar(R1, 2, 1)
+  Iniciar(R2, 3, 1)
+  Iniciar(J, 1, 1)
+fin

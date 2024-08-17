@@ -1,0 +1,80 @@
+programa P2E3
+procesos
+  proceso juntarFlores (ES flores: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+  fin
+  proceso juntarPapeles (ES papeles: numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:= papeles + 1
+  fin
+areas
+  ciudad: AreaC(1,1,100,100)
+robots
+  robot tipoA
+  variables 
+    cont: numero
+    id: numero
+  comenzar
+    derecha
+    cont:= 0
+    RecibirMensaje(id, *)
+    si (id = 2)
+      RecibirMensaje(cont, A1)
+    repetir 9
+      juntarPapeles(cont)
+      mover
+    juntarPapeles(cont)
+    si (id = 1)
+      EnviarMensaje(2, A2)
+      EnviarMensaje(cont, A2)
+    sino
+      Informar(cont)
+  fin
+  robot tipoB
+  variables
+    cont: numero
+    id: numero
+  comenzar
+    derecha
+    cont:= 0
+    RecibirMensaje(id,*)
+    si (id =2)
+      RecibirMensaje(cont, B1)
+    repetir 9
+      juntarFlores(cont)
+      mover
+    juntarFlores(cont)
+    si (id = 1)
+      EnviarMensaje(2, B2)
+      EnviarMensaje(cont, B2)
+    sino
+      Informar(cont)
+  fin
+  robot jefe
+  comenzar
+    EnviarMensaje(1, A1)
+    EnviarMensaje(1, B1)
+  fin
+variables
+  A1: tipoA
+  A2: tipoA
+  B1: tipoB
+  B2: tipoB
+  J: jefe
+comenzar
+  AsignarArea(A1, ciudad)
+  AsignarArea(A2, ciudad)
+  AsignarArea(B1, ciudad)
+  AsignarArea(B2, ciudad)
+  AsignarArea(J, ciudad)
+  Iniciar(A1, 1, 1)
+  Iniciar(A2, 11, 1)
+  Iniciar(B1, 1, 5)
+  Iniciar(B2, 11, 5)
+  Iniciar(J, 100, 100)
+fin

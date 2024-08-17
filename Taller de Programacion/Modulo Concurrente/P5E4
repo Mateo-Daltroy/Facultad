@@ -1,0 +1,126 @@
+programa P5E4
+procesos
+  proceso juntarFlores (ES cont: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cont:= cont + 1
+  fin
+  proceso limpiarEsquina (ES cont: numero; E av: numero; E ca:numero)
+  variables
+    auxAv, auxCa: numero
+  comenzar
+    RecibirMensaje(auxAv, J)
+    RecibirMensaje(auxCa, J)
+    BloquearEsquina(auxAv, auxCa)
+    Pos(auxAv, auxCa)
+    juntarFlores(cont)
+    Pos(av, ca)
+    LiberarEsquina(auxAv, auxCa)
+  fin
+  proceso depositarFlores(E tot: numero; E avIni: numero; E caIni: numero)
+  comenzar
+    repetir tot
+      BloquearEsquina(10, 10)
+      Pos(10, 10)
+      depositarFlor
+      Pos(avIni, caIni)
+      LiberarEsquina(10, 10)
+  fin
+  proceso enviarDatos(E ID: numero)
+  variables
+    av, ca: numero
+  comenzar
+    Random(av, 40, 60)
+    Random(ca, 40, 60)
+    si (ID = 1)
+      EnviarMensaje(V, R1)
+      EnviarMensaje(av, R1)
+      EnviarMensaje(ca, R1)
+    sino
+      si (ID = 2)
+        EnviarMensaje(V, R2)
+        EnviarMensaje(av, R2)
+        EnviarMensaje(ca, R2)
+      sino
+        EnviarMensaje(V, R3)
+        EnviarMensaje(av, R3)
+        EnviarMensaje(ca, R3)
+  fin
+  proceso recibirResultados (E ID: numero; ES cont: numero)
+  variables
+    aux: numero
+  comenzar
+    si (ID = 1)
+      RecibirMensaje(aux, R1)
+    sino
+      si (ID = 2)
+        RecibirMensaje(aux, R2)
+      sino
+        RecibirMensaje(aux, R3)
+    cont:= cont + aux
+  fin
+  proceso cerrarRobots
+  comenzar
+    EnviarMensaje(F, R1)
+    EnviarMensaje(F, R2)
+    EnviarMensaje(F, R3)
+  fin
+areas
+  Almacen: AreaPC(10, 10, 10, 10)
+  Zona: AreaPC(40, 40, 60, 60)
+  Base: AreaC(1, 1, 4, 1)
+robots
+  robot florero
+  variables
+    cont, avIni, caIni, tot: numero
+    otro: boolean
+  comenzar
+    cont:= 0
+    tot:= 0
+    avIni:= PosAv
+    caIni:= PosCa
+    RecibirMensaje(otro, J)
+    mientras (otro)
+      limpiarEsquina(cont, avIni, caIni)
+      EnviarMensaje(cont, J)
+      tot:= tot + cont
+      cont:= 0
+      RecibirMensaje(otro, J)
+    depositarFlores(tot, avIni, caIni)
+    EnviarMensaje(V, J)
+  fin
+  robot jefe
+  variables
+    cont, ID: numero
+    aux: boolean
+  comenzar
+    cont:= 0
+    repetir 8
+      Random(ID, 1, 3)
+      enviarDatos(ID)
+      recibirResultados(ID, cont)
+    cerrarRobots
+    repetir 3
+      RecibirMensaje(aux, *)
+    Informar(cont)
+  fin
+variables
+  R1, R2, R3: florero
+  J: jefe
+comenzar
+  AsignarArea(J, Base)
+  AsignarArea(R1, Base)
+  AsignarArea(R2, Base)
+  AsignarArea(R3, Base)
+  AsignarArea(R1, Zona)
+  AsignarArea(R2, Zona)
+  AsignarArea(R3, Zona)
+  AsignarArea(R1, Almacen)
+  AsignarArea(R2, Almacen)
+  AsignarArea(R3, Almacen)
+  Iniciar(J, 4, 1)
+  Iniciar(R1, 1, 1)
+  Iniciar(R2, 2, 1)
+  Iniciar(R3, 3, 1)
+fin

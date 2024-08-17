@@ -176,6 +176,7 @@ end;
 
 // Inicio Programa Principal
 
+
 var
 	v: vector;
 	v2: vectorC;

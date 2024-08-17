@@ -1,0 +1,93 @@
+programa P5E3
+procesos
+  proceso checkEsquina(ES contA: numero; ES contF: numero)
+  comenzar
+    si (HayFlorEnLaEsquina)
+      tomarFlor
+      contF:= contF + 1
+    contA:= contA + 1
+  fin
+  proceso juntarFlores (ES cont: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cont:= cont + 1
+  fin
+  proceso vaciarBolso
+  comenzar
+    mientras (HayFlorEnLaBolsa)
+      depositarFlor
+  fin
+  proceso depositarFloresSeguro
+  variables
+    auxAv, auxCa: numero
+  comenzar
+    auxAv:= PosAv
+    auxCa:= PosCa
+    BloquearEsquina(10, 10)
+    Pos(10, 10)
+    vaciarBolso
+    Pos(auxAv, auxCa)
+    LiberarEsquina(10, 10)
+  fin
+areas
+  Base: AreaC(10, 10, 10, 10)
+  Tanda1: AreaP(1, 3, 100, 3)
+  Tanda2: AreaP(1, 4, 100, 4)
+  Ofi: AreaP(1, 5, 1, 5)
+robots
+  robot cosechador
+  variables
+    cont, terminados: numero
+    aux: boolean
+  comenzar
+    cont:= 0
+    terminados:= 0
+    mientras (terminados < 2)
+      RecibirMensaje(aux, *)
+      si (aux)
+        BloquearEsquina(10, 10)
+        Pos(10, 10)
+        juntarFlores(cont)
+        Pos(1, 5)
+        LiberarEsquina(10, 10)
+      sino
+        terminados:= terminados + 1
+    Informar(cont)
+  fin
+  robot recolector
+  variables
+    contA, contF: numero
+  comenzar
+    contA:= 0
+    contF:= 0
+    derecha
+    checkEsquina(contA, contF)
+    {Primera Esquina, no se checkea si contA = 5 porque es solo la primera} 
+    {ni si contF > 9 porque cada esquina tiene a lo sumo una flor}
+    mientras (PosAv < 100)
+      mover
+      checkEsquina(contA, contF)
+      si (contA = 5) | (contF > 9)
+        depositarFloresSeguro
+        EnviarMensaje(V, C1)
+        si (contA = 5)
+          contA:= 0
+        si (contF > 9)
+          contF:= 0
+    EnviarMensaje(F, C1)
+  fin
+variables
+  R1, R2: recolector
+  C1: cosechador
+comenzar
+  AsignarArea(C1, Base)
+  AsignarArea(R1, Base)
+  AsignarArea(R2, Base)
+  AsignarArea(C1, Ofi)
+  AsignarArea(R1, Tanda1)
+  AsignarArea(R2, Tanda2)
+  Iniciar(C1, 1, 5)
+  Iniciar(R1, 1, 3)
+  Iniciar(R2, 1, 4)
+fin

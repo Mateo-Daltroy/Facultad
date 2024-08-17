@@ -1,0 +1,112 @@
+programa P6P12
+procesos
+  proceso izq
+  comenzar
+    repetir 3
+      derecha
+  fin
+  proceso juntarFlores (ES cont: numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      cont:= cont + 1
+  fin
+  proceso recorrido(ES cont: numero)
+  comenzar
+    repetir 9
+      juntarFlores(cont)
+      mover
+    derecha
+    repetir 8
+      juntarFlores(cont)
+      mover
+    juntarFlores(cont)
+  fin
+  proceso depositarFlores(E cont: numero)
+  variables
+    avIni, caIni: numero
+  comenzar
+    avIni:= PosAv
+    caIni:= PosCa
+    repetir cont
+      BloquearEsquina(20, 20)
+      Pos(20, 20)
+      depositarFlor
+      Pos(avIni, caIni)
+      LiberarEsquina(20, 20)
+  fin
+areas
+  BloqueA: AreaPC(1, 1, 10, 10)
+  BloqueB: AreaPC(13, 1, 22, 10)
+  Base: AreaPC(20, 20, 20, 20)
+  Ofi: AreaP(30, 1, 30, 1)
+robots
+  robot recolector
+  variables
+    ID, cont, tot: numero {1=A1, 2=B1, 3=A2, 4=B2}
+    aux: boolean
+  comenzar
+    tot:= 0
+    cont:= 0
+    RecibirMensaje(ID, J)
+    si (ID > 2)
+      repetir 2
+        derecha
+      RecibirMensaje(tot, *)
+    recorrido(cont)
+    si (ID = 1)
+      EnviarMensaje(cont, A2)
+    sino
+      si (ID = 2)
+        EnviarMensaje(cont, B2)
+    depositarFlores(cont)
+    EnviarMensaje(-1, J)
+    si (ID > 2)
+      tot:= tot + cont
+      EnviarMensaje(ID, J) 
+      EnviarMensaje(tot, J) 
+  fin
+  robot jefe
+  variables
+    contA, contB, ID, terminados: numero
+  comenzar
+    EnviarMensaje(1, A1)
+    EnviarMensaje(2, B1)
+    EnviarMensaje(3, A2)
+    EnviarMensaje(4, B2)
+    terminados:= 0
+    repetir 6 {repite 4 en vez de 2 porque recibe -1 cada vez}
+    {que un robot termina de depositar sus flores}
+      RecibirMensaje(ID, *)
+      si (ID = 3)
+        RecibirMensaje(contA, A2)
+      sino
+        si (ID = 4)
+          RecibirMensaje(contB, B2)
+    si (contA > contB)
+      Informar(contA)
+    sino
+      si (contB > contA)
+        Informar(contB) 
+      sino
+        Informar(-1)
+  fin
+variables
+  A1, A2, B1, B2: recolector
+  J: jefe
+comenzar
+  AsignarArea(A1, BloqueA)
+  AsignarArea(A2, BloqueA)
+  AsignarArea(B1, BloqueB)
+  AsignarArea(B2, BloqueB)
+  AsignarArea(A1, Base)
+  AsignarArea(A2, Base)
+  AsignarArea(B1, Base)
+  AsignarArea(B2, Base)
+  AsignarArea(J, Ofi)
+  Iniciar(J, 30, 1)
+  Iniciar(A2, 10, 10)
+  Iniciar(A1, 1, 1)
+  Iniciar(B2, 22, 10)
+  Iniciar(B1, 13, 1)
+fin

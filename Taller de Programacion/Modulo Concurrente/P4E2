@@ -1,0 +1,95 @@
+programa P4E2
+procesos
+  proceso juntarPapeles (ES cont: numero; ES quedan: boolean)
+  comenzar
+    mientras (cont < 5) & (HayPapelEnLaEsquina)
+      tomarPapel
+      cont:= cont + 1
+    si (HayPapelEnLaEsquina)
+      quedan:= V
+    sino
+      quedan:= F
+  fin
+  proceso buscarConsumo (E cant: numero; ES cont: numero)
+  variables
+    aux: numero
+  comenzar
+    aux:= 0
+    mientras (aux < cant)
+      si (HayPapelEnLaEsquina)
+        tomarPapel
+        aux:= aux + 1
+      sino
+        repetir aux
+          depositarPapel
+        aux:= 6 {numero fuera de rango de cant, siempre sale del mientras}
+        cont:= cont + 1
+  fin
+areas
+  Tanda1: AreaP(5, 1, 5, 100)
+  Tanda2: AreaP(10, 1, 10, 100)
+  Ofi1: AreaP(11, 1, 11, 1)
+  Ofi2: AreaP(12, 1, 12, 1)
+  Base: AreaC(50, 50, 50, 50)
+robots
+  robot productor
+  variables
+    cont, auxAv, auxCa: numero
+    quedan: boolean
+  comenzar
+    cont:= 0
+    mientras (PosCa < 100)
+      juntarPapeles(cont, quedan)
+      mientras (quedan = F) & (PosCa < 100)
+        mover
+        juntarPapeles(cont, quedan)
+      auxAv:= PosAv
+      auxCa:= PosCa
+      si (cont = 5) 
+{Cubre el caso en el que termina la av sin tener 5 papeles}
+{Tambien en vez de usar el si (cont = 5) se podria utilizar}
+{mientras (HayPapelEnLaBolsa) depositarPapel}
+        BloquearEsquina(50, 50)
+        Pos(50, 50)
+        repetir 5
+          depositarPapel
+        Pos(auxAv, auxCa)
+        LiberarEsquina(50, 50)
+        cont:= 0
+  fin
+  robot consumidor
+  variables
+    cant, aux, cont, auxAv, auxCa: numero
+  comenzar
+    cont:= 0
+    auxAv:= PosAv
+    auxCa:= PosCa
+    mientras (cont < 8)
+      aux:= cont
+      Random(cant, 2, 5)
+      BloquearEsquina(50, 50)
+      Pos(50, 50)
+      buscarConsumo(cant, cont)
+      Pos(auxAv, auxCa)
+      LiberarEsquina(50, 50)
+      si (cont = aux)
+        repetir cant
+          depositarPapel
+  fin
+variables
+  P1, P2: productor
+  C1, C2: consumidor
+comenzar
+  AsignarArea(P1, Base)
+  AsignarArea(P2, Base)
+  AsignarArea(C1, Base)
+  AsignarArea(C2, Base)
+  AsignarArea(P1, Tanda1)
+  AsignarArea(P2, Tanda2)
+  AsignarArea(C1, Ofi1)
+  AsignarArea(C2, Ofi2)
+  Iniciar(P1, 5, 1)
+  Iniciar(P2, 10, 1)
+  Iniciar(C1, 11, 1)
+  Iniciar(C2, 12, 1)
+fin

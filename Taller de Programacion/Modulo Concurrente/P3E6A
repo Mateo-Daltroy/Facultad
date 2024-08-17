@@ -1,0 +1,63 @@
+programa P3E6
+procesos
+  proceso juntarFlores (cont: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      cont:= cont + 1
+      tomarFlor
+  fin
+  proceso juntarPapeles (cont: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      cont:= cont + 1
+      tomarPapel
+  fin
+  proceso limpiarEsquina (contF: numero; contP: numero)
+  comenzar
+    juntarFlores(contF)
+    juntarPapeles(contP)
+  fin
+areas
+robots
+  robot tipo2
+  variables
+    ID, contP, contF, auxCa, auxAv, orientador: numero
+  comenzar
+    contP:= 0
+    contF:= 0
+    orientador:= 0
+    repetir 4
+      orientador:= orientador + 1
+      si (orientador = 1)
+        repetir 8
+          auxCa:= PosCa
+          auxAv:= PosAv
+          si ((auxCa+1) = 8)
+            BloquearEsquina(PosAv,8)
+            mover
+            limpiarEsquina(contF,contP)
+            mover
+            auxCa:= PosCa
+            LiberarEsquina(PosAv,8)
+          sino
+            LimpiarEsquina(contF,contP)
+            mover
+      sino
+        si (orientador = 2)
+          derecha
+          repetir 8
+            si ((auxAv+1)=9)
+              BloquearEsquina(9,PosCa)
+              ...
+            sino
+              LimpiarEsquina(contF,contP)
+              mover
+       sino
+         si(orientador=3)
+         sino
+          
+       
+  fin
+variables
+comenzar
+fin
