@@ -1,0 +1,25 @@
+package ar.edu.unlp.info.oo1.ej17_alquilerDePropiedades;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Propiedad {
+
+	private String nombre;
+	private String direccion;
+	private double precioNoche;
+	private ArrayList<DateLapse> reservas = new ArrayList<>();
+	
+	public double calcularIngresosPropietario() {
+		return(this.reservas.stream().mapToInt(P -> P.sizeInDays())
+				.mapToDouble(P -> P * this.precioNoche).sum());
+	}
+	
+	public boolean consultarDisponibilidad(DateLapse D) {
+		return(this.reservas.stream().noneMatch(Dia -> Dia.overlaps(D)));
+	}
+	
+	public double calcularPrecio(DateLapse D) {
+		return(D.sizeInDays() * this.precioNoche);
+	}
+}

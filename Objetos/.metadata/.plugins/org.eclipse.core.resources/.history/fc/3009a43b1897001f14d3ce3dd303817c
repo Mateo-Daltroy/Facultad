@@ -1,0 +1,16 @@
+package ar.edu.unlp.info.oo1.ej17_alquilerDePropiedades;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Propiedad {
+
+	private String nombre;
+	private String direccion;
+	private double precioNoche;
+	private ArrayList<DateLapse> reservas = new ArrayList<>();
+	
+	public boolean consultarDisponibilidad(DateLapse D) {
+		return(reservas.stream().noneMatch(Dia -> Dia.overlaps(D)));
+	}
+}

@@ -1,0 +1,17 @@
+package ar.edu.unlp.info.oo1.ej19_envioPaquetes;
+
+import java.time.LocalDate;
+
+public abstract class Envio {
+
+	protected LocalDate fecha = null;
+	protected String dirOrigen = null;
+	protected String dirDestino = null;
+	protected int peso = -1;
+	
+	public abstract double calcularPrecio();
+	
+	public LocalDate getFecha() {
+		return this.fecha;
+	}
+}

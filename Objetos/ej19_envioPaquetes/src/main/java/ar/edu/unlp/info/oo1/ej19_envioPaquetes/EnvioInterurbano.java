@@ -1,0 +1,32 @@
+package ar.edu.unlp.info.oo1.ej19_envioPaquetes;
+
+import java.time.LocalDate;
+
+public class EnvioInterurbano extends Envio {
+
+	private double distanciaKm;
+	
+	public EnvioInterurbano (double unaDistancia, LocalDate unaFecha, String unOrigen, String unDestino, int unPeso) {
+		super(unaFecha, unOrigen, unDestino, unPeso);
+		this.distanciaKm = unaDistancia;
+	}
+	
+	public double calcularPrecio() {
+		if (this.distanciaKm < 100) {
+			return(20 * this.peso);
+		} else if (this.distanciaKm <= 500) {
+			return(25 * this.peso);
+		} else {
+			return(30 * this.peso);
+		}
+	}
+	
+	public LocalDate getFecha() {
+		return this.fecha;
+	}
+	
+	//funciones testeo
+	public void setDistancia(double unaDistancia) {
+		this.distanciaKm = unaDistancia;
+	}
+}

@@ -1,0 +1,43 @@
+package ar.edu.unlp.info.oo1.ej17_alquilerDePropiedades;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import java.time.LocalDate;
+
+public class UsuarioTest {
+
+	Usuario Testeado;
+	DateLapse reserva;
+	Propiedad P;
+	Propiedad P2;
+	
+	@BeforeEach
+	public void setup() throws Exception {
+		Testeado = new Usuario();
+		P = new Propiedad();
+		Testeado.addPropiedad(P);
+		reserva = new DateLapse(LocalDate.of(2024, 10, 1), LocalDate.of(2024, 12, 1));
+		Testeado.crearReserva(P, reserva);
+		P2 = new Propiedad();
+	}
+	
+	@Test
+	public void crearReservaTest() {
+		Testeado.crearReserva(P2, reserva); //Imprime "Esta propiedad no le corresponde al usuario"
+		assertTrue(Testeado.containsReserva(P, reserva));
+		assertFalse(Testeado.containsReserva(P2, reserva));
+		assertFalse(Testeado.containsReserva(P, null)); //Funciona null para este testeo?
+		DateLapse reserva2 = new DateLapse(LocalDate.of(2024, 11, 2), LocalDate.of(2024, 11, 7));
+		Testeado.crearReserva(P, reserva2); //Imprime "La fecha se sobreescribe con otra reserva"
+		assertFalse(Testeado.containsReserva(P, reserva2));
+	}
+	
+	@Test
+	public void cancelarReservaTest() {
+		assertTrue(Testeado.containsReserva(P, reserva));
+		Testeado.cancelarReserva(P, reserva);
+		assertFalse(Testeado.containsReserva(P, reserva));
+		Testeado.cancelarReserva(P2, reserva); //Imprime "Esta propiedad no le corresponde al usuario"
+	}
+}

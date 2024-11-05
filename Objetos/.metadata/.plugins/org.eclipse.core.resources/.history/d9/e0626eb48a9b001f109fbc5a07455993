@@ -1,0 +1,23 @@
+package ar.edu.unlp.info.oo1.ej19_envioPaquetes;
+
+import java.time.LocalDate;
+
+public class EnvioLocal extends Envio{
+
+	private boolean envRapido;
+	
+	public EnvioLocal (LocalDate unaFecha, String unOrigen, String unDestino, int unPeso) {
+		this.fecha = unaFecha;
+		this.dirOrigen = unOrigen;
+		
+	}
+	
+	public double calcularPrecio() {
+		if (this.envRapido) {
+			return(1500);
+		}
+		return(1000);
+	}
+
+
+}

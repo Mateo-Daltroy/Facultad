@@ -1,0 +1,29 @@
+package ar.edu.unlp.info.oo1.ej19_envioPaquetes;
+
+import java.time.LocalDate;
+
+public class EnvioInternacional extends Envio {
+	
+	public EnvioInternacional (LocalDate unaFecha, String unOrigen, String unDestino, int unPeso) {
+		super(unaFecha, unOrigen, unDestino, unPeso);
+	}
+
+	public double calcularPrecio() {
+		if (this.peso <= 1000) {
+			return(5000 + 10 * this.peso);
+		} else {
+			return(5000 + 12 * this.peso);
+		}
+	}
+	
+	public LocalDate getFecha() {
+		return this.fecha;
+	}
+	
+	// funciones testeo
+	
+	public void setPeso(int unPeso) {
+		this.peso = unPeso;
+	}
+	
+}

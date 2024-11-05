@@ -1,0 +1,11 @@
+package ar.edu.unlp.info.oo1.ej17_alquilerDePropiedades;
+
+public class CancelacionFlexible implements PoliticaCancelacion {
+
+	public double reembolsarReserva(DateLapse D, double precioPorNoche) {
+		System.out.println(D.sizeInDays());
+		System.out.println(precioPorNoche);
+		System.out.println(D.sizeInDays() * precioPorNoche);
+		return(D.sizeInDays() * precioPorNoche);
+	}
+}

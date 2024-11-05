@@ -1,0 +1,35 @@
+package ar.edu.unlp.info.oo1.ej17_alquilerDePropiedades;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Usuario {
+
+	private String nombre;
+	private String direccion;
+	private int DNI;
+	private ArrayList<Propiedad> propiedades = new ArrayList<>();
+	
+	public void crearReserva(Propiedad P, DateLapse D) {
+		if (this.propiedades.contains(P)) { 
+			if (!P.addReserva(D)) {
+				System.out.println("La fecha se sobreescribe con otra reserva");
+			}
+		} else {
+			System.out.println("Esta propiedad no le corresponde al usuario");
+		}
+	}
+	
+	public void cancelarReserva(Propiedad P, DateLapse D) {
+		if (this.propiedades.contains(P)) { 
+			P.sacarReserva(D); //Esto tiene que estar mal
+		} else {
+			System.out.println("Esta propiedad no le corresponde al usuario");
+		}
+	}
+	
+	//Modulos de testeo
+	public void addPropiedad(Propiedad P) {
+		this.propiedades.add(P);
+	}
+}

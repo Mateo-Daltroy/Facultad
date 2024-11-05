@@ -1,0 +1,21 @@
+package ar.edu.unlp.info.oo1.ej17_alquilerDePropiedades;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Usuario {
+
+	private String nombre;
+	private String direccion;
+	private int DNI;
+	
+	public void crearReserva(Propiedad P, DateLapse D) {
+		if (!P.addReserva(D)) {
+			System.out.println("La fecha se sobreescribe con otra reserva");
+		}
+	}
+	
+	public void cancelarReserva(Propiedad P, DateLapse D) {
+		P.sacarReserva(D); //Esto tiene que estar mal
+	}
+}

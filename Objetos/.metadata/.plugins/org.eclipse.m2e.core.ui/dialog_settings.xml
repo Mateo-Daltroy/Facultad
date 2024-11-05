@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="MavenProjectImportWizardPage">
+		<list key="rootDirectory">
+			<item value="D:\mateo\eclipse-workspace\ej10_jobScheduler"/>
+			<item value="D:\mateo\Zips Eclipse\ej2"/>
+			<item value="D:\mateo\Zips Eclipse\ej1"/>
+			<item value="D:\mateo\Zips Eclipse"/>
+			<item value="D:\mateo\Zips Eclipse\src"/>
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+	</section>
+	<section name="MavenProjectWizardLocationPage">
+		<list key="location">
+			<item value="D:\mateo\eclipse-workspace\ej17_alquilerDePropiedades\src\main\java\ar\edu\unlp\info\oo1\ej17_alquilerDePropiedades\CancelacionModearada.java"/>
+			<item value="D:\mateo\eclipse-workspace\ej12_volumenYSuperficieDeSolidos\src\test\java\ar\edu\unlp\info\oo1\ej12_volumenYSuperficieDeSolidos\ReporteDeConstruccionTest.java"/>
+			<item value="D:\mateo\eclipse-workspace\ej12_volumenYSuperficieDeSolidos\src\main\java\ar\edu\unlp\info\oo1\ej12_volumenYSuperficieDeSolidos\ReporteDeConstruccion.java"/>
+			<item value="D:\mateo\eclipse-workspace\ej11_inversor\src\test\java\ar\edu\unlp\info\oo1\ej11_inversor\InversorTest.java"/>
+			<item value="D:\mateo\eclipse-workspace\ej10_jobScheduler\src\main\java\ar\edu\unlp\info\oo1\ej10_jobScheduler\GestorTrabajosFIFO.java"/>
+			<item value="D:\mateo\eclipse-workspace\ej4_figuras"/>
+			<item value="D:\mateo\eclipse-workspace\ej6_mamiferos\src\main\java\ar\edu\unlp\info\oo1\ej6_mamiferos"/>
+			<item value="D:\mateo\eclipse-workspace"/>
+			<item value="D:\mateo\eclipse-workspace\ej4_figuras\src\main\java\ar\edu\unlp\info\oo1\ej4_figuras\Cuerpo3D.java"/>
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+	</section>
+	<section name="MavenProjectWizardArchetypePage">
+		<item key="catalog" value="defaultLocal"/>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+	</section>
+	<section name="Maven2ProjectWizardArchifactPage">
+		<list key="package">
+			<item value="ar.edu.unlp.info.oo1.ej19_envioPaquetes"/>
+			<item value="ar.edu.unlp.info.oo1.ej17_alquilerDePropiedades"/>
+			<item value="ar.edu.unlp.info.oo1.ej15_distribuidoraElectrica"/>
+			<item value="ar.edu.unlp.info.oo1.ej14_intervaloDeTiempo"/>
+			<item value="ar.edu.unlp.info.oo1.ej13_clienteDeCorreo"/>
+		</list>
+		<list key="groupId">
+			<item value="ar.edu.unlp.info.oo1"/>
+		</list>
+		<list key="artifactId">
+			<item value="ej19_envioPaquetes"/>
+			<item value="ej17_alquilerDePropiedades"/>
+			<item value="ej15_distribuidoraElectrica"/>
+			<item value="ej14_intervaloDeTiempo"/>
+			<item value="ej13_clienteDeCorreo"/>
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+		<list key="version">
+			<item value="0.0.1-SNAPSHOT"/>
+		</list>
+	</section>
+	<section name="MavenProjectWizardArtifactPage">
+		<list key="groupId">
+		</list>
+		<list key="name">
+		</list>
+		<list key="artifactId">
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+		<list key="version">
+			<item value="0.0.1-SNAPSHOT"/>
+		</list>
+	</section>
+	<section name="org.eclipse.m2e.core.ui.internal.wizards.CustomArchetypeDialog">
+		<list key="archetypeGroupId">
+			<item value="io.github.unlp-oo"/>
+		</list>
+		<list key="archetypeArtifactId">
+			<item value="archetype"/>
+		</list>
+		<list key="archetypeVersion">
+			<item value="1.0.0"/>
+		</list>
+		<list key="repositoryUrl">
+			<item value=""/>
+		</list>
+	</section>
+</section>

@@ -1,0 +1,11 @@
+package ar.edu.unlp.info.oo1.ej19_envioPaquetes;
+
+public class ClienteFisico extends Cliente {
+
+	private int dni;
+	
+	@Override
+	public double montoAPagar(DateLapse d) {
+		return(super.montoAPagar(d) * 0.9);
+	}
+}

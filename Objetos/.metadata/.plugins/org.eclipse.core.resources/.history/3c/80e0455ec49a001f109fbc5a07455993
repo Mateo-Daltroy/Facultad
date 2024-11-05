@@ -1,0 +1,55 @@
+package ar.edu.unlp.info.oo1.ej17_alquilerDePropiedades;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Propiedad {
+
+	private String nombre;
+	private String direccion;
+	private double precioNoche;
+	private ArrayList<DateLapse> reservas = new ArrayList<>();
+	private PoliticaCancelacion politica;
+	private double dineroReembolsos = 0;
+	
+	public Propiedad (double precio, PoliticaCancelacion unaPolitica) {
+		this.precioNoche = precio;
+	}
+	
+	public double calcularReembolso(DateLapse D) {
+		double dineroReembolsado = this.politica.reembolsarReserva(D, precioNoche);
+		this.dineroReembolsos = (D.sizeInDays() * this.precioNoche) - dineroReembolsado; 
+		// Variable que controla cuanto dinero recauda el propietario de reembolsos, para hacer un calcularIngresosPropietario mas preciso
+		return(dineroReembolsado);
+	}
+	
+	public double calcularIngresosReservas(DateLapse D) {
+		return(this.reservas.stream().filter(R -> R.overlaps(D)).mapToInt(P -> P.sizeInDays())
+				.mapToDouble(P -> P * this.precioNoche).sum() + this.dineroReembolsos);
+	}
+	
+	public boolean addReserva(DateLapse D) {
+		if (this.consultarDisponibilidad(D)) {
+			this.reservas.add(D);
+			return(true);
+		}
+		return(false);
+	}
+	
+	public void cancelarReserva(DateLapse D) {
+		this.reservas.remove(D);
+	}
+	
+	public boolean consultarDisponibilidad(DateLapse D) {
+		return(this.reservas.stream().noneMatch(Dia -> Dia.overlaps(D)));
+	}
+	
+	public double calcularPrecio(DateLapse D) {
+		return(D.sizeInDays() * this.precioNoche);
+	}
+	
+	//Testing Functions
+	public boolean contains(DateLapse D) {
+		return(this.reservas.contains(D));
+	}
+}

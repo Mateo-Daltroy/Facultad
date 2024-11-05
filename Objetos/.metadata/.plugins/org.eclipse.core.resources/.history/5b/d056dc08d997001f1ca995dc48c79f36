@@ -1,0 +1,29 @@
+package ar.edu.unlp.info.oo1.ej17_alquilerDePropiedades;
+
+import static org.junit.jupiter.api.Assertions.*;
+import java.time.LocalDate;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class PropiedadTest {
+
+	Propiedad Testeado;
+	DateLapse reserva;
+	
+	@BeforeEach
+	public void setup() throws Exception {
+		Testeado = new Propiedad(20.5);
+		reserva = new DateLapse(LocalDate.of(2024, 10, 15), LocalDate.of(2024, 10, 20));
+		Testeado.addReserva(reserva);
+	}
+	
+	@Test
+	public void addReservaTest() {
+		DateLapse R1 = new DateLapse(LocalDate.of(2024, 9, 23), LocalDate.of(2024, 9, 25));
+		DateLapse R2 = new DateLapse(LocalDate.of(2024,  10, 9), LocalDate.of(2024, 10, 17));
+		Testeado.addReserva(R1);
+		Testeado.addReserva(R2);
+		assertTrue(Testeado.contains(R1));
+		assertFalse(Testeado.contains(R2));
+	}
+}

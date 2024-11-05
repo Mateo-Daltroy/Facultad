@@ -1,0 +1,19 @@
+package ar.edu.unlp.info.oo1.ej19_envioPaquetes;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class Cliente {
+
+	private String nombre;
+	private String direccion;
+	private ArrayList<Envio> envios = new ArrayList<Envio>();
+	
+	public void agregarEnvio(Envio e) {
+		this.envios.add(e);
+	}
+	
+	public double montoAPagar() {
+		return(this.envios.stream().mapToDouble(Env -> Env.calcularPrecio()).sum());
+	}
+}
