@@ -1,0 +1,13 @@
+package ar.edu.unlp.info.oo1.Parcial1Obj;
+
+import java.time.LocalDate;
+
+public class Virtual extends Evento {
+
+	private double montoEnvio;
+	
+	@Override
+	public double getPrecio(LocalDate fecha) {
+		return(super.getPrecio(fecha) + this.montoEnvio);
+	}
+}

@@ -19,6 +19,7 @@
 	</section>
 	<section name="MavenProjectWizardLocationPage">
 		<list key="location">
+			<item value="D:\mateo\eclipse-workspace\ej19_envioPaquetes\src\main\java\ar\edu\unlp\info\oo1\ej19_envioPaquetes\Cliente.java"/>
 			<item value="D:\mateo\eclipse-workspace\ej17_alquilerDePropiedades\src\main\java\ar\edu\unlp\info\oo1\ej17_alquilerDePropiedades\CancelacionModearada.java"/>
 			<item value="D:\mateo\eclipse-workspace\ej12_volumenYSuperficieDeSolidos\src\test\java\ar\edu\unlp\info\oo1\ej12_volumenYSuperficieDeSolidos\ReporteDeConstruccionTest.java"/>
 			<item value="D:\mateo\eclipse-workspace\ej12_volumenYSuperficieDeSolidos\src\main\java\ar\edu\unlp\info\oo1\ej12_volumenYSuperficieDeSolidos\ReporteDeConstruccion.java"/>
@@ -51,6 +52,9 @@
 	</section>
 	<section name="Maven2ProjectWizardArchifactPage">
 		<list key="package">
+			<item value="ar.edu.unlp.info.oo1.Parcial1Obj"/>
+			<item value="ar.edu.unlp.info.oo1.ej21_MapBag"/>
+			<item value="ar.edu.unlp.info.oo1.ej20_liquidacionHaberes"/>
 			<item value="ar.edu.unlp.info.oo1.ej19_envioPaquetes"/>
 			<item value="ar.edu.unlp.info.oo1.ej17_alquilerDePropiedades"/>
 			<item value="ar.edu.unlp.info.oo1.ej15_distribuidoraElectrica"/>
@@ -61,6 +65,9 @@
 			<item value="ar.edu.unlp.info.oo1"/>
 		</list>
 		<list key="artifactId">
+			<item value="Parcial1Obj"/>
+			<item value="ej21_MapBag"/>
+			<item value="ej20_liquidacionHaberes"/>
 			<item value="ej19_envioPaquetes"/>
 			<item value="ej17_alquilerDePropiedades"/>
 			<item value="ej15_distribuidoraElectrica"/>

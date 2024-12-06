@@ -11,4 +11,5 @@
     <fullyQualifiedTypeName name="java.util.ArrayList"/>
     <fullyQualifiedTypeName name="org.junit.jupiter.api.Assertions"/>
     <fullyQualifiedTypeName name="java.time.LocalDate"/>
+    <fullyQualifiedTypeName name="java.util.Map"/>
 </qualifiedTypeNameHistroy>

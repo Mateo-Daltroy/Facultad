@@ -1,0 +1,20 @@
+package ar.edu.unlp.info.oo1.Parcial1Obj;
+
+import java.time.LocalDate;
+
+public abstract class Evento {
+
+	private String nombre;
+	private LocalDate fecha;
+	private String temaPrincipal;
+	private double precioInscripcion;
+	private double precioRemera;
+	
+	public double getPrecio(LocalDate fecha) {
+		return(this.precioInscripcion + this.precioRemera);
+	}
+	
+	public LocalDate getFecha() {
+		return this.fecha;
+	}
+}

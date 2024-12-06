@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;DateLapse.java&apos; to &apos;Parcial1Obj/src/main/java/ar.edu.unlp.info.oo1.Parcial1Obj&apos;&#x0D;&#x0A;- Original project: &apos;ej14_intervaloDeTiempo&apos;&#x0D;&#x0A;- Destination element: &apos;Parcial1Obj/src/main/java/ar.edu.unlp.info.oo1.Parcial1Obj&apos;&#x0D;&#x0A;- Original element: &apos;ar.edu.unlp.info.oo1.ej14_intervaloDeTiempo.DateLapse.java&apos;" description="Copy compilation unit" destination="=Parcial1Obj/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;ar.edu.unlp.info.oo1.Parcial1Obj" element1="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;ar.edu.unlp.info.oo1.ej14_intervaloDeTiempo{DateLapse.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1733349623742" units="1" version="1.0"/>
+</session>
