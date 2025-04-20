@@ -3,6 +3,11 @@ package Testers;
 import java.util.Scanner;
 import java.util.function.Supplier;
 
+/*
+LectorPrimitivo es una clase hecha para proveer los Suppliers necesarios para usar los generadores de arbol
+con las clases Wrapper basicas sin tener que implementar nada, si se quiere implementar un lector para una
+clase programada, deberia seguir el mismo formato los que hay aca para asegurar su funcionamiento
+ */
 public class LectorPrimitivo {
     private static Scanner s = new Scanner(System.in);
 
