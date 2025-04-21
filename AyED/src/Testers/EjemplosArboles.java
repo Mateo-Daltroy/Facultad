@@ -16,5 +16,6 @@ public class EjemplosArboles {
         // Arbol General solo tiene implementado generarDesordenado
         GeneralTree<String> arbolGeneral = GeneradorArbGen.generarDesordenado(LectorPrimitivo.leerString());
         arbolGeneral.printPosOrden();
+        arbolGeneral.printPreOrden();
     }
 }

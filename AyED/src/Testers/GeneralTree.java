@@ -76,12 +76,15 @@ public class GeneralTree<T> implements Arbol<T>{
 	public void printPreOrden() {
 		System.out.print("Arbol General PreOrden: ");
 		this.printPreOrden(this);
+		System.out.println();
 	}
 
 	private void printPreOrden(GeneralTree<T> arb) {
 		if (!this.isEmpty()) {
-			System.out.print(this.data.toString() + ", ");
-			this.children.stream().forEach(child -> this.printPreOrden(child));
+			System.out.print(arb.getData().toString() + ", ");
+			for (GeneralTree<T> c:  arb.getChildren()) {
+				this.printPreOrden(c);
+			}
 		}
 	}
 
@@ -89,12 +92,15 @@ public class GeneralTree<T> implements Arbol<T>{
 	public void printPosOrden() {
 		System.out.print("Arbol General PosOrden: ");
 		this.printPosOrden(this);
+		System.out.println();
 	}
 
 	private void printPosOrden(GeneralTree<T> arb) {
 		if (!this.isEmpty()) {
-			this.children.stream().forEach(child -> this.printPosOrden(child));
-			System.out.print(this.data.toString() + ", ");
+			for (GeneralTree<T> c:  arb.getChildren()) {
+				this.printPosOrden(c);
+			}
+			System.out.print(arb.getData().toString() + ", ");
 		}
 	}
 }
