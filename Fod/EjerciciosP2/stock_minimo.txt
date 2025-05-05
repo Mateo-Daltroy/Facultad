@@ -1,0 +1,6 @@
+Codigo, stock actual y stock minimo de todos los productos actualmente por debajo de su minimo:
+{cod: 2, stkAct: 0, stkMin: 2}
+{cod: 3, stkAct: 16, stkMin: 20}
+{cod: 5, stkAct: -60, stkMin: 10}
+{cod: 7, stkAct: 16, stkMin: 30}
+{cod: 13, stkAct: 12, stkMin: 25}

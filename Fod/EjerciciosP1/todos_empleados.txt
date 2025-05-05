@@ -1,0 +1,4 @@
+{Empleado: pedro juanes, edad: 20, codigo: 333, dni: 00}
+{Empleado: juanes ramirez, edad: 19, codigo: 111, dni: 00}
+{Empleado: a pistacho, edad: 72, codigo: 502, dni: 3784}
+{Empleado: usuario nuevo, edad: 56, codigo: 5988, dni: 00}
