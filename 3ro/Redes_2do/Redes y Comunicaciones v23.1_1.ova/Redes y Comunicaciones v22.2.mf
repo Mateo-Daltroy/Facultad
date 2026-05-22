@@ -1,2 +1,0 @@
-SHA1 (Redes y Comunicaciones v22.2.ovf) = 216b201f13016067673315b10564100292660dc1
-SHA1 (Redes y Comunicaciones v22.2-disk001.vmdk) = 284f31f651c0981fdb46df7daa8d849630b106b5
