@@ -1,0 +1,125 @@
+
+Cliente = (idCliente, nombre, apellido, DNI, telefono, direccion) 
+Factura = (nroTicket, total, fecha, hora, idCliente (fk)) 
+Detalle = (nroTicket (fk), idProducto (fk), cantidad, preciounitario) 
+
+Producto = (idProducto, nombreP, descripcion, precio, stock) 
+-- 1
+SELECT nombre, apellido, dni
+FROM Cliente
+WHERE apellido LIKE "Pe%"
+ORDER BY dni;
+
+
+-- 2
+SELECT nombre, telefono, apellido, dni, direccion
+FROM Cliente EXCEPT ( Cliente as C INNER JOIN (
+    SELECT idCliente
+    FROM Factura as F
+    WHERE (F.fecha < 1/1/24) AND (F.fecha > 31/12/24))
+    ON (C.idCliente = F.idCliente)
+))
+
+
+-- 3
+SELECT nombreP, descripcion, precio, stock
+FROM Factura as F
+    INNER JOIN (
+	SELECT idCliente, dni
+	FROM Cliente
+	WHERE dni = 45789456
+	) as C ON (C.idCliente = F.idCliente)
+    INNER JOIN Detalle as D ON (F.nroTicket = D.nroTicket)
+    INNER JOIN Produto as P ON (D.idProducto = P.idProducto)
+EXCEPT
+SELECT nombreP, descripcion, precio, stock
+FROM Factura as F
+    INNER JOIN (
+	SELECT idCliente, dni
+	FROM Cliente
+	WHERE apellido = "Garcia"
+	) as C ON (C.idCliente = F.idCliente)
+    INNER JOIN Detalle as D ON (F.nroTicket = D.nroTicket)
+    INNER JOIN Produto as P ON (D.idProducto = P.idProducto)
+
+
+-- 4
+SELECT nombreP, descripcion, precio, stock
+FROM Producto P
+WHERE P.idProducto NOT IN (
+    SELECT P2.idProducto
+    FROM Factura as F
+	INNER JOIN (
+	    SELECT idCliente, dni
+	    FROM Cliente
+	    WHERE telefono LIKE "221%"
+	    ) as C ON (C.idCliente = F.idCliente)
+	INNER JOIN Detalle as D ON (F.nroTicket = D.nroTicket)
+	INNER JOIN Produto as P2 ON (D.idProducto = P2.idProducto)
+)
+ORDER BY nombreP
+
+
+-- 5
+SELECT nombreP, descripcion, precio, COALESCE(SUM(D.cantidad), 0)
+FROM Producto as P LEFT JOIN Detalle as D ON (P.idProducto = D.idProducto)
+GROUP BY P.idProducto, P.nombreP, P.descricpion, P.precio
+
+
+-- 6
+SELECT nombre, apellido, dni, telefono, direccion
+FROM Cliente as C
+    INNER JOIN Factura as F ON (C.idCliente = F.idCliente)
+    INNER JOIN Detalle as D ON (F.nroTicket = D.nroTicket)
+    INNER JOIN Producto as P ON (D.idProducto = P.idProducto)
+WHERE nombreP = "prod1" AND C.idCliente IN (
+    SELECT C2.idCliente
+    FROM Cliente as C2
+	INNER JOIN Factura as F ON (C.idCliente = F.idCliente)
+	INNER JOIN Detalle as D ON (F.nroTicket = D.nroTicket)
+	INNER JOIN Producto as P ON (D.idProducto = P.idProducto)
+    WHERE nombreP = "prod2"
+)
+EXCEPT
+    SELECT nombre, apellido, dni, telefono, direccion
+    FROM Cliente as C
+	INNER JOIN Factura as F ON (C.idCliente = F.idCliente)
+	INNER JOIN Detalle as D ON (F.nroTicket = D.nroTicket)
+	INNER JOIN Producto as P ON (D.idProducto = P.idProducto)
+    WHERE nombreP = "prod3"
+)
+
+
+-- 7
+SELECT nroTicket, total, fecha, hora, dni
+FROM Factura as F
+    INNER JOIN Cliente as C ON (F.idCliente = C.idCliente)
+    INNER JOIN Detalle as D ON (F.nroTicket = D.nroTicket)
+    INNER JOIN Producto as P ON (D.idProducto = P.idProducto)
+WHERE ((fecha >= 1/1/2023) AND (fecha <= 31/12/2023)) OR (P.nombreP = "prod38")
+
+
+-- 8
+INSERT INTO CLIENTE (idCliente, nombre, apellido, DNI, telefono, direccion) 
+VALUES (500002, 'Jorge Luis', 'Castor', 40578999, '221-4400789', '11 entre 500 y 501 nro:2587')
+
+
+-- 9
+SELECT nroTicket, total, fecha, hora
+FROM Factura as F
+    INNER JOIN Cliente as C ON (F.idCliente = C.idCliente)
+WHERE C.nombre = 'Jorge' AND C.apellido 'Perez' AND F.nroTicket NOT IN (
+    SELECT F2.nroTicket
+    FROM Factura as F2
+	INNER JOIN Detalle as D ON (F2.nroTicket = D.nroTicket)
+	INNER JOIN Producto as P ON (D.idProducto = P.idProducto)
+    WHERE P.nombreP = "Z"
+)
+
+-- 10
+SELECT nombre, apellido, dni
+FROM Cliente as C
+    INNER JOIN Factura as F ON (C.idCliente = F.idCliente)
+GROUP BY C.nombre, C.apellido, C.dni
+HAVING
+    SUM(F.total) > 100000

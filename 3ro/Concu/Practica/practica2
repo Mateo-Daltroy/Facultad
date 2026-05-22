@@ -1,0 +1,313 @@
+Consultas:
+* 5D
+
+
+
+1.
+    c.
+	sem detector = 3;
+
+	process Persona [id = 1..N] {
+	    P(detector);
+	    // pasar por detector
+	    V(detector);
+	}
+
+    d.
+	sem detector = 3;
+
+	process Persona [id = 1..N] {
+	    int vueltas = random(999);
+	    for i:= 1 to vueltas {
+		P(detector);
+		// pasar por detector
+		V(detector);
+	    }
+	}
+
+2.
+    a.
+	fallo fallos[1..N] = //se recibe;
+	int contador = 1;
+
+	process checker [id = 1..4] {
+	    int cant = (N / 4);
+	    int base = cant * id - cant;
+	    int tope = base + cant;
+	    for i:= base to tope {
+		contador++;
+		// Imprimir fallo[i].ID
+	    }
+	}
+
+    b. sumen al final
+	fallo fallos[1..N] = //se recibe;
+	int contador = 0;
+
+	process checker [1..4] {
+	    int contLoc = 0;
+	    int base = (N / 4) * (id - 1);
+	    int tope = base + (N / 4);
+	    for i:= base to tope {
+		contLoc++;
+	    }
+	    <contador = contador + contLoc;>
+	}
+
+    c. Proceso por nivel gravedad
+	fallo fallos[1..N] = //se recibe;
+	int gravedad[4] = ([4] 0);
+	int contador = 0;
+
+	process checker [id = 1..4] {
+	    for i:= 1 to N {
+		if (id == fallos[i].gravedad) {
+		    fallos[i].gravedad++;
+		}
+	    }
+	}
+
+3.
+    sem recurso = 5;
+    cola q = // Cargar 5 instancias del recurso
+
+    process consumidor [1..P] {
+	int dato;
+	P(recurso);
+	dato = q.pop();
+	// usar recurso
+	q.push(dato);
+	V(recurso);
+    }
+
+4.
+    La solucion propuesta no es la mas indicada debido a que cuando puede darse que hayan 6 procesos de alta prioridad que pasaron el recurso P(total), pero como el recurso P(alta) solo puede dejar pasar a 4, los 2 restantes acaparan el total sin entrar, imposibilitando la entrada de 2 usuarios de baja prioridad que deberian poder entrar. Lo mismo puede suceder al reves.
+
+5.
+    a)
+	int posDeposito, posRetiro = 1;
+	sem espacioLibre = N;
+	sem espacioOcupado = 0;
+	paq contenedor[N];
+
+	process Preparador {
+	    paq paquete;
+	    while (true) {
+		// generar paquete
+		P(espacioLibre);
+		contenedor[posDeposito] = paquete;
+		posDeposito = [posDeposito mod N] + 1;
+		V(espacioOcupado);
+	    }
+	}
+
+	process Entregador {
+	    paq paquete;
+	    while (true) {
+		P(espacioOcupado);
+		paquete = contenedor[posRetiro];
+		posRetiro = [posRetiro mod N] + 1;
+		V(espacioLibre);
+		// entregar paquete
+	    }
+	}
+
+    b)
+	int posDeposito, posRetiro = 1;
+	sem espacioLibre = n;
+	sem espacioOcupado = 0;
+	sem mutexP = 1;
+	paq contenedor[n];
+
+	process Preparador [1..P] {
+	    paq paquete;
+	    while (true) {
+		// generar paquete
+		P(espacioLibre);
+		P(mutexP);
+		posDeposito = [posDeposito mod n] + 1;
+		contenedor[posDeposito] = paquete;
+		V(mutexP);
+		V(espacioOcupado);
+	    }
+	}
+
+	process Entregador {
+	    paq paquete;
+	    while (true) {
+		P(espacioOcupado);
+		paquete = contenedor[posRetiro];
+		posRetiro = [posRetiro mod n] + 1;
+		V(espacioLibre);
+		// entregar paquete
+	    }
+	}
+
+    c)
+	int posDeposito, posRetiro = 1;
+	sem espacioLibre = n;
+	sem espacioOcupado = 0;
+	sem mutexE = 1;
+	paq contenedor[n];
+
+	process Preparador {
+	    paq paquete;
+	    while (true) {
+		// generar paquete
+		P(espacioLibre);
+		posDeposito = [posDeposito mod n] + 1;
+		contenedor[posDeposito] = paquete;
+		V(espacioOcupado);
+	    }
+	}
+
+	process Entregador [1..E]{
+	    paq paquete;
+	    while (true) {
+		P(espacioOcupado);
+		P(mutexE);
+		posRetiro = [posRetiro mod n] + 1;
+		paquete = contenedor[posRetiro];
+		V(mutexE);
+		V(espacioLibre);
+		// entregar paquete
+	    }
+	}
+
+    d)
+	int posDeposito, posRetiro = 1;
+	sem espacioLibre = n;
+	sem espacioOcupado = 0;
+	sem mutexE, mutexP = 1;
+	paq contenedor[n];
+
+	process Preparador [1..P] {
+	    paq paquete;
+	    while (true) {
+		// generar paquete
+		P(espacioLibre);
+		P(mutexP);
+		posDeposito = [posDeposito mod n] + 1;
+		contenedor[posDeposito] = paquete; //Esta sentencia tiene que estar dentro o fuera del semaforo mutexP?
+		V(mutexP);
+		V(espacioOcupado);
+	    }
+	}
+
+	process Entregador [1..E]{
+	    paq paquete;
+	    while (true) {
+		P(espacioOcupado);
+		P(mutexE);
+		posRetiro = [posRetiro mod n] + 1;
+		paquete = contenedor[posRetiro]; //Esta sentencia tiene que estar dentro o fuera del semaforo mutexE?
+		V(mutexE);
+		V(espacioLibre);
+		// entregar paquete
+	    }
+	}
+	
+6.
+    a)
+	sem impresora = 1;
+
+	process Trabajador [1..N] {
+	    doc documento; // se provee
+	    P(impresora);
+	    Imprimir(documento);
+	    V(impresora);
+	}
+
+    b)
+	sem impresora[N] = ([N] 0);
+	bool libre = true;
+	cola q;
+
+	process Trabajador [id 1..N] {
+	    doc documento; // se provee
+	    int idProx;
+	    if (!libre) {
+		q.push(id);
+		P(impresora[id]);
+	    }
+	    libre = false;
+	    Imprimir(documento);
+	    if (q.isEmpty()) { libre = true; }
+	    else {
+		idProx = q.pop();
+		V(impresora[idProx]);
+	    }
+	}
+
+    c)
+	sem impresora[N] = ([N] 0);
+	bool libre = true;
+	cola q;
+
+	process Trabajador [id 1..N] {
+	    doc documento; // se provee
+	    if (id == 1) {
+		Imprimir(documento);
+		V(impresora[2]);
+	    }
+	    else {
+		P(impresora[id]);
+		Imprimir(documento);
+		if (id != N)
+		    V(impresora[id+1]);
+	    }
+	}
+
+    d)
+	sem impresora[N] = ([N] 0);
+	sem impresoraFisica = 0;
+	sem pedido = 0;
+	cola q;
+
+	process Trabajador [id 1..N] {
+	    doc documento; // se provee
+	    q.push(id);
+	    V(pedido);
+	    P(impresora[id]);
+	    Imprimir(documento);
+	    V(impresoraFisica);
+	}
+
+	process Coordinador {
+	    int trabAct;
+	    while (true) {
+		P(pedido)
+		trabAct = q.pop();
+		V(impresora(trabAct));
+		P(impresoraFisica);
+	    }
+	}
+
+    e) // Como haces que distinga cual es la fuente?
+	sem impresora[N] = ([N] 0);
+	sem impresoraFisica = 4;
+	sem pedido = 0;
+	cola q;
+
+	process Trabajador [id 1..N] {
+	    doc documento; // se provee
+	    q.push(id);
+	    V(pedido);
+	    P(impresora[id]);
+	    Imprimir(documento);
+	    V(impresoraFisica);
+	}
+
+	process Coordinador {
+	    int trabAct;
+	    while (true) {
+		P(pedido)
+		trabAct = q.pop();
+		V(impresora(trabAct));
+		P(impresoraFisica);
+	    }
+	}
+
+7.
+
+

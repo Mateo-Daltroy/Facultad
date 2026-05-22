@@ -1,0 +1,60 @@
+Un micro con 50 pers -> sale
+Un vendedor que atiende a C cli
+C Cliente -> pide ticket -> recibe Num -> sube colectivo
+
+sem termineSubir = 0;
+sem colaCompra[C] = 0;
+sem puedoSubir = 0;
+sem ok = 0;
+sem usarCola = 1;
+int sigNum = 0;
+cola q;
+bool libre = true;
+
+Process Micro {
+    for (int i = 0; i < 50; i++)
+    {
+	V(puedoSubir);
+	P(termineSubir);
+    }
+    -- Salir
+}
+
+Process Cliente [id: 0..C-1]{
+    int miNum;
+
+    // Logica cola
+    P(usarCola);
+    push(q, id);
+    V(colaCompra);
+    V(usarCola);
+
+    // Logica compra
+    P(colaCompra[id]);
+    -- Compra Ticket
+    miNum = sigNum;
+    V(ok);
+
+    // Logica subida
+    if (miNum != 51)
+    {
+	P(puedoSubir);
+	-- Entrar Colectivo
+	-- Sentarse en asiento miNum
+	V(termineSubir);
+    }
+}
+
+Process Vendedor {
+    int idAct;
+    for (int i = 0; i < C; i++)
+    {
+	P(colaCompra);
+	P(usarCola);
+	pop(q, idAct);
+	V(usarCola);
+	if (sigNum != 51) -> sigNum++;
+	V(colaCompra[idAct]);
+	P(ok);
+    }
+}

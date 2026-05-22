@@ -1,0 +1,13 @@
+- [X] Materia
+- [X] Atomicidad
+- [X] Paralelismo
+- [ ] Seccion Critica
+- [ ] Pass the Baton
+- [X] Deadlock
+- [ ] Inanicion
+- [X] Envio de mensajes
+- [X] Memoria Compartida
+- [X] Sincronizacion por condicion
+- [X] Sincronizacion por exclusion mutua
+- [ ] Propiedades de la concurrencia
+- [X] Fairness

@@ -1,0 +1,75 @@
+Localidad=(codigoPostal(PK), nombreL, descripcion, nroHabitantes)
+Arbol=(nroArbol(PK), especie, anios, calle, nro, codigoPostal(fk))
+Podador=(DNI(PK), nombre, apellido, telefono, fnac, codigoPostalVive(fk))
+Poda=(codPoda(PK), fecha, DNI(fk), nroArbol(fk))
+
+-- 1
+SELECT
+    a.especie, a.anios, a.calle, a.nro, l.nombreL
+FROM
+    Arbol as a
+    INNER JOIN Localidad as l ON (a.codigoPostal = l.codigoPostal)
+    INNER JOIN Poda as p on (p.nroArbol = a.nroArbol)
+    INNER JOIN Podador as pod on (p.DNI = pod.DNI)
+WHERE
+    (pod.nombre = "Juan" & pod.apellido = "Perez")
+INTERSECT (
+    SELECT
+	a.especie, a.anios, a.calle, a.nro, l.nombreL
+    FROM
+	Arbol as a
+	INNER JOIN Localidad as l ON (a.codigoPostal = l.codigoPostal)
+	INNER JOIN Poda as p on (p.nroArbol = a.nroArbol)
+	INNER JOIN Podador as pod on (p.DNI = pod.DNI)
+    WHERE
+	(pod.nombre = "Jose" & pod.apellido = "Garcia")
+)
+
+-- 2
+SELECT
+    pod.dni, pod.nombre, pod.apellido, pod.fnac, pod.codigoPostalVive
+FROM
+    Podador as pod INNER JOIN (
+	SELECT p.DNI
+	FROM Poda as p
+	WHERE p.fecha BETWEEN 1/1/23 AND 31/12/23
+    ) ON (pod.DNI = p.DNI)
+
+-- 3
+SELECT
+    a.especie, a.calle, a.anios, a.nro, a.codigoPostal
+FROM
+    Arbol as a
+EXCEPT (
+    SELECT a2.especie, a2.calle, a2.anios, a2.nro, a2.codigoPostal
+    FROM
+	Arbol as a2
+	INNER JOIN Poda as p ON (a2.nroArbol = p.nroArbol)
+    )
+
+-- 4
+SELECT a.especie, a.calle, a.anios, a.nro, a.codigoPostal
+FROM
+    Arbol as a
+    INNER JOIN Poda as p ON (a.nroArbol = p.nroArbol)
+WHERE
+    YEAR(p.fecha) = 2022
+EXCEPT (
+    SELECT a2.especie, a2.calle, a2.anios, a2.nro, a2.codigoPostal
+    FROM
+	Arbol as a2
+	INNER JOIN Poda as p ON (a2.nroArbol = p.nroArbol)
+    WHERE
+	YEAR(p.fecha) = 2023
+)
+
+-- 9
+SELECT
+    l.nombreL, l.descripcion, l.nroHabitantes
+FROM
+    Localidad as l
+    INNER JOIN Arbol as a ON (l.codigoPostal = a.codigoPostal)
+GROUP BY
+    l.codigoPostal
+HAVING
+    COUNT(a.nroArbol) < 5

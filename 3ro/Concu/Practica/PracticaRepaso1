@@ -1,0 +1,289 @@
+# Semaforos
+1)
+    a)
+
+sem miTurno[P] = 0;
+sem mutex = 1;
+sem mutexCola = 1;
+cola q;
+bool libre = true;
+
+Procedure Persona [id: 0..P-1] {
+    -- Llega persona
+    int sigId;
+    if (libre) -> libre = false;
+    else {
+	P(mutexCola);
+	push(q, id);
+	V(mutexCola);
+	P(miTurno[id]);
+    }
+    P(mutex);
+    UsarTerminal();
+    V(mutex);
+    if (!q.isEmpty())
+    {
+	P(mutexCola);
+	pop(q, sigId);
+	V(mutexCola);
+	V(miTurno[id]);
+    }
+    else -> libre = true;
+}
+
+    b)
+sem miTurno[P] = 0;
+sem mutexColaP = 1;
+sem mutexColaT = 1;
+sem ingresar = 1;
+cola qPers;
+cola qTerm; // Inicializado con los IDs de las T terminales dentro
+
+Procedure Persona [id: 0..P-1] {
+    int miTerm;
+    int sigId;
+    -- Llega persona
+    P(ingresar);
+    if (!qTerm.isEmpty() && qPers.isEmpty())
+    { 
+	// Que pasa si me interrumpen entre la instruccion de arriba y la de abajo y se llevan el ultimo elemento de la cola antes de que retome control? Vuelve necesario el semaforo ingresar?
+	P(mutexColaT);
+	pop(qTerm, miTerm);
+	V(ingresar);
+	V(mutexColaT);
+    }
+    else {
+	// lo mismo que el comentario anterior con genteCola?
+	V(ingresar);
+	P(mutexColaP);
+	push(qPers, id);
+	V(mutexColaP);
+	P(miTurno[id]);
+    }
+    UsarTerminal(miTerm);
+    if (!qPers.isEmpty())
+    {
+	P(mutexColaP);
+	pop(qPers, sigId);
+	V(mutexColaP);
+	V(miTurno[sigId]);
+    }
+    else
+    {
+	P(mutexColaT);
+	push(qTerm, miTerm);
+	V(mutexColaT);
+    }
+}
+
+2)
+-- Este ejercicio tiene dos opciones, o dividis 1000/7 y te ahorras usar el semaforo para ganar mas concurrencia por ese lado,
+-- o utilizas un semaforo porque el enunciado dice que los tiempos para validar son diferentes, para ganar concurrencia
+-- distribuyendo equitativamente el workload, a costa de usar un semaforo para sincronizar el acceso.
+sem mutexArr = 1;
+int posAct = 0;
+int cantCodigo[10] = 0;
+sem codigo[10] = 1;
+
+Process Worker [1..7] {
+    int miNum;
+    int ret;
+    P(mutexArr);
+    while (posAct < 10.000) {
+	miNum = posAct;
+	posAct++;
+	V(mutexArr);
+	ret = Validar(miNum);
+	P(codigo[ret]);
+	cantCodigo[ret]++;
+	V(codigo[ret]);
+    }
+    -- cont ++ ; sumar al vector
+    if (miNum == 9.999 // cont = 7) {
+	for (int i = 0; i < 10; i++) {
+	    Print(cantCodigo[i]);
+	}
+    }
+}
+
+3)
+sem mutexCola = 1;
+cola q;
+int cont = 0;
+sem recarga, ok = 0;
+bool libre = true;
+sem individual[U] = 0;
+
+Process Usuario [id: 0..U-1] {
+    int sigId;
+    -- llegar
+    P(mutexCola);
+    if (libre) {
+	libre = fales
+	V(mutexCola);
+    } else {
+	push(q, id);
+	V(cola);
+	P(individual[id]);
+    }
+    if (cont == 100) {
+	V(recarga);
+	P(ok);
+    }
+    -- Retirar Bebida
+    cont++;
+    if (q.isEmpty()) -> libre = true;
+    else {
+	pop(q, sigId);
+	V(individual[sigId]);
+    }
+}
+
+Process Encargado {
+    for (int i = 0; i < (U DIV 100); i++) {
+	P(recarga);
+	-- Reponer
+	cont = 0;
+	V(ok);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+# Monitores
+
+1)
+Process Persona [id: 0..N-1] {
+    int edad = generarEdad(id);
+    bool embarazada = generarEmbarazo(id);
+    MaquinaVoto.solicitarAcceso(id, edad, embarazada);
+    Votar();
+    MaquinaVoto.finalizarAcceso();
+}
+
+Process AutoridadMesa {
+    for (int i = 0; i < N; i++)
+    {
+	MaquinaVoto.siguientePersona();
+	MaquinaVoto.esperarFinal();
+    }
+}
+
+Monitor MaquinaVoto {
+    cola q;
+    cond llegada;
+    cond mutex;
+    cond miTurno[N];
+    int contCola = 0;
+    bool libre = true;
+
+    Procedure solicitarAcceso(id: int; edad: int; emb: bool)
+    {
+	if (contCola == 0) -> signal(llegada);
+	contCola++;
+	push(q, id, edad, emb);
+	wait(miTurno[id]);
+    }
+
+    Procedure siguientePersona()
+    {
+	int sigId;
+	if (contCola == 0) -> wait(llegada);
+	pop(q, sigId);
+	signal(miTurno[sigId]);
+	contCola--;
+    }
+
+    Procedure finalizarAcceso()
+    {
+	signal(mutex);
+    }
+
+    Procedure esperarFinal()
+    {
+	wait(mutex);
+    }
+}
+
+2)
+Process Vendedor [id:1..20] {
+    int eq; // Inicializado con el numero de equipo
+    int cont = 0;
+    int total;
+    
+    Equipo[eq].llegar();
+    for (int i = 0; i < n; i++) { // donde n == ventas que hace cada vendedor en particular
+	-- vender producto del equipo
+	cont++;
+    }
+    Equipo[eq].cerrar(cont, total);
+}
+
+Monitor Equipo[1..5] {
+    int control = 0;
+    int total = 0;
+    cond espera;
+
+    Procedure llegar() {
+	if (control != 3) {
+	    control++;
+	    wait(espera);
+	}
+	else {
+	    signal_all(espera);
+	    control = 0;
+	}
+    }
+
+    Procedure cerrar(cont: in int; tot: out int) {
+	total+= cont;
+	if (control != 3) {
+	    control++;
+	    wait(espera);
+	}
+	else {
+	    signal_all(espera);
+	    control = 0;
+	}
+	tot = total;
+    }
+}
+
+3)
+Process Escalador [id: 1..30] {
+    -- llega
+    Paso.pedirAcceso(id);
+    -- pasar
+    Paso.lierarAcceso();
+}
+
+Monitor Paso {
+    cola q;
+    cond mutex[30];
+    bool libre = true;
+
+    Procedure pedirAcceso (id: in int) {
+	if (!libre) {
+	    push(q, id);
+	    wait(mutex[id]);
+	} else {
+	    libre = false;
+	}
+    }
+
+    Procedure librerarAceso() {
+	int sigId;
+	if (q.isEmpty()) -> libre = true;
+	else {
+	    pop(q, sigId);
+	    signal(mutex[sigId]);
+	}
+    }
+}

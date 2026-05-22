@@ -1,0 +1,183 @@
+# Ejercicio 4 Explicacion Practica
+
+Escritorio[3] esc;
+
+Process Cliente [id: 0..N-1]
+{
+    int idE;
+    Banco.llegada(idE);
+    ...
+}
+
+Process Empleado [id: 0..2]
+{
+    while (true)
+    {
+	Banco.proximo(id);
+	-- Atender cliente (?
+	...
+    }
+}
+
+Monitor Banco {
+    cond cola;
+    cond cliente;
+    int contador = 0; //representa cantidad de gente en la cola
+    cola eLibres;
+    int empleadosLibres = 0;
+
+    Procedure proximo(idE: in int)
+    {
+	push(eLibres, idE);
+	if (contador > 0)
+	{
+	    contador--;
+	    signal(cola);
+	}
+	else
+	{
+	    empleadosLibres++;
+	}
+    }
+
+    Procedure llegada(idE: out int)
+    {
+	if (empleadosLibres == 0)
+	{
+	    contador++;
+	    wait(cola)
+	}
+	else
+	{
+	    empleadosLibres--;
+	}
+	pop(eLibres, idE);
+    }
+}
+
+Monitor Escritorio {
+    cond entrega;
+    cond recep;
+    bool listo = false; //senal si el empleado esta listo
+
+    Procedure Atencion (papel: in pap, resultado: out res)
+    {
+	listo = true;
+	signal(entrega);
+	wait(recep);
+	-- Recibir los datos
+	signal(recep);
+    }
+
+    Procedure EsperarDatos (datos: in dat)
+    {
+	if (!listo) -> wait(entrega);
+	else
+	{
+	    
+	}
+    }
+
+    Procedure EnviarResultado (resultado: in res);
+    {
+	signal(recep); //entrega
+	wait(recep); //espera confirmacion de recepcion
+	listo = false;
+    }
+
+}
+
+
+# Ejercicio 5 Explicacion Practica
+
+Process jugador [Id: 0.. 21] {
+    Cancha.llegar();
+}
+
+Process partido {
+    Cancha.iniciar();
+    delay(90min); // juegan el partido
+    Cancha.finalizar();
+}
+
+Monitor Cancha {
+    int cont = 0;
+    cond espera;
+    cond listos;
+
+    Process llegar()
+    {
+	cont++;
+	if (cont == 22)
+	{
+	    signal(listos);
+	}
+	wait(espera);
+    }
+
+    Process iniciar()
+    {
+	if (cont < 22) -> wait(listos);
+    }
+
+    Process finalizar()
+    {
+	signal_all(espera);
+    }
+}
+
+
+# Ejercicio 6 Explicacion Practica
+
+En una empresa de genética hay N clientes que envían secuencias de ADN para
+que sean analizadas y esperan los resultados para poder continuar. Para resolver
+estos análisis la empresa cuenta con un servidor que resuelve los pedidos de
+acuerdo al orden de llegada de los mismos
+
+Process cliente [Id: 0..N-1] {
+    Secuencia sec;
+    Resultado res;
+    while (true) {
+	-- Generar secuencia
+	Servidor.solicitar(Id);
+	Servidor.enviarSecuencia(sec);
+	Servidor.recibir(res);
+	-- Utilizar resultado
+    }
+}
+
+Monitor Servidor {
+    cond espera;
+    int cont = 0;
+    bool libre = true;
+    Secuencia sec;
+    Resultado res;
+
+    Process solicitar(idCli: in int)
+    {
+	if (libre) -> libre = false;
+	else
+	{
+	    cont++;
+	    wait(espera);
+	}
+    }
+
+    Process enviarSecuencia(secIn: in Secuencia)
+    {
+	sec = secIn;
+    }
+
+    Process recibir(resOut: out Resultado)
+    int idProx;
+    {
+	res = AnalizarSec(sec);
+	resOut = res;
+	if (cont == 0) -> libre = true;
+	else
+	{
+	   signal(espera);
+	   cont--;
+	}
+    }
+}

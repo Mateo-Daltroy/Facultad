@@ -1,0 +1,606 @@
+# Consultas:
+    * Ej 3F -> Linea 246, checkear nomas
+    * Ej 4 -> 303
+
+CONSIDERACIONES PARA RESOLVER LOS EJERCICIOS:
+• Los monitores utilizan el protocolo signal and continue.
+• A una variable condition SÓLO pueden aplicársele las operaciones SIGNAL,
+SIGNALALL y WAIT.
+• NO puede utilizarse el wait con prioridades.
+• NO se puede utilizar ninguna operación que determine la cantidad de procesos
+encolados en una variable condition o si está vacía.
+• La única forma de comunicar datos entre monitores o entre un proceso y un monitor
+es por medio de invocaciones al procedimiento del monitor del cual se quieren obtener
+(o enviar) los datos.
+• No existen variables globales.
+• En todos los ejercicios debe maximizarse la concurrencia.
+• En todos los ejercicios debe aprovecharse al máximo la característica de exclusión
+mutua que brindan los monitores.
+• Debe evitarse hacer busy waiting.
+• En todos los ejercicios el tiempo debe representarse con la función delay
+
+1.
+    a) El codigo no funciona correctamente, esto es debido a que el uso inapropiado del contador permite que si mientras que se ejecuta el cruce del auto X, esta esperando en la condition el auto X+1 y tambien llega el auto X+2, para cuando se le envie la señal a (X+1) este va a competir por acceso al monitor con X+2. Si X+2 gana el acceso al monitor antes que X+1, este puede pasar directamente, salteandose la cola. Y lo que es peor, es que si el proximo auto en conseguir acceso al monitor es X+1, este sale de la cola de la condicion y vuelve a entrar al final de esta.
+
+    b) No hay manera de simplificar el codigo ya que no esta funcionando apropiadamente.
+
+    c) La solucion no respeta el orden de llegada.
+
+2.
+    a) En el problema van a haber N procesos Clientes que necesitan tener temporalmente uno de los M permisos de lectura que el motor puede soportar, representado como:
+	- Proceso Cliente [Id: 0..N-1]
+	- Monitor Motor (contador permisos = 5)
+    El Motor es el que se encarga de conectar el cliente, tomar su pedido de dato a leer y darle el pedido a algun lector libre que le brindara los datos correspondientes al Motor para que se los dirija al cliente.
+
+    b)
+    Process Cliente [Id: 0..N-1]
+    {
+	Pedido ped;
+	Resultado res;
+	while (true)
+	{
+	    -- Genera un pedido
+	    Motor.solicitarAtencion();
+	    -- Utilizar los datos recibidos
+	}
+    }
+
+    Monitor Motor
+    {
+	cond cola;
+	int contCola = 0;
+	int lectoresLibres = 5;
+
+	Procedure solicitarAtencion()
+	{
+	    if (lectoresLibres == 0)
+	    {
+		contCola++;
+		wait(cola);
+	    }
+	    else 
+	    {
+		lectoresLibres--;
+	    }
+	}
+
+	Procedure finalizarAtencion()
+	{
+	    if (contCola != 0)
+	    {
+		signal(cola);
+		contCola--;
+	    }
+	    else
+	    {
+		lectoresLibres++;
+	    }
+	}
+    }
+
+3.
+    0-> Proceso persona, Monitor fotocopiadora con procedure fotocopiar
+
+    b)
+    Process Cliente [Id: 0..N-1]
+    {
+	Fotocopiadora.acceder();
+	Fotocopiar()
+	Fotocopiadora.liberar();
+    }
+
+    Monitor Fotocopiadora
+    {
+	cond enUso;
+	int cont = 0;
+	bool libre = true;
+
+	Procedure acceder()
+	{
+	    if (!libre)
+	    {
+		cont++;
+		wait(enUso);
+	    }
+	    else
+	    {
+		libre = false;
+	    }
+	}
+
+	Procedure liberar()
+	{
+	    if (cont == 0) -> libre = true;
+	    else
+	    {
+		cont--;
+		signal(enUso);
+	    }
+	}
+    }
+
+    c)
+    Process Cliente [Id: 0..N-1]
+    {
+	Fotocopiadora.acceder(edad, Id);
+	Fotocopiar()
+	Fotocopiadora.liberar();
+    }
+
+    Monitor Fotocopiadora
+    {
+	cond enUso[N];
+	int cont = 0;
+	bool libre = true;
+	priorityQueue cola;
+
+	Procedure acceder(edad: in int; id: in int)
+	{
+	    if (!libre)
+	    {
+		cont++;
+		cola.add(edad, id);
+		wait(enUso[id]);
+	    }
+	    else
+	    {
+		libre = false;
+	    }
+	}
+
+	Procedure liberar()
+	{
+	    int prox;
+	    if (cont == 0) -> libre = true;
+	    else
+	    {
+		cont--;
+		prox = cola.pop();
+		signal(enUso[prox]);
+	    }
+	}
+    }
+
+    d)
+    Process Cliente [Id: 0..N-1]
+    {
+	Fotocopiadora.acceder(Id);
+	Fotocopiar()
+	Fotocopiadora.liberar();
+    }
+
+    Monitor Fotocopiadora
+    {
+	cond enUso;
+	cond enCola;
+	int nextId = 1;
+	bool listo = false;
+
+	Procedure acceder(id: in int)
+	{
+	    if (nextId < id)
+	    {
+		wait(enCola);
+	    }
+	    if (nextId == id)
+	    {
+		nextId++;
+		cont++;
+		wait(enUso);
+	    }
+	}
+
+	Procedure liberar()
+	{
+	    if (cont > 0)
+	    {
+		signal(enUso);
+		cont--;
+	    }
+	    else -> signal_all(enCola);
+	}
+    }
+
+    e)
+    Process Cliente [Id: 0..N-1]
+    {
+	Fotocopiadora.acceder(Id);
+	Fotocopiar()
+	Fotocopiadora.liberar();
+    }
+
+    Process Empleado
+    {
+	while (true)
+	{
+	    Fotocopiadora.proximo();
+	}
+    }
+
+    Monitor Fotocopiadora
+    {
+	cond ok, esperando, fin;
+	int cont = 0;
+	bool libre = true;
+
+	Procedure proximo()
+	{
+	    if (cont == 0) -> wait(esperando);
+	    signal(ok);
+	    cont--;
+	    wait(fin);
+	}
+
+	Procedure acceder()
+	{
+	    cont++;
+	    signal(esperando);
+	    wait(ok);
+	}
+
+	Procedure liberar()
+	{
+	    signal(fin);
+	}
+    }
+
+    f)
+    Process Cliente [Id: 0..N-1]
+    {
+	Fotocopiadora.acceder(Id);
+	Fotocopiar()
+	Fotocopiadora.liberar();
+    }
+
+    Process Empleado
+    {
+	while (true)
+	{
+	    Fotocopiadora.proximo();
+	}
+    }
+
+    Monitor Fotocopiadora
+    {
+	cond ok, esperando, fin;
+	int cont = 0;
+	int nextId;
+	int maquinasLibres = 10;
+	cola maquinas; //inicializadas con los id de las 10 adentro
+
+	Procedure proximo()
+	{
+	    if (cont == 0) -> wait(esperando);
+	    if (maquinasLibres == 0)
+	    {
+		wait(fin);
+	    }
+	    else
+	    {
+		maquinasLibres--;
+	    }
+	    pop(maquinas, nextId);
+	    signal(ok);
+	}
+
+	Procedure acceder(idMaq: out int)
+	{
+	    cont++;
+	    signal(esperando);
+	    wait(ok);
+	    idMaq = nextId;
+	}
+
+	Procedure liberar(idMaq: in int)
+	{
+	    push(maquinas, idMaq);
+	    cont--;
+	    signal(fin);
+	    if (cont == 0) -> maquinasLibres++;
+	}
+    }
+
+4.
+    Process Auto \[id: 0..N-1]
+    {
+      int miPeso; //Inicializado cada uno con su peso propio
+      Puente.solicitarPaso(miPeso);
+      -- pasa el puente
+      Puente.pasarPuente(miPeso);
+    }
+
+    Monitor Puente
+    {
+	int pesoRes = 50.000;
+	cond cola;
+	cola q;
+	int nextPeso = -1;
+	int esperando = 0;
+	
+	Procedure solicitarPaso(peso: in int)
+	{
+	    if ((pesoRes - peso) < 0 || esperando > 0)
+	    {
+		esperando++;
+		if (nextPeso == -1) -> nextPeso = peso;
+		else -> push(q, peso);
+		wait(cola);
+		esperando--;
+	    }
+	    pesoRes = pesoRes - peso;
+	    if (esperando > 0)
+	    {
+		pop(q, nextPeso);
+		if (pesoRes > nextPeso) -> signal(cola);
+	    }
+	    else -> nextPeso = -1;
+	}
+
+	Procedure pasarPuente(peso: in int)
+	{
+	    pesoRes = pesoRes + peso;
+	    if (pesoRes >= nextPeso)
+	    {
+		signal(cola);
+	    }
+	}
+    }
+
+5.
+    a)
+    Process Cliente [id: 0..N-1]
+    {
+	Pedido ped;
+	Ticket t;
+	-- generar pedido
+	Corralon.solicitarAtencion();
+	Corralon.enviarPedido(ped);
+	Corralon.recibirComprobante(t);
+    }
+
+    Process Empleado
+    {
+	Pedido act;
+	Ticket t;
+	for (int i = 0; i < N; i++)
+	{
+	    Corralon.asignarCliente();
+	    Corralon.tomarPedido(act);
+	    -- Atender venta
+	    Corralon.enviarComprobante(t);
+	}
+    }
+
+    Monitor Corralon
+    {
+	cond pase;
+	bool libre = true;
+	Pedido auxP;
+	Ticket auxT;
+
+	Procedure asignarCliente()
+	{
+	    if (libre) -> wait(alguien);
+	    signal(pase);
+	}
+
+	Procedure solicitarAtencion()
+	{
+	    if (libre) -> signal(alguien);
+	    wait(pase);
+	}
+
+	Procedure tomarPedido(act: out Pedido)
+	{
+	    wait(ok);
+	    act = auxP;
+	}
+
+	Procedure enviarPedido(ped: in Pedido)
+	{
+	    auxP = ped;
+	    signal(ok);
+	}
+
+	Procedure recibirComprobante(t: out Ticket)
+	{
+	    wait(ok);
+	    t = auxT;
+	}
+
+	Procedure enviarComprobante(t: in Ticket)
+	{
+	    auxT = t;
+	    signal(ok);
+	}
+    }
+
+    b)
+    Process Cliente [id: 0..N-1]
+    {
+	Pedido ped;
+	Ticket t;
+	int miCaja;
+	-- generar pedido
+	Corralon.solicitarCaja(miCaja);
+	Caja[miCaja].enviarPedido(ped);
+	Caja[miCaja].recibirComprobante(t);
+    }
+
+    Process Empleado [id: 0..E-1]
+    {
+	Pedido act;
+	Ticket t;
+	while (true)
+	{
+	    Caja[id].tomarPedido(act);
+	    -- Atender venta
+	    Caja[id].enviarComprobante(t);
+	    Corralon.siguienteCli(id)
+	}
+    }
+
+    Monitor Caja [id: 0..E-1]
+    {
+	Pedido auxP;
+	Ticket auxT;
+	bool esperando = false;
+
+	Procedure enviarPedido(ped: in Pedido)
+	{
+	    auxP = ped;
+	    signal(auxP);
+	    esperando = true;
+	}
+
+	Procedure tomarPedido(ped: out Pedido)
+	{
+	    if (esperando = false) -> wait(auxP);
+	    ped = auxP;
+	    esperando = false; // la variable esperando existe por si signal sucede antes que wait
+	}
+
+	Procedure enviarComprobante(tic: in Ticket)
+	{
+	    auxT = tic;
+	    signal(auxT);
+	    esperando = true;
+	}
+
+	Procedure recibirComprobante(tic: out Ticket)
+	{
+	    if (esperando = false) -> wait(auxT);
+	    tic = auxT;
+	    esperando = false; // la variable esperando existe por si signal sucede antes que wait
+	}
+    }
+
+    Monitor Corralon
+    {
+	cola q; // iniciado con los IDs de los
+	int cont = 0;
+	cond esperaCaja;
+	int cantLibres = E;
+
+	Procedure solicitarCaja(caja: out int)
+	{
+	    if (cantLibres == 0) 
+	    {
+		cont++;
+		wait(esperaCaja);
+	    }
+	    else
+	    {
+		cantLibres--;
+	    }
+	    pop(q, caja);
+	}
+
+	Procedure siguienteCli(id: in int)
+	{
+	    push(q, id);
+	    if (cont > 0) {
+		signal(esperaCaja);
+		cont--;
+	    }
+	    else -> cantLibres++;
+	}
+    }
+
+    c)
+    Process Cliente [id: 0..N-1]
+    {
+	Pedido ped;
+	Ticket t;
+	int miCaja;
+	-- generar pedido
+	Corralon.solicitarCaja(miCaja);
+	Caja[miCaja].enviarPedido(ped);
+	Caja[miCaja].recibirComprobante(t);
+    }
+
+    Process Empleado [id: 0..E-1]
+    {
+	Pedido act;
+	Ticket t;
+	bool faltan = true;
+	while (faltan)
+	{
+	    Caja[id].tomarPedido(act);
+	    -- Atender venta
+	    Caja[id].enviarComprobante(t);
+	    Corralon.siguienteCli(id, faltan)
+	}
+    }
+
+    Monitor Caja [id: 0..E-1]
+    {
+	Pedido auxP;
+	Ticket auxT;
+	bool esperando = false;
+
+	Procedure enviarPedido(ped: in Pedido)
+	{
+	    auxP = ped;
+	    signal(auxP);
+	    esperando = true;
+	}
+
+	Procedure tomarPedido(ped: out Pedido)
+	{
+	    if (esperando = false) -> wait(auxP);
+	    ped = auxP;
+	    esperando = false; // la variable esperando existe por si signal sucede antes que wait
+	}
+
+	Procedure enviarComprobante(tic: in Ticket)
+	{
+	    auxT = tic;
+	    signal(auxT);
+	    esperando = true;
+	}
+
+	Procedure recibirComprobante(tic: out Ticket)
+	{
+	    if (esperando = false) -> wait(auxT);
+	    tic = auxT;
+	    esperando = false; // la variable esperando existe por si signal sucede antes que wait
+	}
+    }
+
+    Monitor Corralon
+    {
+	cola q; // iniciado con los IDs de los
+	int cont = 0;
+	cond esperaCaja;
+	int cantLibres = E;
+
+	Procedure solicitarCaja(caja: out int)
+	{
+	    if (cantLibres == 0) 
+	    {
+		cont++;
+		wait(esperaCaja);
+	    }
+	    else
+	    {
+		cantLibres--;
+	    }
+	    pop(q, caja);
+	    contAtendidos++;
+	}
+
+	Procedure siguienteCli(id: in int; fin: out bool)
+	{
+	    push(q, id);
+	    if (cont > 0) {
+		signal(esperaCaja);
+		cont--;
+	    }
+	    else -> cantLibres++;
+	    if (contAtendidos == N) -> fin = true;
+	}
+    }
+
+6.
+    
