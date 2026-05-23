@@ -1,0 +1,161 @@
+
+1)
+
+b)
+    Process Examinador [id:0..R-1] {
+	link url;
+	while (true) {
+	    -- Encontrar sitio
+	    Analizador!encontre(url);
+	}
+    }
+
+    Process Analizador {
+	link url;
+	while (true) {
+	    Examinador[*]?encontre(url);
+	    -- Analizar sitio
+	}
+    }
+
+c)
+    Process Examinador [id:0..R-1] {
+	link url;
+	while (true) {
+	    -- Encontrar sitio
+	    Coordinador!encontre(url);
+	}
+    }
+
+    Process Coordinador {
+	cola q;
+	do
+	[] Examinador[*]?encontre(url) -> push(url, q);
+	[] !q.empty(); Analizador?pedido() -> Analizador!pedido(pop(q));
+	od
+    }
+
+    Process Analizador {
+	link url;
+	while (true) {
+	    Coordinador!pedido()
+	    Coordinador?pedido(url);
+	    -- Analizar sitio
+	}
+    }
+
+
+2)
+    Process Empleado1 {
+	while (true) {
+	    --Generar muestra
+	    Empleado2!muestraP1(muestra);
+	}
+    }
+
+    Process Empleado2 {
+	while (true) {
+	    Empleado1?muestraP1(muestra);
+	    -- Armar set analisis
+	    Empleado3!analizar(set);
+	    Empleado3?analizar(resultado);
+	}
+    }
+
+    Process Empleado3 {
+	while (true) {
+	    Empleado2?analizar(set);
+	    -- Hacer analisis
+	    Empleado2!analizar(resultado);
+	}
+    }
+
+
+3)
+
+a)
+    Process Alumno [id:0..N-1] {
+	-- Rendir examen
+	Coordinador!entregarExamen(ex, id);
+	Profesor?recibirExamen(ex);
+    }
+
+    Process Profesor {
+	int idAct;
+	Coordinador!pedido();
+	Coordinador?recibirExamen(ex, idAct);
+	-- Corregir examen
+	Alumno[id]!recibirExamen(ex);
+    }
+
+    Process Coordinador {
+	cola q;
+	do
+	[] Alumno[*]?entregarExamen(ex, id) -> push(q, ex, id);
+	[] !q.isEmpty(); Profesor?pedido() -> Profesor!recibirExamen(pop(q))
+	od
+    }
+
+b)
+    Process Alumno [id:0..N-1] {
+	-- Rendir examen
+	Coordinador!entregarExamen(ex, id);
+	Profesor?recibirExamen(ex);
+    }
+
+    Process Profesor [id:0..P-1] {
+	int idAct;
+	Coordinador!pedido(id);
+	Coordinador?recibirExamen(ex, idAct);
+	-- Corregir examen
+	Alumno[id]!recibirExamen(ex);
+    }
+
+    Process Coordinador {
+	cola q;
+	int idAct;
+	do
+	[] Alumno[*]?entregarExamen(ex, id) -> push(q, ex, id);
+	[] !q.isEmpty(); Profesor?pedido(idAct) -> Profesor[idAct]!recibirExamen(pop(q))
+	od
+    }
+
+c)
+    Process Alumno [id:0..N-1] {
+	Coordinador!llegada();
+	Coordinador?llegada();
+	-- Rendir examen
+	Coordinador!entregarExamen(ex, id);
+	Profesor?recibirExamen(ex);
+    }
+
+    Process Profesor [id:0..P-1] {
+	int idAct;
+	Coordinador!pedido(id);
+	Coordinador?recibirExamen(ex, idAct);
+	-- Corregir examen
+	Alumno[id]!recibirExamen(ex);
+    }
+
+    Process Coordinador {
+	cola q;
+	int idAct;
+	for (int i = 0; i < N; i++) {
+	    Alumno[i]?llegada();
+	}
+	for (int i = 0; i < N; i++) {
+	    Alumno[i]!llegada();
+	}
+	// for 2*N y if
+	// cualquier do que tenga una entrada sin guarda
+	// se ejecuta infinitamente porque su guarda siempre
+	// da true
+	do
+	[] Alumno[*]?entregarExamen(ex, id) -> push(q, ex, id);
+	[] !q.isEmpty(); Profesor?pedido(idAct) -> Profesor[idAct]!recibirExamen(pop(q))
+	od
+    }
+
+
+4)
+
