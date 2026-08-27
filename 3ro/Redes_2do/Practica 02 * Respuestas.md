@@ -181,6 +181,7 @@
   * Mirar nota cookies obsidian
 
 19. ¿Cuál es la diferencia entre un protocolo binario y uno basado en texto? ¿De qué tipo de protocolo se trata HTTP/1.0, HTTP/1.1 y HTTP/2?
+  - La diferencia entre los protocolos binarios y basados en texto es la manera en la que los datos se guardan durante el momento de la transmision de los datos. La transmision de datos en binario es mas eficiente en cuanto a espacio, la usa HTTP/2 como mejora sobre los modelos de comunicacion anteriores.
 
 20. Responder las siguientes preguntas:
 a. ¿Qué función cumple la cabecera Host en HTTP 1.1? ¿Existía en HTTP 1.0? ¿Qué sucede en HTTP/2? (Ayuda:https://undertow.io/blog/2015/04/27/An-in-depth-overview-of-HTTP2.html para HTTP/2)
