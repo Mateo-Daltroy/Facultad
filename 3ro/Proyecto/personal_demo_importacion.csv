@@ -1,0 +1,11 @@
+dni,nombre,apellido,tipo_personal,sector,menu,activo
+35.123.456,Sofía,Martínez,Personal Fijo,Quirófano,General,Sí
+36234567,martín,rodríguez,Personal Fijo,Médicos Internos,Vegetariano,
+37.345.678,Valentina,Sánchez,Residente,,Celiaco,Sí
+38456789,Lucas,Romero,Personal Fijo,intendencia,,No
+39.567.890,Camila,Díaz,Residente,,General,
+40678901,Mateo,Álvarez,Personal Fijo,Alimentación,Celiaco,Sí
+41.789.012,Julieta,Torres,Personal Fijo,Hemoterapia,General,Sí
+42890123,Tomás,Ruiz,Residente,,Vegetariano,No
+1234,Pedro,Acosta,Personal Fijo,Quirófano,General,Sí
+43901234,Florencia,Benítez,Personal Fijo,Rayos,General,Sí

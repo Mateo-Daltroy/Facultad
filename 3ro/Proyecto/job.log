@@ -1,0 +1,135 @@
+[0KRunning with gitlab-runner 14.9.1 (bd40e3da)[0;m
+[0K  on 26feeb0a741d glrt-xEO[0;m
+section_start:1792198910:prepare_executor[0K[0K[36;1mPreparing the "docker" executor[0;m[0;m
+[0KUsing Docker executor with image registry.gitlab.catedras.linti.unlp.edu.ar/proyecto-2026/groups-ci-cd/capistrano-deployment:latest ...[0;m
+[0KAuthenticating with credentials from job payload (GitLab Registry)[0;m
+[0KPulling docker image registry.gitlab.catedras.linti.unlp.edu.ar/proyecto-2026/groups-ci-cd/capistrano-deployment:latest ...[0;m
+[0KUsing docker image sha256:19f7e9bcfcbe6145fa6fe806d0020abeb4fd04a4816d4cc3d21de80c933bbbf2 for registry.gitlab.catedras.linti.unlp.edu.ar/proyecto-2026/groups-ci-cd/capistrano-deployment:latest with digest registry.gitlab.catedras.linti.unlp.edu.ar/proyecto-2026/groups-ci-cd/capistrano-deployment@sha256:cecd0d8e1b84e7bfb77b03fc80e14964d83535d680939f414cd6a25dcd012a92 ...[0;m
+section_end:1792198912:prepare_executor[0Ksection_start:1792198912:prepare_script[0K[0K[36;1mPreparing environment[0;m[0;m
+Running on runner-glrt-xeo-project-1899-concurrent-0 via 26feeb0a741d...
+section_end:1792198912:prepare_script[0Ksection_start:1792198912:get_sources[0K[0K[36;1mGetting source from Git repository[0;m[0;m
+[32;1mFetching changes with git depth set to 20...[0;m
+Reinitialized existing Git repository in /builds/proyecto-2026/proyectos/grupo24/code/.git/
+[32;1mChecking out 5699a6fd as main...[0;m
+
+[32;1mSkipping Git submodules setup[0;m
+section_end:1792198913:get_sources[0Ksection_start:1792198913:step_script[0K[0K[36;1mExecuting "step_script" stage of the job script[0;m[0;m
+[0KUsing docker image sha256:19f7e9bcfcbe6145fa6fe806d0020abeb4fd04a4816d4cc3d21de80c933bbbf2 for registry.gitlab.catedras.linti.unlp.edu.ar/proyecto-2026/groups-ci-cd/capistrano-deployment:latest with digest registry.gitlab.catedras.linti.unlp.edu.ar/proyecto-2026/groups-ci-cd/capistrano-deployment@sha256:cecd0d8e1b84e7bfb77b03fc80e14964d83535d680939f414cd6a25dcd012a92 ...[0;m
+[32;1m$ eval $(ssh-agent -s)[0;m
+Agent pid 14
+[32;1m$ cat "$PRIV_KEY" | ssh-add -[0;m
+Identity added: (stdin) (ansible-generated on proyecto-2026)
+[32;1m$ cd /capistrano[0;m
+[32;1m$ cap proyecto2026 deploy[0;m
+00:00 git:wrapper
+      01 mkdir -p /tmp
+    ✔ 01 grupo24@163.10.20.164 1.645s
+      Uploading /tmp/git-ssh-d140fc1a67a7efca5b20.sh 100.0%
+      02 chmod 700 /tmp/git-ssh-d140fc1a67a7efca5b20.sh
+    ✔ 02 grupo24@163.10.20.164 0.061s
+00:01 git:check
+      01 git ls-remote git@gitlab.catedras.linti.unlp.edu.ar:proyecto-2026/proyectos/grupo24/code HEAD
+      01 ** WARNING: connection is not using a post-quantum key exchange algorithm.
+      01 ** This session may be vulnerable to "store now, decrypt later" attacks.
+      01 ** The server may need to be upgraded. See https://openssh.com/pq.html
+      01 5699a6fd2bcde4140089d7a7a5fb3abb2b747aaa	HEAD
+    ✔ 01 grupo24@163.10.20.164 0.476s
+00:02 deploy:check:directories
+      01 mkdir -p /home/grupo24/app/shared /home/grupo24/app/releases
+    ✔ 01 grupo24@163.10.20.164 0.058s
+00:02 deploy:check:linked_dirs
+      01 mkdir -p /home/grupo24/app/shared/admin/flask_session /home/grupo24/app/shared/admin/private
+    ✔ 01 grupo24@163.10.20.164 0.058s
+00:02 git:clone
+      The repository mirror is at /home/grupo24/app/repo
+00:02 git:update
+      01 git remote set-url origin git@gitlab.catedras.linti.unlp.edu.ar:proyecto-2026/proyectos/grupo24/code
+    ✔ 01 grupo24@163.10.20.164 0.090s
+      02 git remote update --prune
+      02 ** WARNING: connection is not using a post-quantum key exchange algorithm.
+      02 ** This session may be vulnerable to "store now, decrypt later" attacks.
+      02 ** The server may need to be upgraded. See https://openssh.com/pq.html
+      02 From gitlab.catedras.linti.unlp.edu.ar:proyecto-2026/proyectos/grupo24/code
+      02  - [deleted]         (none)                 -> refs/merge-requests/10/head
+      02  - [deleted]         (none)                 -> refs/merge-requests/10/merge
+      02  - [deleted]         (none)                 -> refs/pipelines/15518
+      02  * [new ref]         refs/environments/production-backen-sh1y9k/deployments/8 -> refs/environments/production-backen-sh1y9k/deployments/8
+      02    27f4bb0..02c92d0  development            -> development
+      02  * [new branch]      docs/update-docstring  -> docs/update-docstring
+      02  * [new branch]      feat/pendientes-etapa1 -> feat/pendientes-etapa1
+      02    eb2962c..5699a6f  main                   -> main
+      02  * [new ref]         refs/pipelines/15694   -> refs/pipelines/15694
+    ✔ 02 grupo24@163.10.20.164 1.113s
+00:03 git:create_release
+      01 mkdir -p /home/grupo24/app/releases/20261017010157
+    ✔ 01 grupo24@163.10.20.164 0.062s
+      02 git archive main | /usr/bin/env tar -x -f - -C /home/grupo24/app/releases/20261017010157
+    ✔ 02 grupo24@163.10.20.164 0.085s
+00:04 deploy:set_current_revision
+      01 echo "5699a6fd2bcde4140089d7a7a5fb3abb2b747aaa" > REVISION
+    ✔ 01 grupo24@163.10.20.164 0.060s
+00:04 deploy:symlink:linked_dirs
+      01 mkdir -p /home/grupo24/app/releases/20261017010157/admin
+    ✔ 01 grupo24@163.10.20.164 0.059s
+      02 ln -s /home/grupo24/app/shared/admin/flask_session /home/grupo24/app/releases/20261017010157/admin/flask_session
+    ✔ 02 grupo24@163.10.20.164 0.061s
+      03 ln -s /home/grupo24/app/shared/admin/private /home/grupo24/app/releases/20261017010157/admin/private
+    ✔ 03 grupo24@163.10.20.164 0.060s
+00:04 deploy:symlink:release
+      01 ln -s /home/grupo24/app/releases/20261017010157 /home/grupo24/app/releases/current
+    ✔ 01 grupo24@163.10.20.164 0.059s
+      02 mv /home/grupo24/app/releases/current /home/grupo24/app
+    ✔ 02 grupo24@163.10.20.164 0.056s
+00:04 deploy:cleanup
+      Keeping 2 of 3 deployed releases on 163.10.20.164
+      01 rm -rf /home/grupo24/app/releases/20261015213943
+    ✔ 01 grupo24@163.10.20.164 0.385s
+00:05 deploy:run_poetry
+      01 poetry config virtualenvs.in-project true --local
+    ✔ 01 grupo24@163.10.20.164 1.392s
+      02 poetry env use python3.14
+      02 Creating virtualenv web in /home/grupo24/app/releases/20261017010157/admin/.venv
+      02 Using virtualenv: /home/grupo24/app/releases/20261017010157/admin/.venv
+    ✔ 02 grupo24@163.10.20.164 2.650s
+      03 PYTHON_KEYRING_BACKEND=keyring.backends.fail.Keyring poetry install --only main
+      03 Installing dependencies from lock file
+      03 
+      03 Package operations: 
+      03 22 installs, 
+      03 0 updates, 0 removals
+      03 
+      03   - Installing asgiref (3.12.1)
+      03   - Installing bcrypt (5.0.0)
+      03   - Installing blinker (1.9.0)
+      03   - Installing cachelib (0.17.0)
+      03   - Installing click (8.5.0)
+      03   - Installing flask (3.1.3)
+      03   - Installing flask-cors (6.0.5)
+      03   - Installing flask-session (0.8.0)
+      03   - Installing flask-sqlalchemy-lite (0.2.1)
+      03   - Installing greenlet (3.5.6)
+      03   - Installing itsdangerous (2.2.0)
+      03   - Installing jinja2 (3.1.6)
+      03   - Installing markupsafe (3.0.3)
+      03   - Installing marshmallow (4.3.1)
+      03   - Installing msgspec (0.21.1)
+      03   - Installing psycopg (3.3.6)
+      03   - Installing psycopg-binary (3.3.6)
+      03   - Installing pyjwt (2.15.1)
+      03   - Installing python-dotenv (1.2.4)
+      03   - Installing sqlalchemy (2.1.4)
+      03   - Installing typing-extensions (4.16.0)
+      03   - Installing werkzeug (3.1.8)
+      03 
+      03 Installing the current project: web (0.1.0)
+    ✔ 03 grupo24@163.10.20.164 3.342s
+00:12 deploy:reload_uwsgi
+      01 touch uwsgi.ini
+    ✔ 01 grupo24@163.10.20.164 0.055s
+00:12 deploy:log_revision
+      01 echo "Branch main (at 5699a6fd2bcde4140089d7a7a5fb3abb2b747aaa) deployed as release 20261017010157 by " >> /home/grupo24/app/revisions.log
+    ✔ 01 grupo24@163.10.20.164 0.073s
+[32;1m$ echo "Sitio privado: https://admin-${GROUP_NAME}.proyecto2026.linti.unlp.edu.ar"[0;m
+Sitio privado: https://admin-grupo24.proyecto2026.linti.unlp.edu.ar
+section_end:1792198928:step_script[0Ksection_start:1792198928:cleanup_file_variables[0K[0K[36;1mCleaning up project directory and file based variables[0;m[0;m
+section_end:1792198928:cleanup_file_variables[0K[32;1mJob succeeded[0;m

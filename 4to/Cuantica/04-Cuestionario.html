@@ -1,0 +1,2448 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <title>Cuestionario interactivo · Clase 04</title>
+
+    <!-- MathJax renders expressions like the course presentations -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [["$", "$"]],
+                displayMath: [["$$", "$$"]]
+            },
+            svg: {
+                fontCache: "global"
+            },
+            startup: {
+                typeset: false
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+    <style>
+        :root {
+            --ink: #172033;
+            --muted: #5b6578;
+            --surface: #ffffff;
+            --surface-soft: #f4f7fb;
+            --line: #d9e1ee;
+            --accent: #2457b8;
+            --accent-dark: #173c86;
+            --accent-soft: #e8f0ff;
+            --teal: #087f7a;
+            --teal-soft: #e4f7f5;
+            --success: #16734b;
+            --success-soft: #e8f7ef;
+            --danger: #a43c3c;
+            --danger-soft: #fff0f0;
+            --warning: #9a6200;
+            --warning-soft: #fff5dc;
+            --shadow: 0 18px 45px rgba(34, 59, 100, 0.11);
+            --radius: 18px;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { min-height: 100%; }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 12% 0%, #e4efff 0, transparent 36rem),
+                linear-gradient(135deg, #f7f9fd 0%, #eef3f9 100%);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            line-height: 1.5;
+        }
+
+        body.modal-open { overflow: hidden; }
+
+        button,
+        input { font: inherit; }
+
+        button {
+            border: 0;
+            cursor: pointer;
+        }
+
+        button:focus-visible,
+        input:focus-visible + .radio-marker {
+            outline: 3px solid rgba(36, 87, 184, 0.32);
+            outline-offset: 3px;
+        }
+
+        [hidden] { display: none !important; }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .app-shell {
+            width: min(1080px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 26px 0 34px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .eyebrow {
+            margin: 0 0 6px;
+            color: var(--accent);
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+        }
+
+        h1,
+        h2,
+        h3,
+        p { margin-top: 0; }
+
+        h1 {
+            max-width: 760px;
+            margin-bottom: 8px;
+            font-size: clamp(1.75rem, 4vw, 2.7rem);
+            line-height: 1.1;
+            letter-spacing: -0.035em;
+        }
+
+        .topbar p {
+            max-width: 730px;
+            margin-bottom: 0;
+            color: var(--muted);
+            font-size: 1.02rem;
+        }
+
+        .offline-badge {
+            flex: 0 0 auto;
+            padding: 8px 12px;
+            border: 1px solid #bfe1d5;
+            border-radius: 999px;
+            color: var(--success);
+            background: rgba(232, 247, 239, 0.82);
+            font-size: 0.78rem;
+            font-weight: 750;
+            white-space: nowrap;
+        }
+
+        .screen {
+            min-height: 530px;
+        }
+
+        .setup-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+            gap: 22px;
+            align-items: stretch;
+        }
+
+        .panel,
+        .question-card,
+        .final-card {
+            border: 1px solid rgba(217, 225, 238, 0.92);
+            border-radius: var(--radius);
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: var(--shadow);
+        }
+
+        .panel { padding: clamp(22px, 4vw, 34px); }
+
+        .panel h2 {
+            margin-bottom: 12px;
+            font-size: clamp(1.35rem, 3vw, 1.8rem);
+            line-height: 1.2;
+        }
+
+        .panel p { color: var(--muted); }
+
+        .learning-list {
+            display: grid;
+            gap: 12px;
+            margin: 24px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .learning-list li {
+            display: grid;
+            grid-template-columns: 30px minmax(0, 1fr);
+            gap: 10px;
+            align-items: start;
+            color: #354156;
+        }
+
+        .list-number {
+            display: grid;
+            width: 30px;
+            height: 30px;
+            place-items: center;
+            border-radius: 10px;
+            color: var(--accent-dark);
+            background: var(--accent-soft);
+            font-weight: 800;
+        }
+
+        .mode-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background:
+                linear-gradient(160deg, rgba(232, 240, 255, 0.9), rgba(255, 255, 255, 0.98) 65%);
+        }
+
+        .mode-panel h2 { font-size: 1.35rem; }
+
+        .mode-panel fieldset {
+            display: grid;
+            gap: 12px;
+            margin: 4px 0 20px;
+            padding: 0;
+            border: 0;
+        }
+
+        .mode-panel .selection-fieldset {
+            margin-bottom: 14px;
+        }
+
+        .sub-options {
+            margin: -2px 0 20px;
+            padding: 13px 14px;
+            border: 1px solid #dce5f2;
+            border-radius: 13px;
+            background: rgba(255, 255, 255, 0.72);
+        }
+
+        .sub-options fieldset {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px 18px;
+            margin: 0;
+        }
+
+        .sub-options legend {
+            margin-bottom: 9px;
+            color: var(--muted);
+            font-size: 0.84rem;
+            font-weight: 800;
+        }
+
+        .inline-choice {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #354156;
+            cursor: pointer;
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        .inline-choice input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent);
+        }
+
+        .number-choice {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            color: #354156;
+            cursor: text;
+        }
+
+        .number-choice strong,
+        .number-choice small {
+            display: block;
+        }
+
+        .number-choice small {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 0.82rem;
+        }
+
+        .number-choice input {
+            width: 82px;
+            padding: 9px 8px;
+            border: 1px solid #b9c7dc;
+            border-radius: 9px;
+            color: var(--ink);
+            background: white;
+            font: inherit;
+            font-weight: 750;
+            text-align: center;
+        }
+
+        .number-choice input:focus {
+            outline: 3px solid rgba(36, 87, 184, 0.17);
+            border-color: var(--accent);
+        }
+
+        .available-count {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .mode-choice {
+            position: relative;
+            display: grid;
+            grid-template-columns: 22px minmax(0, 1fr);
+            gap: 11px;
+            align-items: start;
+            padding: 14px 15px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--surface);
+            cursor: pointer;
+            transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+        }
+
+        .mode-choice:hover {
+            border-color: #9bb5e9;
+            transform: translateY(-1px);
+        }
+
+        .mode-choice:has(input:checked) {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .mode-choice input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+        }
+
+        .radio-marker {
+            display: block;
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            border: 2px solid #9aa8be;
+            border-radius: 50%;
+            background: white;
+        }
+
+        .mode-choice input:checked + .radio-marker {
+            border: 6px solid var(--accent);
+        }
+
+        .mode-choice strong {
+            display: block;
+            margin-bottom: 2px;
+            color: var(--ink);
+        }
+
+        .mode-choice small {
+            display: block;
+            color: var(--muted);
+            line-height: 1.35;
+        }
+
+        .primary-button,
+        .secondary-button,
+        .text-button {
+            border-radius: 12px;
+            font-weight: 750;
+            transition: background-color 160ms ease, color 160ms ease, transform 160ms ease, border-color 160ms ease;
+        }
+
+        .primary-button {
+            width: 100%;
+            padding: 13px 18px;
+            color: white;
+            background: var(--accent);
+            box-shadow: 0 8px 18px rgba(36, 87, 184, 0.2);
+        }
+
+        .primary-button:hover {
+            background: var(--accent-dark);
+            transform: translateY(-1px);
+        }
+
+        .secondary-button {
+            padding: 10px 14px;
+            border: 1px solid var(--line);
+            color: var(--accent-dark);
+            background: var(--surface);
+        }
+
+        .secondary-button:hover {
+            border-color: #9bb5e9;
+            background: var(--accent-soft);
+        }
+
+        .text-button {
+            padding: 7px 2px;
+            color: var(--accent);
+            background: transparent;
+        }
+
+        .text-button:hover { color: var(--accent-dark); }
+
+        .quiz-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 12px;
+        }
+
+        .toolbar-stats {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 8px 16px;
+            color: var(--muted);
+            font-size: 0.9rem;
+            text-align: right;
+        }
+
+        .toolbar-stats strong { color: var(--ink); }
+
+        .progress-track {
+            height: 9px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #dfe7f3;
+        }
+
+        .progress-fill {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--teal), var(--accent));
+            transition: width 220ms ease;
+        }
+
+        .question-card {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: clamp(22px, 5vw, 42px);
+            overflow-x: hidden;
+        }
+
+        .question-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .topic-tag {
+            padding: 5px 10px;
+            border-radius: 999px;
+            color: var(--teal);
+            background: var(--teal-soft);
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .question-number {
+            color: var(--muted);
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        #question-title {
+            margin-bottom: 24px;
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
+            line-height: 1.28;
+            letter-spacing: -0.02em;
+        }
+
+        /* MathJax inline SVGs keep their intrinsic width. Constrain and scale
+           long expressions so they remain inside the card on narrow screens. */
+        .question-card mjx-container {
+            max-width: 100%;
+        }
+
+        .question-card mjx-container > svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .formula {
+            display: inline-block;
+            padding: 0.08em 0.34em;
+            border-radius: 7px;
+            color: #213d78;
+            background: #edf3ff;
+            font-family: "Cambria Math", "STIX Two Math", Georgia, serif;
+            font-weight: 650;
+            white-space: nowrap;
+        }
+
+        .ket {
+            font-family: "Cambria Math", "STIX Two Math", Georgia, serif;
+            white-space: nowrap;
+        }
+
+        .matrix {
+            display: inline-block;
+            padding: 2px 8px;
+            border-left: 2px solid currentColor;
+            border-right: 2px solid currentColor;
+            border-radius: 8px;
+            font-family: "Cambria Math", "STIX Two Math", Georgia, serif;
+            line-height: 1.15;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .options {
+            display: grid;
+            gap: 11px;
+            margin-bottom: 24px;
+        }
+
+        .option {
+            position: relative;
+            display: grid;
+            grid-template-columns: 34px minmax(0, 1fr);
+            gap: 12px;
+            align-items: center;
+            min-height: 56px;
+            padding: 12px 14px;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            background: #fcfdff;
+            cursor: pointer;
+            transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+        }
+
+        .option:hover {
+            border-color: #9bb5e9;
+            background: #f8fbff;
+        }
+
+        .option.selected {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+            box-shadow: 0 0 0 2px rgba(36, 87, 184, 0.08);
+        }
+
+        .option.correct {
+            border-color: #72b995;
+            background: var(--success-soft);
+        }
+
+        .option.wrong {
+            border-color: #e0a0a0;
+            background: var(--danger-soft);
+        }
+
+        .option input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+        }
+
+        .option-letter {
+            display: grid;
+            width: 32px;
+            height: 32px;
+            place-items: center;
+            border: 1px solid #c8d4e5;
+            border-radius: 10px;
+            color: #4c5a70;
+            background: white;
+            font-weight: 800;
+        }
+
+        .option.selected .option-letter {
+            border-color: var(--accent);
+            color: white;
+            background: var(--accent);
+        }
+
+        .option.correct .option-letter {
+            border-color: var(--success);
+            color: white;
+            background: var(--success);
+        }
+
+        .option.wrong .option-letter {
+            border-color: var(--danger);
+            color: white;
+            background: var(--danger);
+        }
+
+        .option-copy { min-width: 0; }
+
+        .action-row,
+        .next-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .action-row {
+            padding-top: 2px;
+            border-top: 1px solid #edf1f7;
+        }
+
+        .hint-button {
+            padding: 11px 0;
+            color: var(--warning);
+            background: transparent;
+            font-weight: 750;
+        }
+
+        .hint-button:hover { color: #704700; }
+
+        .next-button {
+            min-width: 126px;
+            padding: 11px 17px;
+            border-radius: 11px;
+            color: white;
+            background: var(--accent);
+            font-weight: 800;
+        }
+
+        .next-button:hover { background: var(--accent-dark); }
+
+.secondary-button:disabled {
+            cursor: not-allowed;
+            color: #8390a4;
+            background: #e4e9f1;
+            border-color: #dce3ed;
+        }
+
+        .hint-box {
+            margin: 17px 0 0;
+            padding: 13px 15px;
+            border-left: 4px solid #d19a28;
+            border-radius: 10px;
+            color: #664a12;
+            background: var(--warning-soft);
+        }
+
+        .feedback {
+            margin-top: 19px;
+            padding: 17px 18px;
+            border-radius: 13px;
+        }
+
+        .feedback.correct {
+            border: 1px solid #9ed2b5;
+            color: #205b3d;
+            background: var(--success-soft);
+        }
+
+        .feedback.incorrect {
+            border: 1px solid #e6b0b0;
+            color: #753333;
+            background: var(--danger-soft);
+        }
+
+        .feedback-title {
+            margin-bottom: 6px;
+            font-weight: 850;
+        }
+
+        .feedback p:last-child { margin-bottom: 0; }
+
+        .next-row {
+            justify-content: space-between;
+            margin-top: 18px;
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            z-index: 10;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            background: rgba(17, 30, 54, 0.58);
+        }
+
+        .final-card {
+            width: min(560px, 100%);
+            padding: clamp(26px, 5vw, 44px);
+            text-align: center;
+        }
+
+        .final-kicker {
+            margin-bottom: 9px;
+            color: var(--teal);
+            font-size: 0.82rem;
+            font-weight: 850;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .final-card h2 {
+            margin-bottom: 8px;
+            font-size: clamp(1.6rem, 4vw, 2.2rem);
+        }
+
+        .final-score {
+            margin: 18px 0 4px;
+            color: var(--accent);
+            font-size: clamp(3.5rem, 13vw, 6rem);
+            font-weight: 850;
+            line-height: 0.95;
+            letter-spacing: -0.07em;
+        }
+
+        .final-detail {
+            margin-bottom: 18px;
+            color: var(--muted);
+            font-weight: 650;
+        }
+
+        .final-message {
+            margin: 0 auto 24px;
+            max-width: 430px;
+            color: #354156;
+        }
+
+        .final-actions {
+            display: flex;
+            justify-content: center;
+            gap: 11px;
+            flex-wrap: wrap;
+        }
+
+        .final-actions .primary-button {
+            width: auto;
+            min-width: 170px;
+        }
+
+        .footer-note {
+            margin: 22px 0 0;
+            color: #738096;
+            font-size: 0.82rem;
+            text-align: center;
+        }
+
+        @media (max-width: 760px) {
+            .app-shell { width: min(100% - 22px, 680px); padding-top: 18px; }
+            .topbar { display: block; }
+            .offline-badge { display: inline-block; margin-top: 15px; }
+            .setup-grid { grid-template-columns: 1fr; }
+            .screen { min-height: 0; }
+            .quiz-toolbar { align-items: flex-start; }
+            .toolbar-stats { display: block; text-align: right; }
+            .toolbar-stats span { display: block; }
+            .question-card { padding: 22px 17px; }
+        }
+
+        @media (max-width: 440px) {
+            .quiz-toolbar { gap: 10px; }
+            .quiz-toolbar .secondary-button { padding-inline: 10px; }
+            .question-meta { align-items: flex-start; flex-direction: column; gap: 7px; }
+            .action-row { align-items: stretch; flex-direction: column; }
+            .hint-button { align-self: flex-start; }
+            .next-row { align-items: stretch; }
+            .next-row .secondary-button,
+            .next-row .next-button { flex: 1 1 0; min-width: 0; }
+            .option { grid-template-columns: 30px minmax(0, 1fr); gap: 9px; padding-inline: 10px; }
+            .option-letter { width: 29px; height: 29px; }
+        }
+
+        /* Etapa 1: recuperación y almacenamiento local */
+        .resume-panel { margin-bottom: 22px; border-color: #b9d2f5; }
+        .resume-panel h2 { margin-bottom: 8px; }
+        .resume-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+        .resume-actions .primary-button { width: auto; min-width: 170px; }
+        .save-status { margin: 12px 0 0; color: var(--muted); font-size: .86rem; }
+        .save-status[data-state="error"] { color: var(--danger); }
+        .save-status[data-state="success"] { color: var(--success); }
+        .resume-detail { color: var(--muted); margin-bottom: 0; }
+        @media (max-width: 440px) {
+            .resume-actions { flex-direction: column; }
+            .resume-actions .primary-button, .resume-actions .secondary-button { width: 100%; }
+        }
+        .review-panel { display: flex; align-items: center; justify-content: space-between; gap: 22px; margin-bottom: 22px; }
+        .review-panel-copy { min-width: 0; }
+        .review-panel h2 { font-size: 1.3rem; margin-bottom: 8px; }
+        .review-panel p { margin-bottom: 7px; }
+        .review-panel small { color: var(--muted); }
+        .review-panel > button { flex: 0 0 auto; }
+        .self-assessment { margin-top: 16px; padding: 17px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface-soft); }
+        .self-assessment h3 { font-size: 1.02rem; margin-bottom: 5px; }
+        .self-assessment p { color: var(--muted); font-size: .9rem; margin-bottom: 12px; }
+        .confidence-options { display: flex; flex-wrap: wrap; gap: 9px; padding: 0; margin: 0; border: 0; }
+        .confidence-options label { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; background: var(--surface); cursor: pointer; }
+        .confidence-options label:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+        .confidence-options input { accent-color: var(--accent); }
+        .self-assessment .assessment-status { margin: 10px 0 0; }
+        .review-marker-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+        .review-question-status { color: var(--muted); font-size: .88rem; }
+        .final-review-detail { color: var(--muted); margin-bottom: 16px; }
+        .history-panel { margin-top: 22px; }
+        .history-panel summary { cursor: pointer; font-weight: 750; }
+        .history-panel summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+        .history-panel p { margin: 14px 0; font-size: .9rem; }
+        .history-list { padding-left: 22px; }
+        .history-list li { margin-bottom: 9px; }
+        .history-list small { display: block; color: var(--muted); }
+        @media (max-width: 760px) { .review-panel { flex-direction: column; align-items: stretch; } .review-panel > button { width: 100%; } }
+        @media (prefers-reduced-motion: reduce) { .progress-fill, .option, .primary-button, .secondary-button, .mode-choice { transition: none; } }
+
+        .review-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 0 0 22px; }
+        .review-groups .review-panel { display: flex; flex-direction: column; align-items: stretch; gap: 12px; margin: 0; min-width: 0; }
+        .review-panel-copy { min-width: 0; }
+        .review-panel-copy h2 { font-size: 1.25rem; margin-bottom: 8px; }
+        .review-panel-copy p { margin-bottom: 6px; }
+        .review-panel-copy small { display: block; color: var(--muted); line-height: 1.45; }
+        .review-count { display: inline-block; padding: 2px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-dark); font-size: .85rem; vertical-align: middle; }
+        .review-list-panel { border-top: 1px solid var(--line); padding-top: 12px; }
+        .review-list-panel summary { cursor: pointer; font-weight: 750; color: var(--accent-dark); }
+        .review-list-panel summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+        .review-list { margin-top: 12px; color: var(--muted); font-size: .9rem; }
+        .review-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+        .review-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+        .review-item-copy { flex: 1; min-width: 0; overflow-wrap: anywhere; color: var(--ink); }
+        .review-item-copy small { display: block; margin-bottom: 5px; color: var(--muted); }
+        .review-item button { flex: 0 0 auto; font-size: .82rem; }
+        @media (max-width: 760px) { .review-groups { grid-template-columns: 1fr; } }
+        @media (max-width: 440px) { .review-item { flex-direction: column; } .review-item button { align-self: flex-start; } }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">Introducción a la computación cuántica · Clase 04</p>
+                <h1>Cuestionario de operadores, SpinQit e interferencia</h1>
+                <p>Respondé, pedí una pista cuando la necesites y usá la explicación para repasar los conceptos matemáticos y de programación de la clase.</p>
+            </div>
+            <div class="offline-badge">LaTeX: requiere conexión</div>
+        </header>
+
+        <main>
+            <section id="setup-screen" class="screen" aria-labelledby="setup-title">
+
+                <article id="resume-panel" class="panel resume-panel" hidden aria-labelledby="resume-title">
+                    <h2 id="resume-title">Continuar tu práctica</h2>
+                    <p id="resume-detail" class="resume-detail"></p>
+                    <div class="resume-actions">
+                        <button id="resume-button" class="primary-button" type="button">Continuar práctica</button>
+                        <button id="new-session-button" class="secondary-button" type="button">Comenzar una nueva</button>
+                    </div>
+                </article>
+                <section class="review-groups" aria-label="Listas de repaso">
+                    <article id="review-panel" class="panel review-panel" aria-labelledby="review-title">
+                        <div class="review-panel-copy">
+                            <h2 id="review-title">★ Marcadas por mí <span id="marked-count" class="review-count">0</span></h2>
+                            <p id="marked-detail">Todavía no marcaste ninguna pregunta.</p>
+                            <small>Esta lista la manejás vos. Respondé bien o mal: la marca permanece hasta que la quites.</small>
+                        </div>
+                        <button id="start-marked-button" class="secondary-button" type="button" disabled>Practicar marcadas</button>
+                        <details class="review-list-panel">
+                            <summary>Ver preguntas marcadas</summary>
+                            <div id="marked-list" class="review-list" aria-live="polite"></div>
+                        </details>
+                    </article>
+                    <article id="errors-panel" class="panel review-panel" aria-labelledby="errors-title">
+                        <div class="review-panel-copy">
+                            <h2 id="errors-title">↻ Respondidas erróneamente <span id="errors-count" class="review-count">0</span></h2>
+                            <p id="errors-detail">No hay errores pendientes.</p>
+                            <small>Se agregan al responder mal y se quitan al responder bien. Las marcas manuales no afectan esta lista.</small>
+                        </div>
+                        <button id="start-errors-button" class="secondary-button" type="button" disabled>Practicar errores</button>
+                        <details class="review-list-panel">
+                            <summary>Ver preguntas con errores</summary>
+                            <div id="errors-list" class="review-list" aria-live="polite"></div>
+                        </details>
+                    </article>
+                </section>
+                <div class="setup-grid">
+                    <article class="panel">
+                        <h2 id="setup-title">Una práctica guiada para la clase 04</h2>
+                        <p>El cuestionario recorre operadores y matrices, compuertas unitarias, circuitos de un qubit con SpinQit, esfera de Bloch, fase, interferencia y hardware NMR.</p>
+                        <ul class="learning-list">
+                            <li><span class="list-number">1</span><span>Elegí una respuesta entre cuatro opciones. Al hacer clic queda registrada.</span></li>
+                            <li><span class="list-number">2</span><span>Solicitá una pista si querés una ayuda intermedia. Pedirla no modifica el puntaje.</span></li>
+                            <li><span class="list-number">3</span><span>Navegá con <strong>Anterior</strong> y <strong>Siguiente</strong>. El feedback queda disponible para volver a consultarlo.</span></li>
+                        </ul>
+                    </article>
+
+                    <article class="panel mode-panel">
+                        <h2>Elegí cómo practicar</h2>
+                        <p>Hay <strong id="question-count">106</strong> preguntas disponibles.</p>
+                        <fieldset class="selection-fieldset">
+                            <legend class="sr-only">Cantidad de preguntas</legend>
+                            <label class="mode-choice">
+                                <input type="radio" name="selection-mode" value="all" checked>
+                                <span class="radio-marker" aria-hidden="true"></span>
+                                <span><strong>Todas las preguntas</strong><small>Recorré las <span class="available-count">106</span> preguntas de la clase.</small></span>
+                            </label>
+                            <label class="mode-choice">
+                                <input type="radio" name="selection-mode" value="sample">
+                                <span class="radio-marker" aria-hidden="true"></span>
+                                <span><strong>Grupo aleatorio</strong><small>Elegí cuántas preguntas querés resolver, seleccionadas al azar.</small></span>
+                            </label>
+                        </fieldset>
+                        <div id="all-options" class="sub-options">
+                            <fieldset>
+                                <legend>Orden de las preguntas</legend>
+                                <label class="inline-choice">
+                                    <input type="radio" name="all-order" value="sequential" checked>
+                                    <span>Secuencial</span>
+                                </label>
+                                <label class="inline-choice">
+                                    <input type="radio" name="all-order" value="random">
+                                    <span>Aleatorio</span>
+                                </label>
+                            </fieldset>
+                        </div>
+                        <div id="sample-options" class="sub-options" hidden>
+                            <label class="number-choice" for="sample-size">
+                                <span><strong>Cantidad de preguntas</strong><small>Podés elegir entre 1 y <span class="available-count">106</span>.</small></span>
+                                <input id="sample-size" type="number" min="1" max="106" value="20" inputmode="numeric">
+                            </label>
+                        </div>
+                        <button id="start-button" class="primary-button" type="button">Comenzar cuestionario</button>
+                        <p id="save-status" class="save-status" role="status" aria-live="polite">Comprobando el guardado local…</p>
+                    </article>
+                </div>
+                                <details id="history-panel" class="panel history-panel">
+                    <summary>Historial de prácticas finalizadas <span id="history-count"></span></summary>
+                    <p>Se guarda automáticamente al ver el resultado. Las prácticas antiguas conservan su puntaje; el repaso no lo modifica.</p>
+                    <div id="history-list"></div>
+                </details>
+            </section>
+
+            <section id="quiz-screen" class="screen" hidden aria-labelledby="question-title">
+                <div class="quiz-toolbar">
+                    <button id="back-button" class="secondary-button" type="button">← Cambiar modo</button>
+                    <div class="toolbar-stats" aria-live="polite">
+                        <span>Pregunta <strong id="progress-label">1 de 118</strong></span>
+                        <span>Aciertos <strong id="score-label">0/0 · 0%</strong></span>
+                        <span>Repaso: <strong id="pending-label">0 marcadas · 0 errores</strong></span>
+                    </div>
+                </div>
+                <div class="progress-track" aria-label="Progreso del cuestionario" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+
+                <article class="question-card">
+                    <div class="question-meta">
+                        <span id="topic-label" class="topic-tag">Operadores y matrices</span>
+                        <span id="question-number" class="question-number">Pregunta 1 de 106</span>
+                    </div>
+                    <h2 id="question-title" tabindex="-1"></h2>
+                    <div id="options" class="options" role="radiogroup" aria-label="Opciones de respuesta"></div>
+
+                    <div class="action-row">
+                        <button id="hint-button" class="hint-button" type="button">💡 Solicitar una pista</button>
+                    </div>
+                    <div id="hint-box" class="hint-box" hidden role="note"></div>
+                    <div id="feedback" class="feedback" hidden aria-live="polite"></div>
+                    <div class="review-marker-row">
+                        <button id="mark-review-button" class="secondary-button" type="button" aria-pressed="false">☆ Marcar para repasar</button>
+                        <span id="review-question-status" class="review-question-status" role="status"></span>
+                    </div>
+                    <div class="next-row">
+                        <button id="previous-button" class="secondary-button" type="button">← Anterior</button>
+                        <button id="next-button" class="next-button" type="button">Siguiente →</button>
+                    </div>
+                </article>
+            </section>
+        </main>
+
+        <p class="footer-note">El progreso se guarda localmente en este navegador, si el almacenamiento está disponible. No se envía a un servidor ni se sincroniza entre dispositivos. Borrar los datos del sitio puede eliminarlo.</p>
+    </div>
+
+    <div id="finish-modal" class="modal-backdrop" hidden>
+        <section class="final-card" role="dialog" aria-modal="true" aria-labelledby="finish-title">
+            <p class="final-kicker">Cuestionario finalizado</p>
+            <h2 id="finish-title">Tu resultado</h2>
+            <div id="final-score" class="final-score">0%</div>
+            <p id="final-detail" class="final-detail">0 respuestas correctas de 106</p>
+            <p id="final-message" class="final-message"></p>
+            <p id="final-review-detail" class="final-review-detail"></p>
+            <div class="final-actions">
+                <button id="start-errors-final-button" class="primary-button" type="button" hidden>Practicar errores</button>
+                <button id="start-marked-final-button" class="secondary-button" type="button" hidden>Practicar marcadas</button>
+                <button id="review-button" class="secondary-button" type="button">Revisar respuestas</button>
+                <button id="restart-button" class="primary-button" type="button">Intentar de nuevo</button>
+                <button id="home-button" class="secondary-button" type="button">Elegir otro modo</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        "use strict";
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        // Las preguntas contienen fórmulas LaTeX explícitas entre $...$ o $$...$$.
+        // El texto común se escapa antes de insertarlo en el DOM.
+
+        function renderMathMarkup(tex, display) {
+            return display
+                ? "$$" + tex + "$$"
+                : "$" + tex + "$";
+        }
+
+        function renderEducationalText(value) {
+            const text = String(value);
+            const delimiter = /\$\$([\s\S]*?)\$\$|\$([\s\S]*?)\$/g;
+            let result = "";
+            let cursor = 0;
+            let match;
+
+            while ((match = delimiter.exec(text)) !== null) {
+                result += escapeHtml(text.slice(cursor, match.index));
+                result += renderMathMarkup(
+                    match[1] !== undefined ? match[1] : match[2],
+                    match[1] !== undefined
+                );
+                cursor = delimiter.lastIndex;
+            }
+
+            result += escapeHtml(text.slice(cursor));
+            return result;
+        }
+
+
+        function clearMath(elements) {
+            const mathJax = window.MathJax;
+            if (mathJax && typeof mathJax.typesetClear === "function") {
+                mathJax.typesetClear(elements.filter(Boolean));
+            }
+        }
+
+        function typesetMath(elements, attempt) {
+            const targets = elements.filter(Boolean);
+            const tries = attempt || 0;
+            if (!targets.length) {
+                return;
+            }
+
+            const mathJax = window.MathJax;
+            if (!mathJax || !mathJax.startup ||
+                !mathJax.startup.promise) {
+                if (tries < 120) {
+                    window.setTimeout(function() {
+                        typesetMath(targets, tries + 1);
+                    }, 100);
+                }
+                return;
+            }
+
+            mathJax.startup.promise.then(function() {
+                clearMath(targets);
+                return mathJax.typesetPromise(targets);
+            }).catch(function() {
+                // Si el CDN no esta disponible, se conserva el texto LaTeX.
+            });
+        }
+
+        const makeQuestion = (topic, prompt, options, answer, hint, explanation) => ({
+            topic,
+            prompt: renderEducationalText(prompt),
+            options: options.map(renderEducationalText),
+            answer,
+            hint: renderEducationalText(hint),
+            explanation: renderEducationalText(explanation)
+        });
+
+        const questions = [
+makeQuestion(String.raw`Operadores y matrices`, String.raw`¿Qué es un operador cuántico?`, [
+String.raw`Una transformación lineal $\hat A:\mathcal H\to\mathcal H$.`,
+String.raw`Una medición clásica.`,
+String.raw`Una matriz siempre real.`,
+String.raw`Una función no lineal.`,
+], 0, String.raw`Debe actuar linealmente sobre los estados.`, String.raw`Un operador cuántico es una transformación lineal $\hat A:\mathcal H\to\mathcal H$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`¿Cuál es la expresión de linealidad de $\hat A$?`, [
+String.raw`$\hat A(c|\psi\rangle+d|\phi\rangle)=\hat A|\psi\rangle+\hat A|\phi\rangle$`,
+String.raw`$\hat A(c|\psi\rangle+d|\phi\rangle)=cd\hat A|\psi\rangle$`,
+String.raw`$\hat A(c|\psi\rangle+d|\phi\rangle)=0$`,
+String.raw`$\hat A(c|\psi\rangle+d|\phi\rangle)=c\hat A|\psi\rangle+d\hat A|\phi\rangle$`,
+], 3, String.raw`Los escalares se conservan al distribuir el operador.`, String.raw`La linealidad preserva sumas y productos por escalares.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`Si $\hat A$ denota un operador lineal y $A$ su matriz en una base elegida, ¿qué diferencia hay entre ambos objetos?`, [
+String.raw`$\hat A$ es una medición y $A$ un estado.`,
+String.raw`No hay diferencia.`,
+String.raw`$\hat A$ es el operador abstracto y $A$ su matriz en una base.`,
+String.raw`$\hat A$ siempre es real y $A$ siempre es complejo.`,
+], 2, String.raw`El sombrero distingue el objeto abstracto.`, String.raw`$\hat A$ es el operador; $A$ representa su acción matricialmente una vez elegida una base.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`¿Por qué basta conocer una transformación lineal sobre una base?`, [
+String.raw`Porque una base contiene todos los estados físicos.`,
+String.raw`Porque todo vector es combinación lineal de la base.`,
+String.raw`Porque todos los vectores son iguales.`,
+String.raw`Porque no actúa sobre combinaciones.`,
+], 1, String.raw`Escribí un vector como combinación de los vectores de la base.`, String.raw`La linealidad determina la imagen de cualquier combinación a partir de las imágenes de la base.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`¿Cómo se construye la matriz de una transformación lineal?`, [
+String.raw`Sus columnas son las coordenadas de las imágenes de los vectores de la base.`,
+String.raw`Sus filas son siempre los vectores de entrada.`,
+String.raw`Contiene solo autovalores.`,
+String.raw`Es el determinante de la base.`,
+], 0, String.raw`La primera columna corresponde a la imagen del primer vector.`, String.raw`Las columnas de la matriz contienen las coordenadas de $T(e_1),\ldots,T(e_n)$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`¿Cuál es la base computacional de un qubit?`, [
+String.raw`$(|+\rangle,|-\rangle)$ únicamente.`,
+String.raw`$(0,1,2)$.`,
+String.raw`$(\langle0|,\langle1|)$.`,
+String.raw`$(|0\rangle,|1\rangle)$.`,
+], 3, String.raw`Está formada por $|0\rangle$ y $|1\rangle$.`, String.raw`La base computacional es $\mathcal B=(|0\rangle,|1\rangle)$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`Si $\hat A|0\rangle=\begin{pmatrix}a\\c\end{pmatrix}$ y $\hat A|1\rangle=\begin{pmatrix}b\\d\end{pmatrix}$, ¿cuál es $A$?`, [
+String.raw`$\begin{pmatrix}c&d\\a&b\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}a&b\\d&c\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}a&b\\c&d\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}a&c\\b&d\end{pmatrix}$`,
+], 2, String.raw`Las dos imágenes se colocan como columnas.`, String.raw`$A=\begin{pmatrix}a&b\\c&d\end{pmatrix}$ porque sus columnas son $\hat A|0\rangle$ y $\hat A|1\rangle$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`Si $|\psi\rangle=\alpha|0\rangle+\beta|1\rangle$, ¿qué columna lo representa?`, [
+String.raw`$\begin{pmatrix}\alpha+\beta\\\alpha-\beta\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}\alpha\\\beta\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}\beta\\\alpha\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}|\alpha|^2\\|\beta|^2\end{pmatrix}$`,
+], 1, String.raw`El coeficiente de $|0\rangle$ va primero.`, String.raw`En la base computacional, $|\psi\rangle$ es $\begin{pmatrix}\alpha\\\beta\end{pmatrix}$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`Para $A=\begin{pmatrix}a&b\\c&d\end{pmatrix}$, ¿cuál es la primera componente de $A\begin{pmatrix}\alpha\\\beta\end{pmatrix}$?`, [
+String.raw`$a\alpha+b\beta$`,
+String.raw`$c\alpha+d\beta$`,
+String.raw`$a\beta+b\alpha$`,
+String.raw`$ac\alpha+bd\beta$`,
+], 0, String.raw`Usá la primera fila de $A$.`, String.raw`La primera componente es $a\alpha+b\beta$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`¿Qué hace Pauli-$X$ sobre la base computacional?`, [
+String.raw`Cambia solo la fase de $|1\rangle$.`,
+String.raw`Crea siempre $|+\rangle$.`,
+String.raw`Deja ambos estados iguales.`,
+String.raw`Intercambia $|0\rangle$ y $|1\rangle$.`,
+], 3, String.raw`Es el NOT cuántico.`, String.raw`$\hat X|0\rangle=|1\rangle$ y $\hat X|1\rangle=|0\rangle$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`¿Cuál es la acción de Pauli-$Y$ sobre la base computacional?`, [
+String.raw`$\hat Y|0\rangle=|0\rangle$ y $\hat Y|1\rangle=-|1\rangle$.`,
+String.raw`$\hat Y|0\rangle=|+\rangle$ y $\hat Y|1\rangle=|-\rangle$.`,
+String.raw`$\hat Y|0\rangle=i|1\rangle$ y $\hat Y|1\rangle=-i|0\rangle$.`,
+String.raw`$\hat Y|0\rangle=|1\rangle$ y $\hat Y|1\rangle=|0\rangle$.`,
+], 2, String.raw`Intercambia estados e incorpora fases imaginarias.`, String.raw`La acción de $Y$ es $i|1\rangle$ sobre $|0\rangle$ y $-i|0\rangle$ sobre $|1\rangle$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`¿Cuál es la acción de Pauli-$Z$ sobre la base computacional?`, [
+String.raw`$\hat Z|0\rangle=|+\rangle$ y $\hat Z|1\rangle=|-\rangle$.`,
+String.raw`$\hat Z|0\rangle=|0\rangle$ y $\hat Z|1\rangle=-|1\rangle$.`,
+String.raw`$\hat Z|0\rangle=|1\rangle$ y $\hat Z|1\rangle=|0\rangle$.`,
+String.raw`$\hat Z|0\rangle=i|1\rangle$ y $\hat Z|1\rangle=-i|0\rangle$.`,
+], 1, String.raw`Solo cambia el signo del segundo vector.`, String.raw`$Z$ deja $|0\rangle$ y multiplica $|1\rangle$ por $-1$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`¿Qué produce Hadamard sobre los vectores de la base computacional?`, [
+String.raw`$\hat H|0\rangle=(|0\rangle+|1\rangle)/\sqrt2$ y $\hat H|1\rangle=(|0\rangle-|1\rangle)/\sqrt2$.`,
+String.raw`$\hat H|0\rangle=|1\rangle$ y $\hat H|1\rangle=|0\rangle$.`,
+String.raw`$\hat H|0\rangle=|0\rangle$ y $\hat H|1\rangle=-|1\rangle$.`,
+String.raw`$\hat H|0\rangle=i|1\rangle$ y $\hat H|1\rangle=-i|0\rangle$.`,
+], 0, String.raw`Crea dos superposiciones con signos relativos diferentes.`, String.raw`Hadamard transforma $|0\rangle$ en $|+\rangle$ y $|1\rangle$ en $|-\rangle$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`¿Cuál es la matriz de Pauli-$X$?`, [
+String.raw`$\begin{pmatrix}1&0\\0&-1\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}0&-i\\i&0\end{pmatrix}$`,
+String.raw`$\frac1{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}0&1\\1&0\end{pmatrix}$`,
+], 3, String.raw`Sus columnas son las imágenes de $|0\rangle$ y $|1\rangle$.`, String.raw`$X=\begin{pmatrix}0&1\\1&0\end{pmatrix}$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`¿Cuál es la matriz de Pauli-$Y$?`, [
+String.raw`$\begin{pmatrix}1&0\\0&-1\end{pmatrix}$`,
+String.raw`$\frac1{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}0&-i\\i&0\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}0&1\\1&0\end{pmatrix}$`,
+], 2, String.raw`La primera columna es $(0,i)^T$.`, String.raw`$Y=\begin{pmatrix}0&-i\\i&0\end{pmatrix}$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`¿Cuál es la matriz de Pauli-$Z$?`, [
+String.raw`$\frac1{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}1&0\\0&-1\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}0&1\\1&0\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}0&-i\\i&0\end{pmatrix}$`,
+], 1, String.raw`Es diagonal y cambia el signo de la segunda base.`, String.raw`$Z=\begin{pmatrix}1&0\\0&-1\end{pmatrix}$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`¿Cuál es la matriz de Hadamard?`, [
+String.raw`$\frac1{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}0&1\\1&0\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}1&0\\0&-1\end{pmatrix}$`,
+String.raw`$\frac1{\sqrt2}\begin{pmatrix}1&-1\\1&1\end{pmatrix}$`,
+], 0, String.raw`Sus columnas son $|+\rangle$ y $|-\rangle$ en coordenadas.`, String.raw`$H=\frac1{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`Para $|\psi\rangle=\alpha|0\rangle+\beta|1\rangle$, ¿qué produce $\hat X$?`, [
+String.raw`$\hat X|\psi\rangle=\alpha|0\rangle-\beta|1\rangle$.`,
+String.raw`$\hat X|\psi\rangle=(\alpha+\beta)|0\rangle$.`,
+String.raw`$\hat X|\psi\rangle=\alpha|1\rangle-\beta|0\rangle$.`,
+String.raw`$\hat X|\psi\rangle=\beta|0\rangle+\alpha|1\rangle$.`,
+], 3, String.raw`Pauli-$X$ intercambia las coordenadas.`, String.raw`$X\begin{pmatrix}\alpha\\\beta\end{pmatrix}=\begin{pmatrix}\beta\\\alpha\end{pmatrix}$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`Para $|\psi\rangle=\alpha|0\rangle+\beta|1\rangle$, ¿qué produce $\hat Y$?`, [
+String.raw`$\hat Y|\psi\rangle=\alpha|0\rangle-\beta|1\rangle$.`,
+String.raw`$\hat Y|\psi\rangle=i\alpha|0\rangle+i\beta|1\rangle$.`,
+String.raw`$\hat Y|\psi\rangle=-i\beta|0\rangle+i\alpha|1\rangle$.`,
+String.raw`$\hat Y|\psi\rangle=\beta|0\rangle+\alpha|1\rangle$.`,
+], 2, String.raw`Multiplicá $Y$ por $(\alpha,\beta)^T$.`, String.raw`$Y\begin{pmatrix}\alpha\\\beta\end{pmatrix}=\begin{pmatrix}-i\beta\\i\alpha\end{pmatrix}$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`Para $|\psi\rangle=\alpha|0\rangle+\beta|1\rangle$, ¿qué produce $\hat Z$?`, [
+String.raw`$\hat Z|\psi\rangle=(\alpha+\beta)|0\rangle$.`,
+String.raw`$\hat Z|\psi\rangle=\alpha|0\rangle-\beta|1\rangle$.`,
+String.raw`$\hat Z|\psi\rangle=\beta|0\rangle+\alpha|1\rangle$.`,
+String.raw`$\hat Z|\psi\rangle=-\alpha|0\rangle+\beta|1\rangle$.`,
+], 1, String.raw`$Z$ cambia el signo de la segunda componente.`, String.raw`$Z\begin{pmatrix}\alpha\\\beta\end{pmatrix}=\begin{pmatrix}\alpha\\-\beta\end{pmatrix}$.`),
+makeQuestion(String.raw`Operadores y matrices`, String.raw`Si $|\psi\rangle=\alpha|0\rangle+\beta|1\rangle$, ¿cuál es la expresión de $\hat H|\psi\rangle$?`, [
+String.raw`$\frac{\alpha+\beta}{\sqrt2}|0\rangle+\frac{\alpha-\beta}{\sqrt2}|1\rangle$.`,
+String.raw`$\frac{\alpha-\beta}{\sqrt2}|0\rangle+\frac{\alpha+\beta}{\sqrt2}|1\rangle$.`,
+String.raw`$\alpha|0\rangle-\beta|1\rangle$.`,
+String.raw`$\beta|0\rangle+\alpha|1\rangle$.`,
+], 0, String.raw`Usá las filas de $H$.`, String.raw`$\hat H|\psi\rangle=\frac{\alpha+\beta}{\sqrt2}|0\rangle+\frac{\alpha-\beta}{\sqrt2}|1\rangle$.`),
+makeQuestion(String.raw`Operadores unitarios`, String.raw`Si $\hat U$ es un operador unitario, ¿qué condición algebraica satisface?`, [
+String.raw`$\hat U^2=\hat U$ siempre.`,
+String.raw`$\hat U^\dagger=-\hat U$ siempre.`,
+String.raw`$\hat U^\dagger\hat U=\hat U\hat U^\dagger=\hat I$.`,
+String.raw`$\hat U^\dagger\hat U=0$.`,
+], 2, String.raw`La adjunta debe actuar como la inversa.`, String.raw`Un operador es unitario si $\hat U^\dagger\hat U=\hat U\hat U^\dagger=\hat I$.`),
+makeQuestion(String.raw`Operadores unitarios`, String.raw`¿Qué relación existe entre la inversa y la adjunta de un operador unitario?`, [
+String.raw`La inversa no existe.`,
+String.raw`$\hat U^{-1}=\hat U^\dagger$.`,
+String.raw`$\hat U^{-1}=\hat U$.`,
+String.raw`$\hat U^{-1}=0$.`,
+], 1, String.raw`La adjunta es la inversa de un operador unitario.`, String.raw`La unitariedad implica $\hat U^{-1}=\hat U^\dagger$ y expresa la reversibilidad de la evolución.`),
+makeQuestion(String.raw`Operadores unitarios`, String.raw`Si $\hat U$ es unitario y $|\phi\rangle$, $|\psi\rangle$ son estados, ¿qué magnitud preserva entre ellos?`, [
+String.raw`El producto interno $\langle\hat U\phi|\hat U\psi\rangle=\langle\phi|\psi\rangle$.`,
+String.raw`Solo la primera componente.`,
+String.raw`La fase global como número complejo exacto.`,
+String.raw`La cantidad de coordenadas, pero no la norma.`,
+], 0, String.raw`La norma es un caso particular del producto interno.`, String.raw`La unitariedad preserva productos internos, normas, solapamientos y ortogonalidad.`),
+makeQuestion(String.raw`Operadores unitarios`, String.raw`Para $D=\begin{pmatrix}1&0\\0&2\end{pmatrix}$, ¿cuánto vale $D^\dagger D$?`, [
+String.raw`$\begin{pmatrix}0&2\\2&0\end{pmatrix}$`,
+String.raw`$I$`,
+String.raw`$\begin{pmatrix}1&0\\0&4\end{pmatrix}$`,
+String.raw`$\begin{pmatrix}1&0\\0&2\end{pmatrix}$`,
+], 2, String.raw`La matriz es real y diagonal.`, String.raw`$D^\dagger D=\begin{pmatrix}1&0\\0&4\end{pmatrix}\neq I$, por eso $D$ no es unitaria.`),
+makeQuestion(String.raw`Operadores unitarios`, String.raw`Para $D=\begin{pmatrix}1&0\\0&2\end{pmatrix}$, ¿qué ocurre con la norma de $D|1\rangle$?`, [
+String.raw`No puede calcularse.`,
+String.raw`$\|\hat D|1\rangle\|=2$.`,
+String.raw`$\|\hat D|1\rangle\|=1$.`,
+String.raw`$\|\hat D|1\rangle\|=0$.`,
+], 1, String.raw`Aplicá $D$ al vector $|1\rangle$.`, String.raw`$D|1\rangle=2|1\rangle$, cuya norma es $2$. Por eso $D$ no puede representar una compuerta cuántica.`),
+makeQuestion(String.raw`Operadores unitarios`, String.raw`Para comprobar que $\hat A$ es unitario, ¿por qué no alcanza con comprobar que $\hat A|0\rangle=|+\rangle$ y $\hat A|1\rangle=|1\rangle$ están normalizados, donde $|+\rangle=(|0\rangle+|1\rangle)/\sqrt2$?`, [
+String.raw`También debe preservar el producto interno entre las entradas.`,
+String.raw`Porque toda salida normalizada debe ser $|0\rangle$.`,
+String.raw`Porque un operador no actúa sobre la base computacional.`,
+String.raw`Porque $|+\rangle$ no es válido.`,
+], 0, String.raw`Compará $\langle0|1\rangle$ con $\langle+|1\rangle$.`, String.raw`Aunque las salidas están normalizadas, $\langle+|1\rangle=1/\sqrt2\neq0=\langle0|1\rangle$. No se preserva la ortogonalidad.`),
+makeQuestion(String.raw`Operadores unitarios`, String.raw`Si el estado inicial es $|\psi_{inicial}\rangle$ y primero se aplica $\hat U_1$ y después $\hat U_2$, ¿cuál es el estado final?`, [
+String.raw`$|\psi_{\mathrm{final}}\rangle=\hat U_1\hat U_2|\psi_{\mathrm{inicial}}\rangle$.`,
+String.raw`$|\psi_{\mathrm{final}}\rangle=(\hat U_1+\hat U_2)|\psi_{\mathrm{inicial}}\rangle$.`,
+String.raw`$|\psi_{\mathrm{final}}\rangle=\hat U_1^{-1}\hat U_2^{-1}|\psi_{\mathrm{inicial}}\rangle$.`,
+String.raw`$|\psi_{\mathrm{final}}\rangle=\hat U_2\hat U_1|\psi_{\mathrm{inicial}}\rangle$.`,
+], 3, String.raw`La operación más cercana al ket se aplica primero.`, String.raw`Primero $\hat U_1$ y luego $\hat U_2$, por eso el producto es $\hat U_2\hat U_1$.`),
+makeQuestion(String.raw`Operadores unitarios`, String.raw`¿Por qué en general no se puede intercambiar el orden de dos operadores?`, [
+String.raw`Porque la segunda operación siempre se cancela.`,
+String.raw`Porque las matrices conmutan siempre.`,
+String.raw`Porque en general $\hat U_2\hat U_1\neq\hat U_1\hat U_2$.`,
+String.raw`Porque los operadores unitarios no pueden componerse.`,
+], 2, String.raw`La multiplicación matricial no es conmutativa en general.`, String.raw`Cambiar el orden puede cambiar el estado final y produce operadores distintos.`),
+makeQuestion(String.raw`Operadores unitarios`, String.raw`Para la matriz de Hadamard $H=\frac{1}{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$, ¿qué demuestra $H^\dagger H=I$?`, [
+String.raw`Que cambia la dimensión del qubit.`,
+String.raw`Que Hadamard es unitaria.`,
+String.raw`Que Hadamard es la identidad.`,
+String.raw`Que Hadamard no es invertible.`,
+], 1, String.raw`Es la condición matricial de unitariedad.`, String.raw`Como $H^\dagger H=I$, Hadamard es unitaria y puede representar una compuerta.`),
+makeQuestion(String.raw`Operadores unitarios`, String.raw`Si $H$ es la compuerta de Hadamard e $I$ la identidad, ¿qué significa $H^2=I$?`, [
+String.raw`Aplicar Hadamard dos veces devuelve cualquier estado a su estado inicial.`,
+String.raw`Aplicar Hadamard dos veces siempre produce $|1\rangle$.`,
+String.raw`Hadamard no puede aplicarse dos veces.`,
+String.raw`La segunda aplicación duplica las amplitudes.`,
+], 0, String.raw`El cuadrado del operador es la identidad.`, String.raw`La identidad $\hat H^2=\hat I$ implica $\hat H(\hat H|\psi\rangle)=|\psi\rangle$ para cualquier estado.`),
+makeQuestion(String.raw`Operadores unitarios`, String.raw`¿Cuál es la diferencia entre un operador lineal y una compuerta cuántica?`, [
+String.raw`Un operador lineal siempre actúa sobre dos qubits.`,
+String.raw`Una compuerta no puede representarse con una matriz.`,
+String.raw`No existe diferencia.`,
+String.raw`Una compuerta debe ser unitaria, mientras que no todo operador lineal lo es.`,
+], 3, String.raw`La linealidad sola no garantiza conservación de normas.`, String.raw`Toda compuerta es lineal, pero además debe ser unitaria para conservar normas y reversibilidad.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Para qué se utiliza SpinQit en este curso?`, [
+String.raw`Para dibujar solo gráficos clásicos.`,
+String.raw`Para leer directamente amplitudes en hardware.`,
+String.raw`Para describir, compilar, dibujar y ejecutar circuitos.`,
+String.raw`Para reemplazar complejos por naturales.`,
+], 2, String.raw`Pensá en el flujo circuito, compilador y backend.`, String.raw`SpinQit permite construir circuitos desde Python, compilarlos, dibujarlos, simularlos y enviarlos al hardware.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Cuál es la instrucción indicada para instalar SpinQit?`, [
+String.raw`pip install spinqit`,
+String.raw`python install quantum`,
+String.raw`install spinqit with conda solamente`,
+String.raw`pip remove spinqit`,
+], 0, String.raw`Es una instalación mediante el gestor de paquetes de Python.`, String.raw`Se indica usar 'pip install spinqit', preferentemente en un entorno virtual.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué componentes se importan para construir circuitos de un qubit en SpinQit?`, [
+String.raw`$\mathtt{Circuit}$ y las compuertas necesarias, entre otros.`,
+String.raw`Solo $\mathtt{BasicSimulatorConfig}$.`,
+String.raw`Únicamente $\mathtt{NMRConfig}$.`,
+String.raw`Solo una biblioteca de gráficos clásica.`,
+], 0, String.raw`Pensá en la clase que representa el circuito y en las operaciones que se aplican.`, String.raw`Para el circuito se importan $\mathtt{Circuit}$, compuertas como $H$, $X$, $Y$, $Z$ y la función $\mathtt{draw}$; luego se importan los simuladores y sus configuraciones cuando hacen falta.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué versiones de Python se recomiendan para trabajar con SpinQit?`, [
+String.raw`Cualquier versión, porque las dependencias no importan.`,
+String.raw`Solo Python 2.7.`,
+String.raw`Exclusivamente Python 4.`,
+String.raw`Python 3.8, 3.9 o 3.10`,
+], 3, String.raw`Se han reportado problemas con versiones recientes.`, String.raw`Se propone Python 3.8, 3.9 o 3.10 para evitar incompatibilidades.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué hace $\mathtt{circ = Circuit()}$?`, [
+String.raw`Mide automáticamente todos los qubits.`,
+String.raw`Construye la matriz de una compuerta.`,
+String.raw`Crea un circuito cuántico vacío.`,
+String.raw`Ejecuta el circuito en la Triangulum.`,
+], 2, String.raw`Todavía no se ha agregado ninguna operación.`, String.raw`$\mathtt{Circuit()}$ crea la estructura del circuito; después se asignan qubits y se agregan las compuertas.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué devuelve $\mathtt{circ.allocateQubits(1)}$?`, [
+String.raw`La matriz de Hadamard.`,
+String.raw`Una referencia a un qubit asignado, accesible como $\mathtt{q[0]}$.`,
+String.raw`El estado $\lvert 0\rangle$ ya medido.`,
+String.raw`Un diccionario de conteos.`,
+], 1, String.raw`La variable $\mathtt{q}$ se usa luego para indicar sobre qué qubit actúa una compuerta.`, String.raw`La asignación reserva un qubit del circuito y devuelve referencias para usarlo como $\mathtt{q[0]}$; no es todavía un resultado de medición.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Cuál es el estado inicial que SpinQit asigna a un qubit nuevo?`, [
+String.raw`$\lvert 0\rangle$.`,
+String.raw`$\lvert 1\rangle$.`,
+String.raw`$\lvert +\rangle$.`,
+String.raw`No tiene estado hasta ejecutar el circuito.`,
+], 0, String.raw`Antes de aplicar compuertas, el qubit comienza en el estado computacional $|0\rangle$.`, String.raw`En el modelo de circuitos de SpinQit, cada qubit nuevo comienza en $|0\rangle$ antes de aplicar compuertas.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Cómo se agrega una compuerta $X$ al qubit $\mathtt{q[0]}$?`, [
+String.raw`$\mathtt{circ = X(q[0])}$.`,
+String.raw`$\mathtt{q[0] << circ}$.`,
+String.raw`$\mathtt{circ.addState(X)}$.`,
+String.raw`$\mathtt{circ << (X, q[0])}$.`,
+], 3, String.raw`La operación se agrega al circuito junto con la referencia del qubit.`, String.raw`La sintaxis usada es $\mathtt{circ << (X, q[0])}$; representa la aplicación de $X$ sobre el qubit cero.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué expresa $\mathtt{q[0]}$ en una instrucción de SpinQit?`, [
+String.raw`El número de shots.`,
+String.raw`La matriz de la compuerta.`,
+String.raw`La referencia al primer qubit del circuito.`,
+String.raw`La amplitud del estado del qubit.`,
+], 2, String.raw`Es un identificador que permite indicar el destino de la compuerta.`, String.raw`$\mathtt{q[0]}$ es la referencia al primer qubit; no es el ket ni su vector de amplitudes.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Para qué se compila un circuito antes de ejecutarlo?`, [
+String.raw`Para eliminar las compuertas del circuito.`,
+String.raw`Para traducirlo a una representación intermedia que el backend pueda ejecutar.`,
+String.raw`Para convertir todas las amplitudes en probabilidades clásicas.`,
+String.raw`Para medirlo y fijar sus resultados.`,
+], 1, String.raw`La compilación adapta la descripción del circuito al backend elegido.`, String.raw`$\mathtt{compiler.compile(circ, 0)}$ produce una representación intermedia, almacenada en $\mathtt{ir}$, que luego recibe el motor de ejecución.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué representa la variable $\mathtt{ir}$ en $\mathtt{ir=compiler.compile(circ, 0)}$?`, [
+String.raw`La representación intermedia compilada del circuito.`,
+String.raw`El registro de mediciones.`,
+String.raw`El número de qubits.`,
+String.raw`El inverso de la matriz del circuito.`,
+], 0, String.raw`Es el objeto que se obtiene después de compilar.`, String.raw`$\mathtt{ir}$ contiene la representación intermedia compilada que se entrega al motor de ejecución y a $\mathtt{draw}$.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué llamada de SpinQit dibuja el circuito compilado en un archivo PNG?`, [
+String.raw`$\mathtt{draw(q[0], circ)}$.`,
+String.raw`$\mathtt{plot(circ)}$.`,
+String.raw`$\mathtt{show\_matrix(engine)}$.`,
+String.raw`$\mathtt{draw(ir, \text{"circuito.png"})}$.`,
+], 3, String.raw`La función recibe la representación intermedia y un nombre de archivo.`, String.raw`$\mathtt{draw(ir, \text{"circuito.png"})}$ genera una imagen del circuito compilado para inspeccionarlo visualmente.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué función se usa para obtener el simulador básico?`, [
+String.raw`$\mathtt{get\_nmr()}$.`,
+String.raw`$\mathtt{BasicSimulatorConfig()}$.`,
+String.raw`$\mathtt{get\_basic\_simulator()}$.`,
+String.raw`$\mathtt{get\_compiler(\text{"native"})}$.`,
+], 2, String.raw`El compilador y la configuración son objetos diferentes del motor.`, String.raw`$\mathtt{get\_basic\_simulator()}$ crea el motor que ejecutará la representación compilada en el simulador ideal.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué objeto configura la cantidad de repeticiones de una ejecución del simulador?`, [
+String.raw`$\mathtt{NMRConfig}$ siempre.`,
+String.raw`$\mathtt{BasicSimulatorConfig}$.`,
+String.raw`$\mathtt{Circuit}$.`,
+String.raw`$\mathtt{draw}$.`,
+], 1, String.raw`La configuración del backend contiene los parámetros de ejecución.`, String.raw`En el simulador básico se crea $\mathtt{config = BasicSimulatorConfig()}$ y se configura allí la cantidad de shots.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué hace $\mathtt{config.configure\_shots(1024)}$?`, [
+String.raw`Solicita 1024 repeticiones de la medición.`,
+String.raw`Fija el estado inicial en $\lvert 1024\rangle$.`,
+String.raw`Crea 1024 qubits en el circuito.`,
+String.raw`Aplica 1024 veces la compuerta $X$.`,
+], 0, String.raw`Un shot es una ejecución o repetición del experimento de medición.`, String.raw`$\mathtt{configure\_shots(1024)}$ establece que se realizarán 1024 shots, no que se creen qubits adicionales.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué qubit solicita medir $\mathtt{config.configure\_measure\_qubits([0])}$?`, [
+String.raw`Todos los qubits de la máquina Triangulum.`,
+String.raw`El qubit número 1024.`,
+String.raw`Ninguno.`,
+String.raw`Solo el qubit de índice 0.`,
+], 3, String.raw`El índice dentro de la lista es $0$.`, String.raw`La instrucción $\mathtt{config.configure\_measure\_qubits([0])}$ selecciona el qubit de índice $0$ para la medición.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué objeto devuelve $\mathtt{engine.execute(ir, config)}$?`, [
+String.raw`La lista de qubits sin medir.`,
+String.raw`Un archivo PNG.`,
+String.raw`Un resultado con información de la ejecución, como $\mathtt{counts}$, $\mathtt{probabilities}$ y eventualmente $\mathtt{states}$.`,
+String.raw`Una nueva matriz de Hadamard.`,
+], 2, String.raw`La ejecución produce datos que se pueden inspeccionar con atributos del resultado.`, String.raw`El resultado permite consultar conteos, probabilidades y, en el simulador, el vector de estado cuando está disponible.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué resultado ideal se espera al aplicar $X$ a un qubit que comienza en $\lvert 0\rangle$?`, [
+String.raw`Un estado no normalizado.`,
+String.raw`$\lvert 1\rangle$ con probabilidad 1.`,
+String.raw`$\lvert 0\rangle$ con probabilidad 1/2.`,
+String.raw`$\lvert +\rangle$ con probabilidad 1.`,
+], 1, String.raw`La compuerta $X$ intercambia $\lvert 0\rangle$ y $\lvert 1\rangle$.`, String.raw`Como $X\lvert 0\rangle=\lvert 1\rangle$, el simulador ideal debe producir el conteo de 1 en todos los shots.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué conteos ideales aparecen para $X\lvert 0\rangle$ con 1024 shots?`, [
+String.raw`$\mathtt{\{\text{"1"}: 1024\}}$.`,
+String.raw`$\mathtt{\{\text{"0"}: 512, \text{"1"}: 512\}}$.`,
+String.raw`$\mathtt{\{\text{"0"}: 1024, \text{"1"}: 0\}}$.`,
+String.raw`Un vector de amplitudes en lugar de conteos.`,
+], 0, String.raw`Primero aplicá $X$ al estado inicial $\lvert 0\rangle$.`, String.raw`En el simulador ideal, cada uno de los 1024 shots obtiene el resultado 1, por lo que $\mathtt{counts}$ es $\mathtt{\{\text{"1"}: 1024\}}$.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué estado prepara $H$ a partir de $\lvert 0\rangle$?`, [
+String.raw`$\lvert-\rangle=(\lvert0\rangle-\lvert1\rangle)/\sqrt{2}$.`,
+String.raw`$\lvert1\rangle$.`,
+String.raw`$\lvert0\rangle-\lvert1\rangle$ sin normalizar.`,
+String.raw`$\lvert+\rangle=(\lvert0\rangle+\lvert1\rangle)/\sqrt{2}$.`,
+], 3, String.raw`Usá la primera columna de la matriz de Hadamard.`, String.raw`$H\lvert0\rangle=\lvert+\rangle=(\lvert0\rangle+\lvert1\rangle)/\sqrt{2}$, una superposición normalizada.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué distribución ideal de mediciones produce $H\lvert 0\rangle$ en la base computacional?`, [
+String.raw`Probabilidad 1 para 1.`,
+String.raw`Probabilidad $1/4$ para cada resultado.`,
+String.raw`Probabilidad $1/2$ para 0 y $1/2$ para 1.`,
+String.raw`Probabilidad 1 para 0.`,
+], 2, String.raw`Las dos amplitudes tienen módulo $1/\sqrt{2}$.`, String.raw`Al elevar al cuadrado los módulos de las amplitudes de $\lvert+\rangle$, se obtiene $P(0)=P(1)=1/2$.`),
+makeQuestion(String.raw`SpinQit`, String.raw`Al ejecutar $H\lvert0\rangle$ con 1024 shots en hardware real, ¿por qué los conteos pueden no ser exactamente 512 y 512?`, [
+String.raw`Porque el hardware cambia al azar la matriz de $H$ en cada shot.`,
+String.raw`Por el muestreo de una cantidad finita de shots y el ruido del hardware.`,
+String.raw`Porque $H$ no es un operador unitario cuando se ejecuta en hardware.`,
+String.raw`Porque en hardware las probabilidades ideales suman 2 en lugar de 1.`,
+], 1, String.raw`Hay dos efectos: cada shot es una medición aleatoria y el dispositivo físico no es perfecto.`, String.raw`Las probabilidades ideales fijan las frecuencias esperadas, no los conteos exactos de una muestra finita: aun con un dispositivo perfecto, obtendríamos valores cercanos a 512 sin coincidir exactamente. Además, el hardware real introduce ruido, decoherencia y errores de compuerta y de medición, que desplazan la distribución respecto de la ideal. En cambio, el $\mathtt{BasicSimulator}$ de SpinQit no simula ese muestreo aleatorio e informa directamente los conteos ideales, 512 y 512.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué diferencia hay entre el vector de estado y $\mathtt{counts}$?`, [
+String.raw`El vector contiene amplitudes; $\mathtt{counts}$ contiene frecuencias de resultados de medición.`,
+String.raw`Ambos contienen siempre las mismas amplitudes complejas.`,
+String.raw`El vector solo existe después de medir y $\mathtt{counts}$ antes de ejecutar.`,
+String.raw`No hay diferencia conceptual.`,
+], 0, String.raw`Una medición entrega resultados clásicos, no las amplitudes directamente.`, String.raw`El estado puede escribirse, para un qubit, como $\alpha\lvert0\rangle+\beta\lvert1\rangle$; $\mathtt{counts}$ resume cuántas veces apareció cada resultado al medir.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué cantidad determina la probabilidad de un resultado cuya amplitud compleja es $a$?`, [
+String.raw`Su parte real solamente.`,
+String.raw`Su argumento solamente.`,
+String.raw`El número de shots, sin importar $a$.`,
+String.raw`Su módulo al cuadrado, $\lvert a\rvert^2$.`,
+], 3, String.raw`La regla de Born utiliza el módulo al cuadrado de la amplitud.`, String.raw`La probabilidad asociada a esa amplitud es $|a|^2$; la fase puede ser crucial para la interferencia aunque no cambie esa probabilidad en una medición aislada.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué afirmación compara correctamente el simulador básico y el hardware real?`, [
+String.raw`El simulador básico reproduce automáticamente toda decoherencia del hardware.`,
+String.raw`No se pueden ejecutar circuitos en ninguno de los dos.`,
+String.raw`El simulador ideal sirve como línea de base y el hardware puede mostrar ruido y errores adicionales.`,
+String.raw`El hardware siempre produce exactamente el vector ideal.`,
+], 2, String.raw`El simulador permite separar el efecto ideal de las imperfecciones experimentales.`, String.raw`El $\mathtt{BasicSimulator}$ calcula el comportamiento ideal; la ejecución en la SpinQ Triangulum puede apartarse por ruido, decoherencia y errores de medición o de compuerta.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Por qué una medición en la base computacional puede no revelar la fase relativa de un estado?`, [
+String.raw`Porque $\mathtt{counts}$ siempre muestra amplitudes complejas.`,
+String.raw`Porque esa medición solo usa los módulos al cuadrado de las amplitudes.`,
+String.raw`Porque la fase relativa no existe.`,
+String.raw`Porque todos los estados tienen la misma fase absoluta.`,
+], 1, String.raw`La medición computacional usa los módulos al cuadrado de las amplitudes.`, String.raw`Los conteos de una medición en la base computacional muestran probabilidades; una fase relativa puede conservar esos módulos y hacerse visible después mediante interferencia.`),
+makeQuestion(String.raw`SpinQit`, String.raw`¿Qué archivo genera $\mathtt{draw(ir, \text{"circuito.png"})}$?`, [
+String.raw`Una imagen PNG del circuito.`,
+String.raw`Una tabla de amplitudes solamente.`,
+String.raw`Una configuración NMR.`,
+String.raw`Un nuevo circuito sin compilar.`,
+], 0, String.raw`La segunda cadena indica el nombre del archivo de imagen.`, String.raw`La llamada $\mathtt{draw(ir, \text{"circuito.png"})}$ guarda una imagen PNG del circuito compilado.`),
+makeQuestion(String.raw`SpinQit`, String.raw`Si un circuito de un qubit comienza en $|0\rangle$ y la instrucción actual es $\mathtt{circ << (X, q[0])}$, ¿por cuál debe reemplazarse para preparar $|+\rangle$?`, [
+String.raw`La base computacional por una base de tres qubits.`,
+String.raw`El estado inicial por un conteo clásico.`,
+String.raw`El compilador por una medición.`,
+String.raw`La operación agregada al circuito: reemplazar $X$ por $H$.`,
+], 3, String.raw`$H|0\rangle=|+\rangle$.`, String.raw`Para preparar $|+\rangle$ desde $|0\rangle$, se reemplaza la instrucción que aplica $X$ por $\mathtt{circ << (H, q[0])}$.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`¿Qué representa un punto de la esfera de Bloch para un qubit?`, [
+String.raw`Solo un resultado clásico de medición.`,
+String.raw`Un circuito de dos qubits.`,
+String.raw`Un estado puro de un qubit, ignorando su fase global.`,
+String.raw`Cualquier matriz cuadrada, aunque no represente un estado.`,
+], 2, String.raw`La esfera resume los estados puros de un qubit.`, String.raw`Cada punto de la esfera de Bloch representa un estado puro de un qubit, identificando como equivalente la fase global.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`En la Esfera de Bloch, ¿cuál es la forma general usada para un estado puro de un qubit?`, [
+String.raw`$\lvert\psi\rangle=\lvert0\rangle+\lvert1\rangle$ sin normalizar.`,
+String.raw`$\lvert\psi\rangle=\cos\left(\frac{\theta}{2}\right)\lvert0\rangle+e^{i\varphi}\sin\left(\frac{\theta}{2}\right)\lvert1\rangle$.`,
+String.raw`$\lvert\psi\rangle=\cos(\theta)\lvert0\rangle+\sin(\varphi)\lvert1\rangle$ siempre.`,
+String.raw`$\lvert\psi\rangle=\theta\lvert0\rangle+\varphi\lvert1\rangle$.`,
+], 1, String.raw`La normalización y la fase relativa aparecen en los coeficientes.`, String.raw`Salvo una fase global, todo estado puro de un qubit puede escribirse con los ángulos $\theta$ y $\varphi$ en esa forma.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`¿Qué controla principalmente el ángulo $\theta$ en la esfera de Bloch?`, [
+String.raw`La posición entre los polos y el ecuador, y por tanto los módulos de las amplitudes.`,
+String.raw`Solo la fase global.`,
+String.raw`El número de shots.`,
+String.raw`La elección del backend.`,
+], 0, String.raw`Mirá los casos $\theta=0$, $\theta=\pi/2$ y $\theta=\pi$.`, String.raw`$\theta$ determina la latitud: fija cuánto pesa $\lvert0\rangle$ y cuánto pesa $\lvert1\rangle$ en los módulos de las amplitudes.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`En la parametrización $|\psi\rangle=\cos(\theta/2)|0\rangle+e^{i\varphi}\sin(\theta/2)|1\rangle$, ¿qué representa el ángulo $\varphi$?`, [
+String.raw`La norma total del estado.`,
+String.raw`La cantidad de qubits del circuito.`,
+String.raw`El número de mediciones realizadas.`,
+String.raw`La fase relativa entre las componentes de $\lvert0\rangle$ y $\lvert1\rangle$.`,
+], 3, String.raw`Es el ángulo alrededor del eje vertical de la esfera.`, String.raw`El ángulo $\varphi$ fija el azimut y codifica la fase relativa $e^{i\varphi}$ entre las componentes computacionales.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`¿Qué estado corresponde al polo norte de la esfera de Bloch?`, [
+String.raw`$\lvert+\rangle$.`,
+String.raw`$\lvert-\rangle$.`,
+String.raw`$\lvert0\rangle$.`,
+String.raw`$\lvert1\rangle$.`,
+], 2, String.raw`En la parametrización, probá $\theta=0$.`, String.raw`Con $\theta=0$, el término de $\lvert1\rangle$ se anula y queda $\lvert\psi\rangle=\lvert0\rangle$, el polo norte.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`¿Qué estado corresponde al polo sur de la esfera de Bloch?`, [
+String.raw`$\lvert-\rangle$.`,
+String.raw`$\lvert1\rangle$.`,
+String.raw`$\lvert0\rangle$.`,
+String.raw`$\lvert+\rangle$.`,
+], 1, String.raw`En la parametrización, probá $\theta=\pi$.`, String.raw`Con $\theta=\pi$, el término de $\lvert0\rangle$ se anula y queda $\lvert\psi\rangle=e^{i\varphi}\lvert1\rangle$, que representa el mismo rayo que $\lvert1\rangle$.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`¿Qué caracteriza a los estados del ecuador de la esfera?`, [
+String.raw`Tienen igual módulo en las amplitudes de $\lvert0\rangle$ y $\lvert1\rangle$, por lo que sus probabilidades computacionales son $1/2$ y $1/2$.`,
+String.raw`Siempre son estados clásicos sin superposición.`,
+String.raw`Tienen probabilidad 1 para $\lvert0\rangle$.`,
+String.raw`No están normalizados.`,
+], 0, String.raw`En el ecuador, $\theta=\pi/2$.`, String.raw`Para $\theta=\pi/2$, ambas amplitudes tienen módulo $1/\sqrt2$; la fase relativa puede variar alrededor del ecuador sin cambiar esas probabilidades aisladas.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`¿Por qué una fase global no cambia el punto de la esfera de Bloch?`, [
+String.raw`Porque transforma siempre $\lvert0\rangle$ en $\lvert1\rangle$.`,
+String.raw`Porque elimina la fase relativa entre componentes.`,
+String.raw`Porque cambia la cantidad de qubits.`,
+String.raw`Porque multiplica todo el ket por el mismo factor y no modifica el rayo físico.`,
+], 3, String.raw`Compará $e^{i\gamma}\lvert\psi\rangle$ con $\lvert\psi\rangle$.`, String.raw`La fase global $e^{i\gamma}$ multiplica todas las componentes por igual; por eso representa el mismo rayo físico y no aparece como una coordenada observable en la esfera.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`¿Qué diferencia conceptual hay entre fase global y fase relativa?`, [
+String.raw`Ambas cambian únicamente la norma.`,
+String.raw`No existe diferencia entre ellas.`,
+String.raw`La global afecta a todo el estado por igual; la relativa compara las fases de sus componentes y puede producir interferencia.`,
+String.raw`La global siempre se mide directamente y la relativa nunca importa.`,
+], 2, String.raw`La interferencia depende de cómo se combinan las amplitudes entre caminos o componentes.`, String.raw`Una fase global no altera predicciones; una fase relativa sí puede modificar las sumas de amplitudes después de aplicar otras compuertas.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`¿Qué relación tienen dos estados puros ortogonales en la esfera de Bloch?`, [
+String.raw`Se representan mediante puntos antipodales.`,
+String.raw`Siempre ocupan el mismo punto.`,
+String.raw`Uno de ellos queda fuera de la esfera.`,
+String.raw`Se representan en puntos con la misma coordenada $z$.`,
+], 0, String.raw`En una esfera, antipodal significa estar en extremos opuestos de un diámetro.`, String.raw`Los estados puros ortogonales corresponden a puntos antipodales; por ejemplo, $\lvert0\rangle$ y $\lvert1\rangle$ son los polos opuestos.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`¿Qué hace $Z$ sobre los estados de la base computacional?`, [
+String.raw`$Z\lvert0\rangle=\lvert1\rangle$ y $Z\lvert1\rangle=\lvert0\rangle$.`,
+String.raw`$Z\lvert0\rangle=\lvert+\rangle$ y $Z\lvert1\rangle=\lvert-\rangle$.`,
+String.raw`$Z\lvert0\rangle=0$ y $Z\lvert1\rangle=0$.`,
+String.raw`$Z\lvert0\rangle=\lvert0\rangle$ y $Z\lvert1\rangle=-\lvert1\rangle$.`,
+], 3, String.raw`La matriz de $Z$ es diagonal.`, String.raw`$Z$ conserva $\lvert0\rangle$ y cambia el signo de $\lvert1\rangle$.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`¿Qué efecto tiene $Z$ sobre $|+\rangle=(|0\rangle+|1\rangle)/\sqrt2$?`, [
+String.raw`$Z\lvert+\rangle=\lvert1\rangle$.`,
+String.raw`$Z\lvert+\rangle=0$.`,
+String.raw`$Z\lvert+\rangle=\lvert-\rangle$.`,
+String.raw`$Z\lvert+\rangle=\lvert+\rangle$.`,
+], 2, String.raw`$Z$ deja igual a $|0\rangle$ y cambia el signo de $|1\rangle$.`, String.raw`Al aplicar $Z$ a $|+\rangle$, se obtiene $| - \rangle=(|0\rangle-|1\rangle)/\sqrt2$. La compuerta cambió la fase relativa.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`Si $|+\rangle=(|0\rangle+|1\rangle)/\sqrt2$ y $| - \rangle=(|0\rangle-|1\rangle)/\sqrt2$, ¿qué ocurre al medirlos directamente en la base computacional?`, [
+String.raw`No se pueden normalizar.`,
+String.raw`Ambos producen $0$ y $1$ con probabilidad $1/2$; se diferencian en la fase relativa.`,
+String.raw`Uno produce siempre 0 y el otro siempre 1.`,
+String.raw`Ambos producen siempre 0.`,
+], 1, String.raw`Calculá el módulo al cuadrado de cada amplitud en la base computacional.`, String.raw`Los signos opuestos no cambian los módulos de las amplitudes: ambos estados producen $0$ y $1$ con probabilidad $1/2$. La fase relativa se distingue mediante interferencia o una medición en otra base.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`Si $|+\rangle=(|0\rangle+|1\rangle)/\sqrt2$ y $| - \rangle=(|0\rangle-|1\rangle)/\sqrt2$, ¿por qué son ortogonales?`, [
+String.raw`Porque $\langle+|-\rangle=0$.`,
+String.raw`Porque tienen la misma probabilidad en la base computacional.`,
+String.raw`Porque ambos son el mismo estado físico.`,
+String.raw`Porque uno no está normalizado.`,
+], 0, String.raw`Calculá el producto interno entre ambos estados.`, String.raw`$\langle +| - \rangle=0$: los términos de las componentes $|0\rangle$ y $|1\rangle$ se cancelan.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`¿Cómo se interpretan $X$, $Y$ y $Z$ en la esfera de Bloch?`, [
+String.raw`Como traslaciones que cambian la cantidad de dimensiones.`,
+String.raw`Como mediciones clásicas que destruyen siempre el estado.`,
+String.raw`Como tres proyecciones sobre el mismo eje.`,
+String.raw`Como rotaciones de $180^\circ$ alrededor de los ejes $x$, $y$ y $z$, respectivamente, salvo fase global cuando corresponda.`,
+], 3, String.raw`Cada compuerta de Pauli está asociada con uno de los ejes.`, String.raw`Geométricamente, las compuertas de Pauli se visualizan como rotaciones de media vuelta alrededor de sus ejes en la esfera de Bloch.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`¿Qué interpretación geométrica se da a $H$ en la esfera de Bloch?`, [
+String.raw`Una medición que lleva todo al polo norte.`,
+String.raw`Una operación que no conserva la norma.`,
+String.raw`Una rotación de $180^\circ$ alrededor de un eje situado entre los ejes $x$ y $z$.`,
+String.raw`Una rotación de $90^\circ$ alrededor del eje $y$ exclusivamente.`,
+], 2, String.raw`La matriz de Hadamard combina las direcciones $x$ y $z$.`, String.raw`En la representación de Bloch, $H$ puede interpretarse como una media vuelta alrededor de un eje inclinado, a $45^\circ$ entre $x$ y $z$.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`¿Qué valores usuales toman los ángulos de la parametrización de Bloch?`, [
+String.raw`Ambos ángulos deben ser negativos.`,
+String.raw`$0\leq\theta\leq\pi$ y $0\leq\varphi<2\pi$.`,
+String.raw`$0\leq\theta<2\pi$ y $0\leq\varphi\leq\pi$.`,
+String.raw`$\theta=\varphi=1$ siempre.`,
+], 1, String.raw`$\theta$ recorre de un polo al otro y $\varphi$ da una vuelta alrededor del eje vertical.`, String.raw`Una elección habitual es $\theta\in[0,\pi]$ y $\varphi\in[0,2\pi)$; los extremos del intervalo de $\varphi$ representan la misma dirección azimutal.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`Para $|\psi\rangle=\cos(\theta/2)|0\rangle+e^{i\varphi}\sin(\theta/2)|1\rangle$, ¿qué estado se obtiene cuando $\theta=\pi/2$ y $\varphi=0$?`, [
+String.raw`$\lvert+\rangle=(\lvert0\rangle+\lvert1\rangle)/\sqrt2$.`,
+String.raw`$\lvert-\rangle=(\lvert0\rangle-\lvert1\rangle)/\sqrt2$.`,
+String.raw`$\lvert0\rangle$.`,
+String.raw`$\lvert1\rangle$.`,
+], 0, String.raw`$\cos(\pi/4)=\sin(\pi/4)=1/\sqrt2$.`, String.raw`Con esos valores, $|\psi\rangle=(|0\rangle+|1\rangle)/\sqrt2=|+\rangle$.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`Para $|\psi\rangle=\cos(\theta/2)|0\rangle+e^{i\varphi}\sin(\theta/2)|1\rangle$, ¿qué estado se obtiene cuando $\theta=\pi/2$ y $\varphi=\pi$?`, [
+String.raw`$\lvert+\rangle=(\lvert0\rangle+\lvert1\rangle)/\sqrt2$.`,
+String.raw`$\lvert0\rangle$.`,
+String.raw`$\lvert1\rangle$.`,
+String.raw`$\lvert-\rangle=(\lvert0\rangle-\lvert1\rangle)/\sqrt2$.`,
+], 3, String.raw`$e^{i\pi}=-1$ y $\cos(\pi/4)=\sin(\pi/4)=1/\sqrt2$.`, String.raw`Con esos valores, $|\psi\rangle=(|0\rangle-|1\rangle)/\sqrt2=| - \rangle$.`),
+makeQuestion(String.raw`Esfera de Bloch y fase`, String.raw`Si una fase relativa no se distingue al medir en la base computacional, ¿qué cambio en el circuito puede hacerla visible?`, [
+String.raw`Eliminar la normalización del estado.`,
+String.raw`Cambiar el nombre del qubit.`,
+String.raw`Aplicar una compuerta adecuada antes de medir, para transformar fases en diferencias de probabilidades.`,
+String.raw`Aumentar la fase global sin cambiar el circuito.`,
+], 2, String.raw`La medición computacional por sí sola puede ocultar la fase.`, String.raw`Una compuerta como $H$ mezcla las componentes; al interferir, una fase relativa puede cambiar las probabilidades observadas en la base computacional.`),
+makeQuestion(String.raw`Interferencia`, String.raw`¿Qué identidad satisface la compuerta de Hadamard?`, [
+String.raw`$H^2=I$.`,
+String.raw`$H^2=0$.`,
+String.raw`$H^2=H$ para todo estado.`,
+String.raw`$H^{-1}=0$.`,
+], 0, String.raw`Aplicar $H$ dos veces devuelve cada estado a su estado inicial.`, String.raw`La compuerta de Hadamard es involutiva: $H^2=I$, por lo que $H^{-1}=H$.`),
+makeQuestion(String.raw`Interferencia`, String.raw`¿Qué estado se obtiene al aplicar $H$ dos veces a $\lvert0\rangle$?`, [
+String.raw`$\lvert1\rangle$.`,
+String.raw`$\lvert+\rangle$.`,
+String.raw`$\lvert-\rangle$.`,
+String.raw`$\lvert0\rangle$.`,
+], 3, String.raw`La primera aplicación produce $\lvert+\rangle$ y la segunda deshace ese cambio.`, String.raw`$H\lvert0\rangle=\lvert+\rangle$ y $H\lvert+\rangle=\lvert0\rangle$; por eso el circuito $HH$ devuelve $\lvert0\rangle$.`),
+makeQuestion(String.raw`Interferencia`, String.raw`Si $|+\rangle=(|0\rangle+|1\rangle)/\sqrt2$, ¿qué ocurre al aplicar $H$?`, [
+String.raw`$H\lvert+\rangle=\lvert-\rangle$.`,
+String.raw`$H\lvert+\rangle=0$.`,
+String.raw`$H\lvert+\rangle=\lvert0\rangle$.`,
+String.raw`$H\lvert+\rangle=\lvert1\rangle$.`,
+], 2, String.raw`Usá que $H^2=I$ y que $H|0\rangle=|+\rangle$.`, String.raw`Como $|+\rangle=H|0\rangle$ y $H^2=I$, se obtiene $H|+\rangle=|0\rangle$.`),
+makeQuestion(String.raw`Interferencia`, String.raw`Si $| - \rangle=(|0\rangle-|1\rangle)/\sqrt2$, ¿qué ocurre al aplicar $H$?`, [
+String.raw`$H\lvert-\rangle=0$.`,
+String.raw`$H\lvert-\rangle=\lvert1\rangle$.`,
+String.raw`$H\lvert-\rangle=\lvert0\rangle$.`,
+String.raw`$H\lvert-\rangle=\lvert+\rangle$.`,
+], 1, String.raw`El estado $| - \rangle$ es la imagen de $|1\rangle$ al aplicar $H$.`, String.raw`Como $| - \rangle=H|1\rangle$ y $H^2=I$, se obtiene $H| - \rangle=|1\rangle$.`),
+makeQuestion(String.raw`Interferencia`, String.raw`Al aplicar $H$ a $|+\rangle=(|0\rangle+|1\rangle)/\sqrt2$, ¿qué significa la interferencia constructiva?`, [
+String.raw`Las contribuciones a $\lvert0\rangle$ se suman y se refuerzan entre sí.`,
+String.raw`Todas las amplitudes se vuelven probabilidades antes de sumarse.`,
+String.raw`El estado deja de estar normalizado.`,
+String.raw`Se elimina la fase global mediante una medición.`,
+], 0, String.raw`En este caso, las dos contribuciones a $|0\rangle$ tienen el mismo signo.`, String.raw`Al aplicar $H$ a $|+\rangle$, las contribuciones se refuerzan en $|0\rangle$ y se cancelan en $|1\rangle$; por eso el resultado es $|0\rangle$.`),
+makeQuestion(String.raw`Interferencia`, String.raw`Al aplicar $H$ a $| - \rangle=(|0\rangle-|1\rangle)/\sqrt2$, ¿qué significa la interferencia destructiva?`, [
+String.raw`La probabilidad de $\lvert1\rangle$ se duplica.`,
+String.raw`La norma del estado se vuelve negativa.`,
+String.raw`El circuito deja de ser lineal.`,
+String.raw`Las contribuciones a $\lvert0\rangle$ se cancelan entre sí.`,
+], 3, String.raw`El signo negativo hace que las contribuciones a $|0\rangle$ se cancelen.`, String.raw`Al aplicar $H$ a $| - \rangle$, hay cancelación en $|0\rangle$ y refuerzo en $|1\rangle$; por eso el resultado es $|1\rangle$.`),
+makeQuestion(String.raw`Interferencia`, String.raw`En un circuito que aplica primero $H$ y luego $Z$, ¿qué estado se obtiene desde $\lvert0\rangle$?`, [
+String.raw`$\lvert0\rangle$.`,
+String.raw`$\lvert1\rangle$.`,
+String.raw`$\lvert-\rangle$.`,
+String.raw`$\lvert+\rangle$.`,
+], 2, String.raw`La primera compuerta produce $\lvert+\rangle$ y $Z\lvert+\rangle=\lvert-\rangle$.`, String.raw`El circuito deja $\lvert0\rangle$ en $\lvert+\rangle$ y luego cambia el signo de la componente $\lvert1\rangle$, obteniendo $\lvert-\rangle$.`),
+makeQuestion(String.raw`Interferencia`, String.raw`¿Qué probabilidades se observan en la base computacional después de aplicar primero $H$ y luego $Z$ a $\lvert0\rangle$?`, [
+String.raw`$P(0)=P(1)=0$.`,
+String.raw`$P(0)=P(1)=1/2$.`,
+String.raw`$P(0)=1$ y $P(1)=0$.`,
+String.raw`$P(0)=0$ y $P(1)=1$.`,
+], 1, String.raw`$Z$ cambia una fase, pero no los módulos de las dos amplitudes.`, String.raw`El estado final es $\lvert-\rangle$, que tiene amplitudes de igual módulo; por eso sus conteos computacionales siguen siendo mitad y mitad.`),
+makeQuestion(String.raw`Interferencia`, String.raw`¿Por qué el circuito que aplica $H$, luego $Z$ y luego $H$ al estado $|0\rangle$ revela la fase relativa introducida por $Z$?`, [
+String.raw`Porque $H$ convierte la fase relativa en interferencia y cambia las probabilidades de medición.`,
+String.raw`Porque $H$ elimina toda información del estado.`,
+String.raw`Porque $Z$ no había actuado realmente.`,
+String.raw`Porque la segunda medición entrega amplitudes complejas.`,
+], 0, String.raw`El primer $H$ prepara $|+\rangle$ y $Z$ lo transforma en $| - \rangle$.`, String.raw`El primer $H$ prepara $|+\rangle$, $Z$ cambia su fase relativa y el segundo $H$ convierte $| - \rangle$ en $|1\rangle$. Así la fase se vuelve observable como un cambio en las probabilidades.`),
+makeQuestion(String.raw`Interferencia`, String.raw`¿Cuál es el estado final del circuito $HZH$ aplicado a $\lvert0\rangle$?`, [
+String.raw`$\lvert0\rangle$.`,
+String.raw`$\lvert+\rangle$.`,
+String.raw`$\lvert-\rangle$.`,
+String.raw`$\lvert1\rangle$.`,
+], 3, String.raw`Seguí la evolución: $\lvert0\rangle\to\lvert+\rangle\to\lvert-\rangle\to\lvert1\rangle$.`, String.raw`El circuito produce $\lvert1\rangle$: primero $H$ prepara $\lvert+\rangle$, luego $Z$ lo convierte en $\lvert-\rangle$ y el último $H$ lo lleva a $\lvert1\rangle$.`),
+makeQuestion(String.raw`Interferencia`, String.raw`¿Qué conteo ideal produce $HZH$ sobre $\lvert0\rangle$ con 1024 shots?`, [
+String.raw`$\mathtt{\{\text{"0"}: 1024\}}$.`,
+String.raw`No se puede predecir en el simulador.`,
+String.raw`$\mathtt{\{\text{"1"}: 1024\}}$.`,
+String.raw`$\mathtt{\{\text{"0"}: 512, \text{"1"}: 512\}}$.`,
+], 2, String.raw`El estado final es $\lvert1\rangle$.`, String.raw`Como $HZH\lvert0\rangle=\lvert1\rangle$, el simulador ideal obtiene 1 en los 1024 shots.`),
+makeQuestion(String.raw`Interferencia`, String.raw`Si una secuencia aplica primero $H$ y luego $Z$, ¿qué operador total actúa sobre el estado $|\psi\rangle$?`, [
+String.raw`El orden no importa para ningún operador.`,
+String.raw`Si primero se aplica $H$ y después $Z$, el operador total que actúa sobre el ket es $ZH$.`,
+String.raw`El operador total siempre es $HZ$ sin importar el orden temporal.`,
+String.raw`Las compuertas se suman en lugar de componerse.`,
+], 1, String.raw`La operación más cercana al estado se aplica primero.`, String.raw`Primero se obtiene $H|\psi\rangle$ y luego se aplica $Z$; por eso el resultado es $ZH|\psi\rangle$.`),
+makeQuestion(String.raw`Interferencia`, String.raw`¿Por qué no basta verificar que $HZH\lvert0\rangle=\lvert1\rangle$ para afirmar que $HZH=X$?`, [
+String.raw`Porque dos operadores pueden coincidir sobre $\lvert0\rangle$ y diferir sobre otros vectores.`,
+String.raw`Porque $X$ no es lineal.`,
+String.raw`Porque $\lvert0\rangle$ no es un vector.`,
+String.raw`Porque las matrices no actúan sobre kets.`,
+], 0, String.raw`Una transformación lineal queda determinada por su acción sobre una base completa.`, String.raw`Para demostrar la igualdad de operadores hay que comparar su acción sobre $\lvert0\rangle$ y $\lvert1\rangle$, o multiplicar sus matrices.`),
+makeQuestion(String.raw`Interferencia`, String.raw`¿Qué identidades se obtienen al calcular $HZH$ y $HXH$ mediante multiplicación matricial?`, [
+String.raw`$HZH=Y$ y $HXH=I$.`,
+String.raw`$HZH=0$ y $HXH=0$.`,
+String.raw`$HZH=H$ y $HXH=H$.`,
+String.raw`$HZH=X$ y $HXH=Z$.`,
+], 3, String.raw`Multiplicá las matrices en el orden indicado.`, String.raw`El cálculo matricial da $HZH=X$ y $HXH=Z$. Hadamard intercambia, por conjugación, los roles de $X$ y $Z$.`),
+makeQuestion(String.raw`Interferencia`, String.raw`¿Qué es la interferencia cuántica en términos de amplitudes?`, [
+String.raw`La aplicación de una compuerta que no es lineal.`,
+String.raw`El refuerzo o debilitamiento de amplitudes al sumar contribuciones, incluso hasta cancelarlas.`,
+String.raw`El conteo clásico de qubits sin usar amplitudes.`,
+String.raw`La pérdida obligatoria de normalización.`,
+], 1, String.raw`Las amplitudes se suman antes de calcular probabilidades.`, String.raw`La interferencia ocurre cuando las contribuciones complejas se combinan: pueden reforzarse o cancelarse y alterar las probabilidades finales.`),
+makeQuestion(String.raw`Hardware real y NISQ`, String.raw`¿Qué significa NISQ?`, [
+String.raw`Noisy Intermediate-Scale Quantum: cuántico de escala intermedia y ruidoso.`,
+String.raw`Numerical Ideal Simulator for Quantum.`,
+String.raw`New Input State Quantization.`,
+String.raw`Network Interface for SpinQit Queries.`,
+], 0, String.raw`La palabra incluye explícitamente la idea de ruido.`, String.raw`Los dispositivos actuales suelen describirse como NISQ porque tienen escala intermedia y son ruidosos, con recursos y fidelidad limitados.`),
+makeQuestion(String.raw`Hardware real y NISQ`, String.raw`¿Por qué los conteos de una ejecución en hardware real pueden diferir de los conteos ideales calculados por un simulador?`, [
+String.raw`Por las fluctuaciones estadísticas debidas al número finito de shots y, además, por ruido, decoherencia y errores del hardware.`,
+String.raw`Porque las leyes lineales dejan de cumplirse en hardware.`,
+String.raw`Porque el hardware no usa estados cuánticos.`,
+String.raw`Porque todo resultado ideal es necesariamente incorrecto.`,
+], 0, String.raw`Separá las probabilidades ideales de los conteos obtenidos en un número finito de mediciones.`, String.raw`Las probabilidades ideales describen la distribución esperada, pero los conteos reales fluctúan estadísticamente. Por ejemplo, una distribución $1/2$–$1/2$ puede producir 500 resultados de 0 y 524 de 1 en 1024 shots. En el hardware real se agregan ruido, decoherencia y errores de compuerta y medición.`),
+makeQuestion(String.raw`Hardware real y NISQ`, String.raw`¿Cuál es una estrategia prudente al usar por primera vez la SpinQ Triangulum?`, [
+String.raw`Cambiar simultáneamente todas las compuertas y parámetros.`,
+String.raw`Medir sin compilar el circuito.`,
+String.raw`Ejecutar primero en el simulador y usarlo como línea de base para comparar.`,
+String.raw`Ignorar el simulador y confiar en una sola ejecución física.`,
+], 2, String.raw`Primero hay que saber qué resultado ideal se espera.`, String.raw`Comparar con el $\mathtt{BasicSimulator}$ ayuda a distinguir el efecto lógico del circuito de las desviaciones introducidas por el hardware real.`),
+makeQuestion(String.raw`Hardware real y NISQ`, String.raw`¿Qué backend se utiliza para conectarse con la Triangulum basada en RMN?`, [
+String.raw`El estado $\lvert0\rangle$.`,
+String.raw`El backend NMR, obtenido mediante $\mathtt{get\_nmr()}$.`,
+String.raw`El backend de gráficos, obtenido mediante $\mathtt{draw}$.`,
+String.raw`El compilador nativo, obtenido mediante $\mathtt{get\_compiler}$.`,
+], 1, String.raw`NMR significa resonancia magnética nuclear.`, String.raw`Para la ejecución física se usa $\mathtt{get\_nmr()}$ y una configuración $\mathtt{NMRConfig()}$, en lugar del simulador básico.`),
+makeQuestion(String.raw`Hardware real y NISQ`, String.raw`¿Qué objeto configura una ejecución sobre el backend NMR?`, [
+String.raw`$\mathtt{NMRConfig}$.`,
+String.raw`$\mathtt{BasicSimulatorConfig}$.`,
+String.raw`$\mathtt{Circuit}$.`,
+String.raw`La matriz $Y$.`,
+], 0, String.raw`Cada backend tiene su configuración específica.`, String.raw`La configuración del backend físico se crea con $\mathtt{NMRConfig()}$ y puede incluir parámetros de conexión y ejecución.`),
+makeQuestion(String.raw`Hardware real y NISQ`, String.raw`¿Cuál de estos datos puede ser necesario para enviar una tarea al hardware NMR?`, [
+String.raw`Solo el color del circuito dibujado.`,
+String.raw`El determinante de $H$ como contraseña pública.`,
+String.raw`La fase global de $\lvert0\rangle$.`,
+String.raw`La dirección IP, el puerto, la cuenta y la tarea, según la configuración disponible.`,
+], 3, String.raw`Son parámetros de conexión y de identificación del trabajo.`, String.raw`La configuración NMR puede requerir IP, puerto, cuenta y datos de la tarea; las credenciales deben mantenerse privadas y no incluirse en materiales públicos.`),
+makeQuestion(String.raw`Hardware real y NISQ`, String.raw`¿Qué información suele observarse al ejecutar un circuito en el hardware?`, [
+String.raw`Nada, porque el hardware no devuelve resultados.`,
+String.raw`Principalmente resultados de medición, como conteos, afectados por ruido experimental.`,
+String.raw`Siempre el vector de estado exacto sin medir.`,
+String.raw`Únicamente la matriz del operador abstracto.`,
+], 1, String.raw`Una ejecución física realiza un experimento y registra resultados clásicos.`, String.raw`A diferencia del simulador, el hardware normalmente se analiza mediante resultados de medición y sus conteos; el vector de estado ideal sirve como referencia teórica.`)
+        ];
+        const setupScreen = document.getElementById("setup-screen");
+        const quizScreen = document.getElementById("quiz-screen");
+        const startButton = document.getElementById("start-button");
+        const backButton = document.getElementById("back-button");
+        const restartButton = document.getElementById("restart-button");
+        const homeButton = document.getElementById("home-button");
+        const reviewButton = document.getElementById("review-button");
+        const previousButton = document.getElementById("previous-button");
+        const nextButton = document.getElementById("next-button");
+        const hintButton = document.getElementById("hint-button");
+        const hintBox = document.getElementById("hint-box");
+        const feedback = document.getElementById("feedback");
+        const optionsElement = document.getElementById("options");
+        const questionTitle = document.getElementById("question-title");
+        const topicLabel = document.getElementById("topic-label");
+        const questionNumber = document.getElementById("question-number");
+        const progressLabel = document.getElementById("progress-label");
+        const scoreLabel = document.getElementById("score-label");
+        const progressFill = document.getElementById("progress-fill");
+        const progressTrack = document.querySelector(".progress-track");
+        const questionCount = document.getElementById("question-count");
+        const finishModal = document.getElementById("finish-modal");
+        const finalScore = document.getElementById("final-score");
+        const finalDetail = document.getElementById("final-detail");
+        const finalMessage = document.getElementById("final-message");
+        const allOptions = document.getElementById("all-options");
+        const sampleOptions = document.getElementById("sample-options");
+        const sampleSize = document.getElementById("sample-size");
+        const availableCountElements = document.querySelectorAll(".available-count");
+
+        // Etapa 2 simplificada: marcas manuales y errores son independientes.
+        // Se migran los guardados anteriores sin utilizar la autoevaluación de confianza.
+        const STORAGE_KEY = "cuestionario-clase04.session.v1";
+        const HISTORY_KEY = "cuestionario-clase04.history.v1";
+        const STUDY_KEY = "cuestionario-clase04.study.v3";
+        const LEGACY_STUDY_KEY = "cuestionario-clase04.study.v2";
+        const BANK_VERSION = "clase04-operadores-spinqit-interferencia-v4-autocontenido";
+        const SESSION_VERSION = 3;
+        const STUDY_VERSION = 3;
+        const questionIds = new Map(questions.map(function(question, index) { return [question, index]; }));
+        const resumePanel = document.getElementById("resume-panel");
+        const resumeDetail = document.getElementById("resume-detail");
+        const resumeButton = document.getElementById("resume-button");
+        const newSessionButton = document.getElementById("new-session-button");
+        const saveStatus = document.getElementById("save-status");
+        const reviewPanel = document.getElementById("review-panel");
+        const markedDetail = document.getElementById("marked-detail");
+        const errorsDetail = document.getElementById("errors-detail");
+        const markedCount = document.getElementById("marked-count");
+        const errorsCount = document.getElementById("errors-count");
+        const markedList = document.getElementById("marked-list");
+        const errorsList = document.getElementById("errors-list");
+        const startMarkedButton = document.getElementById("start-marked-button");
+        const startErrorsButton = document.getElementById("start-errors-button");
+        const startMarkedFinalButton = document.getElementById("start-marked-final-button");
+        const startErrorsFinalButton = document.getElementById("start-errors-final-button");
+        const finalReviewDetail = document.getElementById("final-review-detail");
+        const pendingLabel = document.getElementById("pending-label");
+        const markReviewButton = document.getElementById("mark-review-button");
+        const reviewQuestionStatus = document.getElementById("review-question-status");
+        const historyCount = document.getElementById("history-count");
+        const historyList = document.getElementById("history-list");
+        let storageAvailable = false;
+        let savedSession = null;
+        let sessionId = null;
+        let sessionStartedAt = null;
+        let sessionMode = null;
+        let sessionCompleted = false;
+        let sessionFinishedAt = null;
+        let sessionHistory = [];
+        let studyRecords = {};
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let correctAnswers = 0;
+        let answeredQuestions = 0;
+
+        function setSaveStatus(message, state) {
+            saveStatus.textContent = message;
+            saveStatus.dataset.state = state || "info";
+        }
+
+        function checkStorage() {
+            try {
+                const key = STORAGE_KEY + ".test";
+                localStorage.setItem(key, "1");
+                localStorage.removeItem(key);
+                storageAvailable = true;
+            } catch (error) {
+                storageAvailable = false;
+                setSaveStatus("El almacenamiento local no está disponible. Podés practicar, pero no se conservará el progreso al cerrar.", "error");
+            }
+        }
+
+        function isInteger(value, min, max) {
+            return Number.isInteger(value) && value >= min && value <= max;
+        }
+
+        function validMode(mode) {
+            return mode && (mode.selection === "all" || mode.selection === "sample" || mode.selection === "review" ||
+                mode.selection === "review-marked" || mode.selection === "review-errors") &&
+                (mode.order === "sequential" || mode.order === "random");
+        }
+
+        function validSession(data) {
+            if (!data || (data.version !== 1 && data.version !== 2 && data.version !== SESSION_VERSION) ||
+                data.bankVersion !== BANK_VERSION || typeof data.id !== "string" || !data.id ||
+                typeof data.startedAt !== "string" || !data.startedAt || !validMode(data.mode) ||
+                typeof data.completed !== "boolean" || !Array.isArray(data.items) ||
+                !data.items.length || data.items.length > questions.length ||
+                !isInteger(data.currentIndex, 0, data.items.length - 1)) return false;
+            const seen = new Set();
+            for (const item of data.items) {
+                if (!item || !isInteger(item.id, 0, questions.length - 1) || seen.has(item.id) ||
+                    typeof item.answered !== "boolean" || typeof item.hintVisible !== "boolean" ||
+                    !(item.selectedIndex === null || isInteger(item.selectedIndex, 0, questions[item.id].options.length - 1)) ||
+                    item.answered !== (item.selectedIndex !== null)) return false;
+                seen.add(item.id);
+            }
+            return true;
+        }
+
+        function readStoredJSON(key) {
+            const raw = localStorage.getItem(key);
+            return raw === null ? null : JSON.parse(raw);
+        }
+
+        function saveJSON(key, value, errorMessage) {
+            if (!storageAvailable) return false;
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+                return true;
+            } catch (error) {
+                storageAvailable = false;
+                setSaveStatus(errorMessage, "error");
+                return false;
+            }
+        }
+
+        function emptyStudyRecord() {
+            return {
+                attempts: 0, correctAttempts: 0, lastSelectedIndex: null,
+                lastCorrect: null, markedForReview: false,
+                lastAttemptAt: null, lastSessionId: null
+            };
+        }
+
+        function getStudyRecord(id) {
+            if (!Object.prototype.hasOwnProperty.call(studyRecords, id)) studyRecords[id] = emptyStudyRecord();
+            return studyRecords[id];
+        }
+
+        function markedIds() {
+            return questions.map(function(_, id) { return id; }).filter(function(id) {
+                return !!studyRecords[id] && studyRecords[id].markedForReview === true;
+            });
+        }
+
+        function errorIds() {
+            return questions.map(function(_, id) { return id; }).filter(function(id) {
+                return !!studyRecords[id] && studyRecords[id].lastCorrect === false;
+            });
+        }
+
+        function saveStudy() {
+            return saveJSON(STUDY_KEY, { version: STUDY_VERSION, bankVersion: BANK_VERSION, records: studyRecords },
+                "No se pudo guardar el progreso de estudio. Los datos siguen disponibles mientras la página permanezca abierta.");
+        }
+
+        function loadStudy() {
+            let data = readStoredJSON(STUDY_KEY);
+            const migrating = data === null;
+            if (migrating) data = readStoredJSON(LEGACY_STUDY_KEY);
+            if (data === null) return;
+            if (!data || (data.version !== 2 && data.version !== STUDY_VERSION) ||
+                data.bankVersion !== BANK_VERSION || !data.records ||
+                typeof data.records !== "object" || Array.isArray(data.records)) throw new Error("Estudio incompatible");
+            Object.keys(data.records).forEach(function(key) {
+                const id = Number(key);
+                const record = data.records[key];
+                if (!isInteger(id, 0, questions.length - 1) || !record ||
+                    !isInteger(record.attempts, 0, Number.MAX_SAFE_INTEGER) ||
+                    !isInteger(record.correctAttempts, 0, record.attempts) ||
+                    typeof record.markedForReview !== "boolean" ||
+                    !(record.lastCorrect === null || typeof record.lastCorrect === "boolean")) return;
+                // Se copian solamente los datos usados por esta versión.
+                const clean = emptyStudyRecord();
+                Object.keys(clean).forEach(function(field) {
+                    if (Object.prototype.hasOwnProperty.call(record, field)) clean[field] = record[field];
+                });
+                studyRecords[id] = clean;
+            });
+            if (migrating) saveStudy();
+        }
+
+        function makeSessionSnapshot() {
+            return {
+                version: SESSION_VERSION, bankVersion: BANK_VERSION,
+                id: sessionId, startedAt: sessionStartedAt, finishedAt: sessionFinishedAt,
+                mode: sessionMode, completed: sessionCompleted, currentIndex: currentIndex,
+                items: currentQuestions.map(function(current) {
+                    return {
+                        id: current.questionId, answered: current.answered,
+                        selectedIndex: current.selectedIndex, hintVisible: current.hintVisible,
+                        hintUsed: current.hintUsed,
+                        studyRecorded: current.studyRecorded, answeredAt: current.answeredAt
+                    };
+                })
+            };
+        }
+
+        function updateResumePanel() {
+            if (!savedSession) { resumePanel.hidden = true; return; }
+            const items = savedSession.items;
+            const answered = items.filter(function(item) { return item.answered; }).length;
+            const correct = items.filter(function(item) {
+                return item.answered && item.selectedIndex === questions[item.id].answer;
+            }).length;
+            resumeDetail.textContent = (savedSession.completed ? "Práctica finalizada" : "Práctica en curso") +
+                " · " + answered + "/" + items.length + " respondidas · " + correct + " aciertos · Pregunta " +
+                (savedSession.currentIndex + 1) + " de " + items.length + ".";
+            resumeButton.textContent = savedSession.completed ? "Revisar última práctica" : "Continuar práctica";
+            resumePanel.hidden = false;
+        }
+
+        function saveSession() {
+            if (!sessionId || !currentQuestions.length) return;
+            savedSession = makeSessionSnapshot();
+            if (storageAvailable && saveJSON(STORAGE_KEY, savedSession,
+                "No se pudo guardar la sesión. Seguirá disponible mientras la página permanezca abierta.")) {
+                setSaveStatus("Progreso guardado en este navegador.", "success");
+            }
+            updateResumePanel();
+        }
+
+        function readHistory() {
+            const parsed = readStoredJSON(HISTORY_KEY);
+            if (parsed === null) return;
+            if (!Array.isArray(parsed)) throw new Error("Historial incompatible");
+            sessionHistory = parsed.filter(function(item) {
+                return item && typeof item.id === "string" && typeof item.finishedAt === "string" &&
+                    isInteger(item.total, 1, questions.length) && isInteger(item.correct, 0, item.total);
+            });
+        }
+
+        function saveHistory() {
+            return saveJSON(HISTORY_KEY, sessionHistory,
+                "No se pudo guardar el historial. El resultado sigue disponible en esta página.");
+        }
+
+        function loadSession() {
+            checkStorage();
+            if (!storageAvailable) { updateReviewUI(); renderHistory(); return; }
+            // Los tres guardados se leen por separado: uno dañado no impide recuperar los otros.
+            try { readHistory(); } catch (error) {
+                setSaveStatus("No se pudo leer el historial anterior. No se borró.", "error");
+            }
+            try { loadStudy(); } catch (error) {
+                setSaveStatus("No se pudo leer el progreso de estudio anterior. No se borró.", "error");
+            }
+            try {
+                const data = readStoredJSON(STORAGE_KEY);
+                if (data && validSession(data)) {
+                    savedSession = data;
+                    // Importación conservadora de respuestas v1: una sola vez por pregunta.
+                    let imported = false;
+                    data.items.forEach(function(item) {
+                        if (!item.answered || (data.version === SESSION_VERSION && item.studyRecorded)) return;
+                        const record = getStudyRecord(item.id);
+                        if (record.attempts > 0) return;
+                        record.attempts = 1;
+                        record.correctAttempts = Number(item.selectedIndex === questions[item.id].answer);
+                        record.lastSelectedIndex = item.selectedIndex;
+                        record.lastCorrect = item.selectedIndex === questions[item.id].answer;
+                        record.lastAttemptAt = item.answeredAt || data.startedAt;
+                        record.lastSessionId = data.id;
+                        imported = true;
+                    });
+                    if (imported) saveStudy();
+                    updateResumePanel();
+                    setSaveStatus("Progreso recuperado de este navegador.", "success");
+                } else if (data) {
+                    setSaveStatus("Hay una sesión anterior incompatible. No se borró; podés comenzar una práctica nueva.", "error");
+                } else {
+                    setSaveStatus("El progreso se guardará automáticamente en este navegador.", "success");
+                }
+            } catch (error) {
+                setSaveStatus("No se pudo leer la sesión anterior. No se borró; podés comenzar una práctica nueva.", "error");
+            }
+            updateReviewUI();
+            renderHistory();
+        }
+
+        function recordAnswer(current) {
+            if (current.studyRecorded) return;
+            const record = getStudyRecord(current.questionId);
+            record.attempts += 1;
+            if (current.isCorrect) record.correctAttempts += 1;
+            record.lastSelectedIndex = current.selectedIndex;
+            record.lastCorrect = current.isCorrect;
+            record.lastAttemptAt = current.answeredAt;
+            record.lastSessionId = sessionId;
+            current.studyRecorded = true;
+            saveStudy();
+            updateReviewUI();
+        }
+
+        function renderReviewList(element, ids, kind) {
+            if (!ids.length) {
+                element.textContent = kind === "marked" ? "No hay preguntas marcadas." : "No hay errores pendientes.";
+                return;
+            }
+            const list = document.createElement("ol");
+            list.className = "review-items";
+            ids.forEach(function(id) {
+                const item = document.createElement("li");
+                item.className = "review-item";
+                const copy = document.createElement("div");
+                copy.className = "review-item-copy";
+                const topic = document.createElement("small");
+                topic.textContent = "Pregunta " + (id + 1) + " · " + questions[id].topic;
+                const prompt = document.createElement("div");
+                prompt.innerHTML = questions[id].prompt;
+                copy.append(topic, prompt);
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "secondary-button";
+                button.textContent = kind === "marked" ? "Quitar marca" :
+                    (getStudyRecord(id).markedForReview ? "★ Quitar marca" : "☆ Marcar para repasar");
+                button.setAttribute("aria-label", (getStudyRecord(id).markedForReview ? "Quitar marca de" : "Marcar") + " pregunta " + (id + 1));
+                button.addEventListener("click", function() { toggleReviewMarkById(id); });
+                item.append(copy, button);
+                list.appendChild(item);
+            });
+            element.replaceChildren(list);
+        }
+
+        function updateReviewUI() {
+            const marked = markedIds();
+            const errors = errorIds();
+            markedCount.textContent = String(marked.length);
+            errorsCount.textContent = String(errors.length);
+            markedDetail.textContent = marked.length ? "Tenés " + marked.length + " pregunta" + (marked.length === 1 ? "" : "s") + " marcada" + (marked.length === 1 ? "" : "s") + "." : "Todavía no marcaste ninguna pregunta.";
+            errorsDetail.textContent = errors.length ? "Tenés " + errors.length + " pregunta" + (errors.length === 1 ? "" : "s") + " con errores pendientes." : "No hay errores pendientes.";
+            startMarkedButton.disabled = marked.length === 0;
+            startErrorsButton.disabled = errors.length === 0;
+            pendingLabel.textContent = marked.length + " marcadas · " + errors.length + " errores";
+            if (!setupScreen.hidden) {
+                renderReviewList(markedList, marked, "marked");
+                renderReviewList(errorsList, errors, "errors");
+                typesetMath([markedList, errorsList]);
+            }
+        }
+
+        function sessionDetails() {
+            return currentQuestions.map(function(current) {
+                return {
+                    id: current.questionId, selectedIndex: current.selectedIndex,
+                    answered: current.answered, correct: current.isCorrect,
+                    hintUsed: current.hintUsed
+                };
+            });
+        }
+
+        function recordCompletedSession() {
+            if (!sessionId) return;
+            if (!sessionFinishedAt) sessionFinishedAt = new Date().toISOString();
+            if (sessionHistory.some(function(item) { return item.id === sessionId; })) return;
+            sessionHistory.push({
+                id: sessionId, startedAt: sessionStartedAt, finishedAt: sessionFinishedAt,
+                total: currentQuestions.length, correct: correctAnswers, answered: answeredQuestions,
+                mode: sessionMode, details: sessionDetails()
+            });
+            saveHistory();
+            renderHistory();
+        }
+
+        function updateHistoryDetails() {
+            if (!sessionCompleted) return;
+            const entry = sessionHistory.find(function(item) { return item.id === sessionId; });
+            if (!entry) return;
+            entry.details = sessionDetails();
+            // El puntaje original del intento no se recalcula ni se reemplaza.
+            saveHistory();
+        }
+
+        function renderHistory() {
+            historyCount.textContent = "(" + sessionHistory.length + ")";
+            if (!sessionHistory.length) {
+                historyList.textContent = "Todavía no hay prácticas finalizadas.";
+                return;
+            }
+            const list = document.createElement("ol");
+            list.className = "history-list";
+            sessionHistory.slice().reverse().forEach(function(item) {
+                const li = document.createElement("li");
+                const title = document.createElement("strong");
+                title.textContent = item.correct + "/" + item.total + " aciertos · " +
+                    Math.round(item.correct / item.total * 100) + "%";
+                const detail = document.createElement("small");
+                const mode = item.mode && item.mode.selection === "review-marked" ? "Refuerzo de marcadas" :
+                    item.mode && (item.mode.selection === "review-errors" || item.mode.selection === "review") ? "Refuerzo de errores" : "Práctica";
+                detail.textContent = mode + " · " + item.answered + " respondidas · " +
+                    new Date(item.finishedAt).toLocaleString("es-AR");
+                li.append(title, detail);
+                list.appendChild(li);
+            });
+            historyList.replaceChildren(list);
+        }
+
+        function confirmNewSession() {
+            if (!savedSession) return true;
+            return window.confirm("¿Comenzar una práctica nueva? La sesión anterior dejará de estar disponible para continuar. Las respuestas ya registradas y las dos listas de repaso se conservarán. Los resultados finalizados seguirán en el historial local. Podés cancelar para seguir con la práctica actual.");
+        }
+
+        function restoreSession() {
+            if (!savedSession || !validSession(savedSession)) return;
+            const data = savedSession;
+            sessionId = data.id;
+            sessionStartedAt = data.startedAt;
+            sessionMode = data.mode;
+            sessionCompleted = data.completed;
+            sessionFinishedAt = data.finishedAt || null;
+            currentQuestions = data.items.map(function(item) {
+                const current = createSessionQuestion(questions[item.id]);
+                current.answered = item.answered;
+                current.selectedIndex = item.selectedIndex;
+                current.isCorrect = item.answered && item.selectedIndex === current.answer;
+                current.hintVisible = item.hintVisible;
+                current.hintUsed = !!item.hintUsed || (item.answered && item.hintVisible);
+                current.studyRecorded = !!item.studyRecorded || (item.answered && data.version === 1);
+                current.answeredAt = item.answeredAt || (item.answered ? data.startedAt : null);
+                return current;
+            });
+            currentIndex = data.currentIndex;
+            answeredQuestions = currentQuestions.filter(function(item) { return item.answered; }).length;
+            correctAnswers = currentQuestions.filter(function(item) { return item.isCorrect; }).length;
+            setupScreen.hidden = true;
+            quizScreen.hidden = false;
+            renderQuestion();
+            saveSession();
+            if (sessionCompleted) finishQuiz();
+        }
+
+        questionCount.textContent = questions.length;
+        availableCountElements.forEach(function(element) { element.textContent = questions.length; });
+        sampleSize.max = String(questions.length);
+
+        function shuffle(items) {
+            const copy = items.slice();
+            for (let i = copy.length - 1; i > 0; i -= 1) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const temporary = copy[i]; copy[i] = copy[j]; copy[j] = temporary;
+            }
+            return copy;
+        }
+
+        function selectedSelectionMode() {
+            const selected = document.querySelector("input[name='selection-mode']:checked");
+            return selected ? selected.value : "all";
+        }
+
+        function selectedAllOrder() {
+            const selected = document.querySelector("input[name='all-order']:checked");
+            return selected ? selected.value : "sequential";
+        }
+
+        function normalizedSampleSize() {
+            const parsed = Number.parseInt(sampleSize.value, 10);
+            const value = Number.isFinite(parsed) ? Math.min(Math.max(parsed, 1), questions.length) : Math.min(20, questions.length);
+            sampleSize.value = String(value);
+            return value;
+        }
+
+        function updateSetupOptions() {
+            const allSelected = selectedSelectionMode() === "all";
+            allOptions.hidden = !allSelected;
+            sampleOptions.hidden = allSelected;
+            sampleSize.disabled = allSelected;
+            document.querySelectorAll("input[name='all-order']").forEach(function(input) { input.disabled = !allSelected; });
+        }
+
+        function createSessionQuestion(question) {
+            return Object.assign({}, question, {
+                questionId: questionIds.get(question), answered: false, selectedIndex: null,
+                isCorrect: false, hintVisible: false, hintUsed: false,
+                studyRecorded: false, answeredAt: null
+            });
+        }
+
+        function updateScore() {
+            const total = currentQuestions.length;
+            const provisional = total === 0 ? 0 : Math.round(correctAnswers / total * 100);
+            scoreLabel.textContent = correctAnswers + "/" + total + " · " + provisional + "%";
+        }
+
+        function updateProgress() {
+            const total = currentQuestions.length;
+            const position = currentIndex + 1;
+            const percentage = Math.round(position / total * 100);
+            progressLabel.textContent = position + " de " + total;
+            questionNumber.textContent = "Pregunta " + position + " de " + total;
+            progressFill.style.width = percentage + "%";
+            progressTrack.setAttribute("aria-valuenow", String(percentage));
+        }
+
+        function updateNavigation() {
+            previousButton.disabled = currentIndex === 0;
+            nextButton.textContent = currentIndex === currentQuestions.length - 1 ? "Ver resultado" : "Siguiente →";
+        }
+
+        function fillFeedback(current) {
+            clearMath([feedback]);
+            feedback.className = "feedback " + (current.isCorrect ? "correct" : "incorrect");
+            const title = current.isCorrect ? "✓ Correcto" : "✕ Todavía no";
+            const correctText = current.options[current.answer];
+            const answerLine = current.isCorrect
+                ? "<p><strong>Respuesta elegida:</strong> " + correctText + "</p>"
+                : "<p><strong>La opción correcta era:</strong> " + correctText + "</p>";
+            feedback.innerHTML = "<div class='feedback-title'>" + title + "</div>" + answerLine +
+                "<p>" + current.explanation + "</p>";
+            feedback.hidden = false;
+        }
+
+        function applyAnswerState(current) {
+            optionsElement.querySelectorAll("input[name='answer']").forEach(function(input) {
+                const option = input.closest(".option");
+                const optionIndex = Number(input.value);
+                input.checked = optionIndex === current.selectedIndex;
+                input.disabled = true;
+                option.classList.remove("selected", "correct", "wrong");
+                if (optionIndex === current.answer) option.classList.add("correct");
+                if (optionIndex === current.selectedIndex && !current.isCorrect) option.classList.add("wrong");
+            });
+        }
+
+        function renderStudyControls(current) {
+            const record = getStudyRecord(current.questionId);
+            markReviewButton.setAttribute("aria-pressed", String(record.markedForReview));
+            markReviewButton.textContent = record.markedForReview ? "★ Quitar marca de repaso" : "☆ Marcar para repasar";
+            const parts = [];
+            if (record.markedForReview) parts.push("Marcada por mí");
+            if (record.lastCorrect === false) parts.push("Error pendiente");
+            reviewQuestionStatus.textContent = parts.join(" · ");
+        }
+
+        function renderQuestion() {
+            const current = currentQuestions[currentIndex];
+            clearMath([questionTitle, optionsElement, hintBox, feedback]);
+            updateProgress(); updateScore(); updateReviewUI();
+            topicLabel.textContent = current.topic;
+            questionTitle.innerHTML = current.prompt;
+            // Se mezclan solo las posiciones de presentación. El valor de cada
+            // radio sigue siendo el índice original de la opción, de modo que
+            // la respuesta correcta y el feedback no se desincronizan.
+            const optionOrder = shuffle(current.options.map(function(_, index) { return index; }));
+            optionsElement.innerHTML = optionOrder.map(function(optionIndex, displayIndex) {
+                const option = current.options[optionIndex];
+                const letter = String.fromCharCode(65 + displayIndex);
+                return "<label class='option'>" +
+                    "<input type='radio' name='answer' value='" + optionIndex + "'>" +
+                    "<span class='option-letter' aria-hidden='true'>" + letter + "</span>" +
+                    "<span class='option-copy'>" + option + "</span></label>";
+            }).join("");
+            if (current.answered) {
+                applyAnswerState(current);
+                hintBox.hidden = true; hintBox.innerHTML = "";
+                hintButton.disabled = true; hintButton.style.opacity = "0.55";
+                hintButton.textContent = current.hintUsed ? "💡 Pista utilizada" : "💡 Pista no disponible";
+                fillFeedback(current);
+            } else {
+                optionsElement.querySelectorAll("input[name='answer']").forEach(function(input) {
+                    input.addEventListener("change", function() { selectAnswer(Number(input.value)); });
+                });
+                hintButton.disabled = false; hintButton.style.opacity = "";
+                hintButton.textContent = current.hintVisible ? "💡 Ocultar pista" : "💡 Solicitar una pista";
+                hintBox.hidden = !current.hintVisible;
+                hintBox.innerHTML = current.hintVisible ? "<strong>Pista:</strong> " + current.hint : "";
+                feedback.hidden = true; feedback.innerHTML = "";
+            }
+            renderStudyControls(current);
+            updateNavigation();
+            typesetMath([questionTitle, optionsElement, hintBox, feedback]);
+            questionTitle.focus();
+        }
+
+        function beginSession(selectedQuestions, mode) {
+            if (!selectedQuestions.length || !confirmNewSession()) return false;
+            currentQuestions = selectedQuestions.map(createSessionQuestion);
+            sessionId = (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function")
+                ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(36).slice(2);
+            sessionStartedAt = new Date().toISOString();
+            sessionMode = mode;
+            sessionCompleted = false;
+            sessionFinishedAt = null;
+            currentIndex = 0; correctAnswers = 0; answeredQuestions = 0;
+            finishModal.hidden = true;
+            document.body.classList.remove("modal-open");
+            setupScreen.hidden = true; quizScreen.hidden = false;
+            renderQuestion(); saveSession();
+            return true;
+        }
+
+        function startQuiz() {
+            const selectionMode = selectedSelectionMode();
+            const selectedQuestions = selectionMode === "sample"
+                ? shuffle(questions).slice(0, normalizedSampleSize())
+                : selectedAllOrder() === "random" ? shuffle(questions) : questions.slice();
+            beginSession(selectedQuestions, {
+                selection: selectionMode, order: selectionMode === "all" ? selectedAllOrder() : "random"
+            });
+        }
+
+        function startReview(kind) {
+            const selection = kind === "marked" ? "review-marked" : "review-errors";
+            const ids = kind === "marked" ? markedIds() : errorIds();
+            if (!ids.length) return;
+            beginSession(shuffle(ids).map(function(id) { return questions[id]; }), { selection: selection, order: "random" });
+        }
+
+        function showHint() {
+            const current = currentQuestions[currentIndex];
+            if (current.answered) return;
+            current.hintVisible = !current.hintVisible;
+            if (current.hintVisible) current.hintUsed = true;
+            clearMath([hintBox]);
+            hintBox.innerHTML = current.hintVisible ? "<strong>Pista:</strong> " + current.hint : "";
+            hintBox.hidden = !current.hintVisible;
+            if (!hintBox.hidden) typesetMath([hintBox]);
+            hintButton.textContent = hintBox.hidden ? "💡 Solicitar una pista" : "💡 Ocultar pista";
+            saveSession();
+        }
+
+        function selectAnswer(selectedIndex) {
+            const current = currentQuestions[currentIndex];
+            if (current.answered || !isInteger(selectedIndex, 0, current.options.length - 1)) return;
+            current.selectedIndex = selectedIndex;
+            current.isCorrect = selectedIndex === current.answer;
+            current.answered = true;
+            current.answeredAt = new Date().toISOString();
+            current.hintVisible = false;
+            answeredQuestions += 1;
+            if (current.isCorrect) correctAnswers += 1;
+            recordAnswer(current);
+            applyAnswerState(current);
+            hintButton.disabled = true; hintButton.style.opacity = "0.55";
+            hintButton.textContent = current.hintUsed ? "💡 Pista utilizada" : "💡 Pista no disponible";
+            clearMath([hintBox]); hintBox.hidden = true; hintBox.innerHTML = "";
+            fillFeedback(current); typesetMath([feedback]); updateScore();
+            renderStudyControls(current);
+            saveSession();
+            feedback.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+
+        function toggleReviewMarkById(id) {
+            const record = getStudyRecord(id);
+            record.markedForReview = !record.markedForReview;
+            saveStudy();
+            updateReviewUI();
+            if (currentQuestions.length) renderStudyControls(currentQuestions[currentIndex]);
+            saveSession();
+        }
+
+        function toggleReviewMark() {
+            if (!currentQuestions.length) return;
+            toggleReviewMarkById(currentQuestions[currentIndex].questionId);
+        }
+
+        function finishQuiz() {
+            if (!currentQuestions.length) return;
+            if (!sessionCompleted) {
+                sessionCompleted = true;
+                sessionFinishedAt = new Date().toISOString();
+                recordCompletedSession();
+            }
+            saveSession();
+            const total = currentQuestions.length;
+            const percentage = Math.round(correctAnswers / total * 100);
+            const unanswered = total - answeredQuestions;
+            finalScore.textContent = percentage + "%";
+            finalDetail.textContent = correctAnswers + " respuestas correctas de " + total +
+                (unanswered > 0 ? " · " + unanswered + " sin responder" : "");
+            if (unanswered > 0) {
+                finalMessage.textContent = "Quedaron " + unanswered + " preguntas sin responder. Podés revisarlas con Anterior y volver a consultar el feedback.";
+            } else if (percentage >= 90) {
+                finalMessage.textContent = "¡Excelente trabajo! Tenés una base muy sólida para seguir con las próximas clases.";
+            } else if (percentage >= 75) {
+                finalMessage.textContent = "¡Muy buen trabajo! Repasá las explicaciones de los errores y vas a llegar todavía más preparado.";
+            } else if (percentage >= 60) {
+                finalMessage.textContent = "Buen comienzo. Volvé a los temas donde aparecieron errores y repetí el cuestionario cuando quieras.";
+            } else {
+                finalMessage.textContent = "Este resultado es un punto de partida. Revisá la clase con calma, usá las pistas y volvé a intentarlo.";
+            }
+            const errors = errorIds().length;
+            const marked = markedIds().length;
+            finalReviewDetail.textContent = errors + " pregunta" + (errors === 1 ? "" : "s") + " con errores pendientes · " + marked + " marcada" + (marked === 1 ? "" : "s") + " por vos.";
+            startErrorsFinalButton.hidden = errors === 0;
+            startMarkedFinalButton.hidden = marked === 0;
+            finishModal.hidden = false;
+            document.body.classList.add("modal-open");
+            (errors ? startErrorsFinalButton : marked ? startMarkedFinalButton : reviewButton).focus();
+        }
+
+        function nextQuestion() {
+            if (currentIndex === currentQuestions.length - 1) { finishQuiz(); return; }
+            currentIndex += 1; renderQuestion(); saveSession();
+        }
+
+        function previousQuestion() {
+            if (currentIndex === 0) return;
+            currentIndex -= 1; renderQuestion(); saveSession();
+        }
+
+        function reviewQuiz() {
+            finishModal.hidden = true;
+            document.body.classList.remove("modal-open");
+            quizScreen.hidden = false; renderQuestion(); saveSession();
+        }
+
+        function returnToSetup() {
+            finishModal.hidden = true;
+            document.body.classList.remove("modal-open");
+            quizScreen.hidden = true; setupScreen.hidden = false;
+            updateReviewUI(); renderHistory(); saveSession(); startButton.focus();
+        }
+
+        document.querySelectorAll("input[name='selection-mode']").forEach(function(input) {
+            input.addEventListener("change", updateSetupOptions);
+        });
+        markReviewButton.addEventListener("click", toggleReviewMark);
+        startMarkedButton.addEventListener("click", function() { startReview("marked"); });
+        startErrorsButton.addEventListener("click", function() { startReview("errors"); });
+        startMarkedFinalButton.addEventListener("click", function() { startReview("marked"); });
+        startErrorsFinalButton.addEventListener("click", function() { startReview("errors"); });
+        resumeButton.addEventListener("click", restoreSession);
+        newSessionButton.addEventListener("click", function() { startButton.focus(); startQuiz(); });
+        startButton.addEventListener("click", startQuiz);
+        nextButton.addEventListener("click", nextQuestion);
+        previousButton.addEventListener("click", previousQuestion);
+        hintButton.addEventListener("click", showHint);
+        backButton.addEventListener("click", returnToSetup);
+        homeButton.addEventListener("click", returnToSetup);
+        reviewButton.addEventListener("click", reviewQuiz);
+        restartButton.addEventListener("click", function() {
+            if (sessionMode && (sessionMode.selection === "review" || sessionMode.selection === "review-marked" || sessionMode.selection === "review-errors")) {
+                beginSession(currentQuestions.map(function(current) { return questions[current.questionId]; }), sessionMode);
+            } else startQuiz();
+        });
+        window.addEventListener("pagehide", saveSession);
+        document.addEventListener("visibilitychange", function() {
+            if (document.visibilityState === "hidden") saveSession();
+        });
+        updateSetupOptions();
+        loadSession();
+    </script>
+</body>
+</html>

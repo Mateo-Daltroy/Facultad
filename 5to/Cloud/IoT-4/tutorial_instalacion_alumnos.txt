@@ -1,0 +1,144 @@
+======================================================================
+GUIA DE INSTALACION: NODE-RED + DOCKER + PIGPIO EN RASPBERRY PI
+Materia: Cloud Computing & Cloud Robotics
+======================================================================
+
+Este tutorial contiene los comandos necesarios para preparar la
+Raspberry Pi, instalar el demonio de hardware (pigpio) y desplegar
+Node-RED mediante Docker.
+
+Los nodos de hardware y dashboard se instalaran luego desde la interfaz
+web de Node-RED.
+
+----------------------------------------------------------------------
+PASO 1: INSTALAR DOCKER (SI AUN NO LO TIENES INSTALADO)
+----------------------------------------------------------------------
+Si tu Raspberry Pi ya tiene Docker instalado, pasa directamente al PASO 2.
+Si no tienes Docker, ejecuta estos comandos uno por uno:
+
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker $USER
+
+Nota: Cierra sesion y vuelve a entrar por SSH (o reinicia la placa)
+para que tome el permiso de usuario de Docker.
+
+
+----------------------------------------------------------------------
+PASO 2: INSTALAR Y ACTIVAR EL DEMONIO DE HARDWARE (PIGPIO)
+----------------------------------------------------------------------
+pigpio permite controlar los pines GPIO con maxima precision y temporizacion
+por hardware para PWM.
+
+Ejecuta en la terminal:
+
+sudo apt update
+sudo apt install pigpio -y
+sudo systemctl enable --now pigpiod
+
+Para verificar que este corriendo correctamente, ejecuta:
+
+sudo systemctl status pigpiod
+
+(Debe indicar "Active: active (running)" en color verde. Presiona la letra 'q'
+para salir de la vista de estado si queda bloqueada).
+
+
+----------------------------------------------------------------------
+PASO 3: CREAR LA CARPETA Y EL ARCHIVO DOCKER COMPOSE
+----------------------------------------------------------------------
+Ejecuta el siguiente bloque de comandos completo para crear la carpeta y
+generar el archivo docker-compose.yml de forma automatica:
+
+mkdir -p ~/nodered && cd ~/nodered
+
+cat << 'EOF' > docker-compose.yml
+version: "3.8"
+
+services:
+  nodered:
+    image: nodered/node-red:latest
+    container_name: nodered
+    restart: unless-stopped
+    network_mode: "host"
+    volumes:
+      - ./data:/data
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
+EOF
+
+
+----------------------------------------------------------------------
+PASO 4: INICIAR EL CONTENEDOR DE NODE-RED
+----------------------------------------------------------------------
+Estando en la carpeta ~/nodered, inicia el contenedor:
+
+docker compose up -d
+
+Para verificar que el contenedor este encendido:
+
+docker ps
+
+(Debes ver el contenedor con nombre "nodered" en estado "Up").
+
+
+----------------------------------------------------------------------
+PASO 5: OBTENER LA IP DE LA RASPBERRY PI
+----------------------------------------------------------------------
+Ejecuta:
+
+hostname -I
+
+Copia la primera direccion IP que aparece (por ejemplo: 192.168.1.45).
+
+
+----------------------------------------------------------------------
+PASO 6: ABRIR NODE-RED EN TU NAVEGADOR
+----------------------------------------------------------------------
+Desde cualquier computadora conectada a la misma red WiFi o cable,
+abre tu navegador web e ingresa a:
+
+http://<IP_DE_TU_RPI>:1880
+
+(Reemplaza <IP_DE_TU_RPI> por la IP obtenida en el Paso 5).
+
+
+----------------------------------------------------------------------
+PASO 7: INSTALAR LOS NODOS DESDE LA INTERFAZ DE NODE-RED
+----------------------------------------------------------------------
+Una vez dentro de la interfaz web de Node-RED:
+
+1. Haz clic en el menu superior derecho (icono de tres lineas horizontales).
+2. Selecciona "Manage palette" (Administrar paleta).
+3. Haz clic en la pestaña "Install".
+4. En la barra de busqueda, escribe y haz clic en "Install" para cada uno:
+
+   a) @flowfuse/node-red-dashboard
+      (Este es el paquete oficial para la interfaz web moderna)
+
+   b) node-red-node-pi-gpiod
+      (Este paquete agrega los nodos para comunicarse con pigpio)
+
+5. Al finalizar cada instalacion, haz clic en "Close".
+
+
+----------------------------------------------------------------------
+PASO 8: ACCESO A LA INTERFAZ GRAFICA (DASHBOARD 2.0)
+----------------------------------------------------------------------
+La interfaz grafica para los usuarios se visualiza en:
+
+http://<IP_DE_TU_RPI>:1880/dashboard
+
+
+----------------------------------------------------------------------
+NOTAS DE CONFIGURACION DE LOS NODOS PI-GPIOD:
+----------------------------------------------------------------------
+Cuando utilices los nodos "pi gpiod in" o "pi gpiod out":
+- En la configuracion del servidor (Host): escribe "localhost" (puerto: 8888).
+- En el campo "Pin", los nodos pi-gpiod utilizan los numeros de PIN FISICO
+  del conector P1 de la Raspberry Pi:
+  * LED Rojo: Pin 36 (GPIO 16)
+  * LED Amarillo (PWM): Pin 38 (GPIO 20)
+  * LED Verde: Pin 40 (GPIO 21)
+  * Sensor PIR: Pin 8 (GPIO 14) o Pin 11 (GPIO 17)
+======================================================================

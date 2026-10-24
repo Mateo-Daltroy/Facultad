@@ -1,0 +1,233 @@
+Running with gitlab-runner 14.9.1 (bd40e3da)
+  on 43a9ab1a4f0c glrt-h6S
+Preparing the "docker" executor
+Using Docker executor with image registry.gitlab.catedras.linti.unlp.edu.ar/proyecto-2026/groups-ci-cd/poetry:latest ...
+Starting service postgis/postgis:16-master ...
+Pulling docker image postgis/postgis:16-master ...
+Using docker image sha256:54918a5552d4e9b58990270d242bafe190f34ae875d0e2fbf832194366c6df07 for postgis/postgis:16-master with digest postgis/postgis@sha256:afaf08e1937d753762cfdb943c69ed46296bf50faa80c5f89494e2d0d12980de ...
+Waiting for services to be up and running...
+Authenticating with credentials from job payload (GitLab Registry)
+Pulling docker image registry.gitlab.catedras.linti.unlp.edu.ar/proyecto-2026/groups-ci-cd/poetry:latest ...
+Using docker image sha256:8987f496c36ff6390465c7d95d9e4ab53a7f9bba4ce21105b9263dd40dd17744 for registry.gitlab.catedras.linti.unlp.edu.ar/proyecto-2026/groups-ci-cd/poetry:latest with digest registry.gitlab.catedras.linti.unlp.edu.ar/proyecto-2026/groups-ci-cd/poetry@sha256:df29f8e75ecf74c7011c3ed48c5456136786ca97cd202d84360412c171a64177 ...
+Preparing environment
+Running on runner-glrt-h6s-project-1899-concurrent-0 via 43a9ab1a4f0c...
+Getting source from Git repository
+Fetching changes with git depth set to 20...
+Reinitialized existing Git repository in /builds/proyecto-2026/proyectos/grupo24/code/.git/
+Checking out 84deb45f as main...
+Removing admin/.pytest_cache/
+Removing admin/flask_session/
+Removing admin/src/core/__pycache__/
+Removing admin/src/core/auth/__pycache__/
+Removing admin/src/web/__pycache__/
+Removing admin/src/web/controlers/__pycache__/
+Removing admin/src/web/handlers/__pycache__/
+Removing admin/src/web/schemas/__pycache__/
+Removing admin/src/web/services/__pycache__/
+Removing admin/tests/__pycache__/
+Removing admin/tests/unit/__pycache__/
+Skipping Git submodules setup
+Restoring cache
+Checking cache for 0_admin/poetry-33d6f5a4b8ab7e7d7fe74bf327d0996fd171b36f-protected...
+No URL provided, cache will not be downloaded from shared cache server. Instead a local version of cache will be extracted. 
+Successfully extracted cache
+Executing "step_script" stage of the job script
+Using docker image sha256:8987f496c36ff6390465c7d95d9e4ab53a7f9bba4ce21105b9263dd40dd17744 for registry.gitlab.catedras.linti.unlp.edu.ar/proyecto-2026/groups-ci-cd/poetry:latest with digest registry.gitlab.catedras.linti.unlp.edu.ar/proyecto-2026/groups-ci-cd/poetry@sha256:df29f8e75ecf74c7011c3ed48c5456136786ca97cd202d84360412c171a64177 ...
+$ cd admin
+$ test -f pyproject.toml || { echo "No se encontró admin/pyproject.toml, se omiten los tests"; exit 0; }
+$ poetry install --with test 2>/dev/null || poetry install
+Skipping virtualenv creation, as specified in config file.
+Installing dependencies from lock file
+Package operations: 27 installs, 0 updates, 0 removals
+  - Installing asgiref (3.12.1)
+  - Installing bcrypt (5.0.0)
+  - Installing blinker (1.9.0)
+  - Installing cachelib (0.17.0)
+  - Installing click (8.5.0)
+  - Installing flask (3.1.3)
+  - Installing flask-cors (6.0.5)
+  - Installing flask-session (0.8.0)
+  - Installing flask-sqlalchemy-lite (0.2.1)
+  - Installing greenlet (3.5.6)
+  - Installing iniconfig (2.3.0)
+  - Installing itsdangerous (2.2.0)
+  - Installing jinja2 (3.1.6)
+  - Installing markupsafe (3.0.3)
+  - Installing marshmallow (4.3.1)
+  - Installing msgspec (0.21.1)
+  - Installing packaging (26.3)
+  - Installing pluggy (1.6.0)
+  - Installing psycopg (3.3.6)
+  - Installing psycopg-binary (3.3.6)
+  - Installing pygments (2.21.0)
+  - Installing pyjwt (2.15.1)
+  - Installing pytest (9.1.1)
+  - Installing python-dotenv (1.2.4)
+  - Installing sqlalchemy (2.1.4)
+  - Installing typing-extensions (4.16.0)
+  - Installing werkzeug (3.1.8)
+Installing the current project: web (0.1.0)
+$ poetry show -q pytest || { echo "No se cuenta con la dependencia pytest, se omiten los tests"; exit 0; }
+$ poetry run pytest
+Skipping virtualenv creation, as specified in config file.
+============================= test session starts ==============================
+platform linux -- Python 3.14.4, pytest-9.1.1, pluggy-1.6.0
+rootdir: /builds/proyecto-2026/proyectos/grupo24/code/admin
+configfile: pyproject.toml
+collected 333 items
+tests/unit/test_api_autenticacion.py EEEEEEEEEEEEEEEEEEE                 [  5%]
+tests/unit/test_api_auth.py .....EEEEEEEEEEEEEE                          [ 11%]
+tests/unit/test_api_catalogos.py EEEEEE                                  [ 13%]
+tests/unit/test_api_cors.py EEE                                          [ 14%]
+tests/unit/test_api_cupos.py EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE              [ 23%]
+tests/unit/test_api_errors.py .............EE                            [ 27%]
+tests/unit/test_api_pagination.py .......EEE                             [ 30%]
+tests/unit/test_api_pedidos.py EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE [ 42%]
+EEEEEEEEEEEEEEEEEEEEEEEEEEE                                              [ 51%]
+tests/unit/test_api_personal.py EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE [ 63%]
+EEEEEEEEEEEEEEEEEEEEEEE                                                  [ 69%]
+tests/unit/test_api_sectores.py EEEEEEEEEEEEEEEEEEE                      [ 75%]
+tests/unit/test_home_controller.py EEE                                   [ 76%]
+tests/unit/test_personal.py EEEEEEEEEEEEEEEEEEEEEEEE                     [ 83%]
+tests/unit/test_roles_controller.py EEEEEEEEE                            [ 86%]
+tests/unit/test_sector.py EEEEEEEEEEEEE                                  [ 90%]
+tests/unit/test_sector_controller.py EEEEEEEEEEEEEEEEE                   [ 95%]
+tests/unit/test_usuarios_controller.py EEEEEEEEEEEEEE.                   [100%]
+==================================== ERRORS ====================================
+__________ ERROR at setup of test_login_returns_token_and_expiration ___________
+self = <sqlalchemy.engine.base.Connection object at 0x7f5e85d6b4d0>
+engine = Engine(postgresql+psycopg://postgres:***@localhost:5432/mydatabase_test)
+connection = None, _has_events = None, _allow_revalidate = True
+_allow_autobegin = True
+    def __init__(
+        self,
+        engine: Engine,
+        connection: Optional[PoolProxiedConnection] = None,
+        _has_events: Optional[bool] = None,
+        _allow_revalidate: bool = True,
+        _allow_autobegin: bool = True,
+    ):
+        """Construct a new Connection."""
+        self.engine = engine
+        self.dialect = dialect = engine.dialect
+    
+        if connection is None:
+            try:
+>               self._dbapi_connection = engine.raw_connection()
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/site-packages/sqlalchemy/engine/base.py:149: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.14/site-packages/sqlalchemy/engine/base.py:3287: in raw_connection
+    return self.pool.connect()
+           ^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/site-packages/sqlalchemy/pool/base.py:445: in connect
+    return _ConnectionFairy._checkout(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/site-packages/sqlalchemy/pool/base.py:1303: in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/site-packages/sqlalchemy/pool/base.py:709: in checkout
+    rec = pool._do_get()
+          ^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/site-packages/sqlalchemy/pool/impl.py:176: in _do_get
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py:166: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+/usr/local/lib/python3.14/site-packages/sqlalchemy/pool/impl.py:174: in _do_get
+    return self._create_connection()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/site-packages/sqlalchemy/pool/base.py:386: in _create_connection
+    return _ConnectionRecord(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/site-packages/sqlalchemy/pool/base.py:671: in __init__
+    self.__connect()
+/usr/local/lib/python3.14/site-packages/sqlalchemy/pool/base.py:906: in __connect
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py:166: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+/usr/local/lib/python3.14/site-packages/sqlalchemy/pool/base.py:902: in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/site-packages/sqlalchemy/engine/create.py:645: in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.14/site-packages/sqlalchemy/engine/default.py:869: in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+cls = <class 'psycopg.Connection'>
+conninfo = 'host=localhost dbname=mydatabase_test user=postgres password=postgres port=5432 hostaddr=127.0.0.1'
+autocommit = False, prepare_threshold = 5
+context = <psycopg.adapt.AdaptersMap object at 0x7f5e85d5e710>
+row_factory = None, cursor_factory = None
+kwargs = {'host': 'localhost', 'dbname': 'mydatabase_test', 'user': 'postgres', 'password': 'postgres', ...}
+    @classmethod
+    def connect(
+        cls,
+        conninfo: str = "",
+        *,
+        autocommit: bool = False,
+        prepare_threshold: int | None = 5,
+        context: AdaptContext | None = None,
+        row_factory: RowFactory[Row] | None = None,
+        cursor_factory: type[Cursor[Row]] | None = None,
+        **kwargs: ConnParam,
+    ) -> Self:
+        """
+        Connect to a database server and return a new `Connection` instance.
+        """
+    
+        params = cls._get_connection_params(conninfo, **kwargs)
+        timeout = timeout_from_conninfo(params)
+        rv = None
+        attempts = conninfo_attempts(params)
+        conn_errors: list[tuple[e.Error, str]] = []
+        for attempt in attempts:
+            tdescr = (attempt.get("host"), attempt.get("port"), attempt.get("hostaddr"))
+            descr = "host: %r, port: %r, hostaddr: %r" % tdescr
+            logger.debug("connection attempt: %s", descr)
+            try:
+                conninfo = make_conninfo("", **attempt)
+                gen = cls._connect_gen(conninfo)
+                rv = waiting.wait_conn(gen, interval=_WAIT_INTERVAL, timeout=timeout)
+            except e._WaitTimeout:
+                tex = e.ConnectionTimeout("connection timeout expired")
+                logger.debug("connection failed: %s: %s", descr, str(tex))
+                conn_errors.append((tex, descr))
+            except e.Error as ex:
+                logger.debug("connection failed: %s: %s", descr, str(ex))
+                conn_errors.append((ex, descr))
+            except e._NO_TRACEBACK as ex:
+                raise ex.with_traceback(None)
+            else:
+                logger.debug("connection succeeded: %s", descr)
+                break
+    
+        if not rv:
+            last_ex = conn_errors[-1][0]
+            if len(conn_errors) == 1:
+                raise last_ex.with_traceback(None)
+    
+            # Create a new exception with the same type as the last one, containing
+            # all attempt errors while preserving backward compatibility.
+            lines = [str(last_ex)]
+            lines.append("Multiple connection attempts failed. All failures were:")
+            lines.extend((f"- {descr}: {error}" for error, descr in conn_errors))
+            new_ex = type(last_ex)("\n".join(lines), pgconn=last_ex.pgconn)
+>           raise new_ex.with_traceback(None)
+E           psycopg.OperationalError: connection failed: connection to server at "127.0.0.1", port 5432 failed: Connection refused
+E           	Is the server running on that host and accepting TCP/IP connections?
+E           Multiple connection attempts failed. All failures were:
+E           - host: 'localhost', port: 5432, hostaddr: '::1': connection failed: connection to server at "::1", port 5432 failed: Connection refused
+E           	Is the server running on that host and accepting TCP/IP connections?
+E           - host: 'localhost', port: 5432, hostaddr: '127.0.0.1': connection failed: connection to server at "127.0.0.1", port 5432 failed: Connection refused
+E           	Is the server running on that host and accepting TCP/IP connections?
+/usr/local/lib/python3.14/site-packages/psycopg/connection.py:134: OperationalError
+The above exception was the direct cause of the following exception:
+    @pytest.fixture(scope="session")
+    def app():
+        """Crea la aplicación Flask configurada para testing (PostgreSQL, base de test)."""
+>       app = create_app("testing")
+              ^^^^^^^^^^^^^^^^^^^^^

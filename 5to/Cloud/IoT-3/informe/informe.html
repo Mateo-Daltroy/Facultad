@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Actividad N°3 – SimuPi – Node-RED – MQTT en AWS – Grupo 03</title>
+<style>
+  @page { size: A4; margin: 22mm 22mm 20mm 22mm; }
+  :root { --rule: #000; }
+  html { background: #fff; }
+  body {
+    font-family: "Liberation Serif", "Times New Roman", Times, serif;
+    font-size: 11.5pt; line-height: 1.45; color: #000; background: #fff;
+    margin: 0; text-align: justify; hyphens: auto;
+  }
+  h1 { text-align: center; font-size: 21pt; margin: 0 0 14pt; }
+  h2 { font-size: 15pt; border-bottom: 1px solid var(--rule); padding-bottom: 2pt; margin: 20pt 0 8pt; page-break-after: avoid; }
+  h3 { font-size: 12pt; margin: 14pt 0 6pt; page-break-after: avoid; }
+  h4 { font-size: 11.5pt; margin: 10pt 0 4pt; font-style: italic; page-break-after: avoid; }
+  p { margin: 0 0 7pt; }
+  ul { margin: 0 0 8pt; padding-left: 22pt; }
+  li { margin-bottom: 2pt; }
+  code { font-family: "Liberation Mono", "DejaVu Sans Mono", monospace; font-size: 9pt; }
+  pre {
+    font-family: "Liberation Mono", "DejaVu Sans Mono", monospace; font-size: 8.6pt; line-height: 1.35;
+    background: #f4f4f4; border: 1px solid #ccc; padding: 6pt 8pt; margin: 4pt 0 10pt;
+    white-space: pre-wrap; text-align: left; page-break-inside: avoid;
+  }
+  figure { margin: 8pt 0 12pt; text-align: center; page-break-inside: avoid; }
+  figure img { max-width: 100%; max-height: 120mm; border: 1px solid #bbb; }
+  figure.alta img { max-height: 150mm; }
+  figure.chica img { max-width: 62%; }
+  figure .par { display: flex; gap: 6pt; align-items: flex-start; justify-content: center; }
+  figure .par img { width: 49%; max-height: none; }
+  figcaption { font-style: italic; font-size: 10.5pt; margin-top: 3pt; text-align: center; }
+  body { counter-reset: fig; }
+  figure { counter-increment: fig; }
+  figcaption::before { content: "Figura " counter(fig) ": "; }
+  table { border-collapse: collapse; width: 100%; margin: 4pt 0 10pt; font-size: 10pt; text-align: left; page-break-inside: avoid; }
+  th, td { border: 1px solid #555; padding: 3pt 5pt; vertical-align: top; }
+  th { background: #e8e8e8; }
+  .nota { font-size: 10.5pt; border-left: 3px solid #888; padding: 2pt 0 2pt 8pt; margin: 6pt 0 10pt; }
+  .salto { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<h1>Actividad N°3 – SimuPi – Node-RED – MQTT en AWS</h1>
+
+<p><b>Grupo 03</b></p>
+<p>Integrantes:</p>
+<ul>
+  <li>Daltroy Mateo</li>
+  <li>Lima Francisco</li>
+  <li>Lamiral Matheo</li>
+</ul>
+
+<h2>Contexto inicial</h2>
+<p>El objetivo de la actividad es reemplazar el bróker de AWS IoT de la Actividad 2 por el bróker MQTT
+embebido de <b>SimuPi</b>, un simulador de Raspberry Pi que genera sensores, pines GPIO y mensajes MQTT.
+Trabajamos con dos instancias EC2 <b>t3.micro</b> con <b>Debian 13</b>: en la <b>Instancia A</b> corre SimuPi y en la
+<b>Instancia B</b> corre Node-RED con un dashboard que lee y controla la simulación por MQTT.</p>
+<p>Las Partes 1 y 2 se hicieron en AWS durante la clase. Al quedarnos sin cupo de vCPU en Ohio (us-east-2),
+la Instancia A terminó en la región São Paulo (sa-east-1), lo que nos obligó a adaptar algunos puntos de la
+consigna; lo explicamos en cada paso. La Parte 3 se desarrolló después, con las instancias ya terminadas,
+reemplazando cada instancia por un contenedor Docker en una computadora del grupo.</p>
+
+<!-- ======================================================================= -->
+<h2>Parte 1 – Infraestructura</h2>
+
+<h3>1) Instancia B – Node-RED (Ohio)</h3>
+<p>Desde la consola de EC2 lanzamos la instancia <code>G03-NodeRED</code> con AMI <b>Debian 13</b>, tipo
+<b>t3.micro</b> y el grupo de seguridad del grupo que ya teníamos, <code>Grupo_03_security_group</code>.
+En <i>Advanced details → User data</i> pegamos el script de la cátedra <code>userdata_instancia_B_nodered.sh</code>,
+que en el primer arranque instala Docker y Docker Compose, levanta Node-RED en un contenedor publicado en el
+puerto 1880 e instala el paquete <code>@flowfuse/node-red-dashboard</code>.</p>
+<p>El primer intento falló porque la cuenta llegó al límite de <b>16 vCPU</b> en la región: todavía teníamos
+corriendo una instancia anterior (la habíamos creado sin el script, para no tener que pasar el archivo por SSH).
+La terminamos y el lanzamiento funcionó.</p>
+
+<figure>
+  <img src="img/p1_b_lanzamiento.jpg">
+  <figcaption>lanzamiento de G03-NodeRED (Debian 13, t3.micro) y error por el límite de vCPU de la cuenta.</figcaption>
+</figure>
+<figure>
+  <img src="img/p1_b_exito.jpg">
+  <figcaption>lanzamiento exitoso de la Instancia B después de terminar la instancia anterior.</figcaption>
+</figure>
+
+<p>Nos conectamos por SSH e instalamos <code>net-tools</code>. Con <code>sudo ss -tulpn</code> comprobamos que el
+contenedor de Node-RED quedó escuchando en el puerto <b>1880</b> (proceso <code>docker-proxy</code>), y desde el
+navegador entramos al editor con la IP pública de B, <code>3.129.25.11:1880</code>.</p>
+
+<figure>
+  <img src="img/p1_b_nettools.jpg">
+  <figcaption>instalación de net-tools en la Instancia B.</figcaption>
+</figure>
+<figure>
+  <img src="img/p1_b_puertos.jpg">
+  <figcaption>Node-RED escuchando en el puerto 1880 a través de docker-proxy.</figcaption>
+</figure>
+<figure>
+  <img src="img/p1_b_nodered.jpg">
+  <figcaption>editor de Node-RED de la Instancia B, accedido por su IP pública.</figcaption>
+</figure>
+
+<h3>2) Grupo de seguridad de la Instancia B</h3>
+<p>El grupo <code>Grupo_03_security_group</code> venía de prácticas anteriores con SSH (22) y Node-RED (1880)
+abiertos a <code>0.0.0.0/0</code>. La consigna pide que los dos puertos se permitan solo desde la IP del alumno.
+Para saber qué IP cargar ejecutamos <code>ip a</code> en nuestra computadora: la dirección es
+<code>163.10.143.79</code> dentro de la red <code>/22</code> de la facultad.</p>
+
+<figure>
+  <img src="img/p1_b_sg_inicial.jpg">
+  <figcaption>reglas iniciales de la Instancia B: puertos 22 y 1880 abiertos a 0.0.0.0/0.</figcaption>
+</figure>
+<figure>
+  <img src="img/p1_ip_local.jpg">
+  <figcaption>IP de nuestra computadora en la red de la facultad (163.10.143.79/22).</figcaption>
+</figure>
+
+<p>Editamos las dos reglas para restringir el origen. Primero cargamos el bloque <code>163.10.140.0/22</code> de
+la red de la facultad, desde la que trabajamos todos los integrantes, y después lo limitamos a nuestra IP exacta
+(<code>163.10.143.79/32</code>), como pide la consigna.</p>
+
+<figure>
+  <img src="img/p1_b_sg_22.jpg">
+  <figcaption>reglas de B con el bloque /22 de la red de la facultad.</figcaption>
+</figure>
+<figure>
+  <img src="img/p1_b_sg_32.jpg">
+  <figcaption>reglas de B limitadas a nuestra IP (/32), su configuración final.</figcaption>
+</figure>
+<figure>
+  <img src="img/p1_b_sg_final.jpg">
+  <figcaption>reglas de entrada de la Instancia B guardadas.</figcaption>
+</figure>
+
+<h3>3) Instancia A – SimuPi (São Paulo)</h3>
+<p>Intentamos crear la Instancia A en Ohio con un grupo de seguridad nuevo, <code>G03-Simupi</code>, pero el
+lanzamiento volvió a fallar por el límite de vCPU. Como no podíamos bajar más el uso en esa región, la creamos
+en <b>São Paulo (sa-east-1)</b>. Los key pairs son por región, así que generamos uno nuevo,
+<code>G03-SaoPaulo</code>, y descargamos el <code>.pem</code>.</p>
+
+<figure>
+  <img src="img/p1_a_ohio.jpg">
+  <figcaption>configuración de la Instancia A en Ohio con el grupo de seguridad G03-Simupi.</figcaption>
+</figure>
+<figure>
+  <img src="img/p1_a_ohio_error.jpg">
+  <figcaption>el lanzamiento en Ohio falla por el límite de 16 vCPU.</figcaption>
+</figure>
+<figure>
+  <img src="img/p1_a_saopaulo.jpg">
+  <figcaption>lanzamiento en São Paulo con el key pair nuevo G03-SaoPaulo.</figcaption>
+</figure>
+<figure>
+  <img src="img/p1_a_exito.jpg">
+  <figcaption>Instancia A lanzada en sa-east-1.</figcaption>
+</figure>
+
+<h3>4) Grupo de seguridad de la Instancia A</h3>
+<p>La consigna pide que el puerto 1883 (MQTT) se permita solo desde el grupo de seguridad de B. Eso no es posible
+con las instancias en regiones distintas: un grupo de seguridad solo puede referenciar a otro de la misma VPC, y
+además las instancias no comparten red privada. Lo consultamos y se nos indicó obviar ese punto, así que en su
+lugar permitimos el 1883 desde el bloque <code>3.129.25.0/24</code>, que contiene la IP pública de B. Una
+consecuencia es que, si la Instancia B se reinicia y cambia de IP pública, el bróker queda inaccesible hasta
+actualizar la regla.</p>
+<p>Para el SSH (22) y la web/API de SimuPi (5000) usamos primero el bloque <code>/22</code> de la facultad y
+después los limitamos a nuestra IP exacta (<code>163.10.143.79/32</code>), como pide la consigna. Ninguno de los
+puertos 1883 y 5000 quedó abierto a <code>0.0.0.0/0</code>.</p>
+
+<figure>
+  <img src="img/p1_a_sg_22.jpg">
+  <figcaption>edición de las reglas de A: 1883 desde la red de B, 22 y 5000 desde la red de la facultad.</figcaption>
+</figure>
+<figure>
+  <img src="img/p1_a_sg_22_ok.jpg">
+  <figcaption>reglas de A guardadas en su primera versión.</figcaption>
+</figure>
+<figure>
+  <img src="img/p1_a_sg_32.jpg">
+  <figcaption>22 y 5000 limitados a nuestra IP (/32).</figcaption>
+</figure>
+<figure>
+  <img src="img/p1_a_sg_final.jpg">
+  <figcaption>reglas finales de la Instancia A.</figcaption>
+</figure>
+
+<h3>5) SimuPi en la Instancia A</h3>
+<p>Le dimos permisos al <code>.pem</code> y nos conectamos por SSH a la IP pública de A,
+<code>15.228.246.183</code>.</p>
+
+<figure>
+  <img src="img/p1_a_ssh.jpg">
+  <figcaption>conexión SSH a la Instancia A con el key pair G03-SaoPaulo.</figcaption>
+</figure>
+
+<p>Descargamos el ejecutable de SimuPi para Linux desde el repositorio de la cátedra, lo dejamos corriendo en
+segundo plano con <code>nohup</code> (sigue vivo al cerrar la sesión SSH) y verificamos el servicio con
+<code>curl localhost:5000/api/health</code>, que respondió <code>{"status":"ok"}</code>.</p>
+
+<pre>wget -O simupi https://github.com/seguren/simupi/raw/main/bin/simupi-linux-amd64 &amp;&amp; chmod +x simupi
+nohup ./simupi &gt; simupi.log 2&gt;&amp;1 &amp;
+curl localhost:5000/api/health</pre>
+
+<figure>
+  <img src="img/p1_a_wget.jpg">
+  <figcaption>descarga del ejecutable de SimuPi.</figcaption>
+</figure>
+<figure>
+  <img src="img/p1_a_health.jpg">
+  <figcaption>SimuPi corriendo con nohup y respuesta del endpoint de salud.</figcaption>
+</figure>
+
+<p>Para abrir la interfaz web armamos un túnel SSH que lleva el puerto 5000 de la instancia al
+<code>localhost:5000</code> de nuestra computadora. La interfaz abrió con el escenario por defecto,
+<code>garage</code>.</p>
+
+<figure>
+  <img src="img/p1_a_tunel.jpg">
+  <figcaption>túnel SSH del puerto 5000 de la Instancia A.</figcaption>
+</figure>
+<figure>
+  <img src="img/p1_a_simupi_web.jpg">
+  <figcaption>interfaz web de SimuPi en localhost:5000 con el escenario garage.</figcaption>
+</figure>
+
+<h3>6) Dashboard en la Instancia B</h3>
+<p>El paquete <code>@flowfuse/node-red-dashboard</code> quedó instalado por el script de user data. Lo
+verificamos en <i>User Settings → Palette</i>: versión <b>1.33.0</b>, sobre Node-RED 5.0.7.</p>
+
+<figure class="chica">
+  <img src="img/p1_b_dashboard_pkg.jpg">
+  <figcaption>@flowfuse/node-red-dashboard instalado en la Instancia B.</figcaption>
+</figure>
+
+<h3>7) Conexión entre B y A</h3>
+<p>En Node-RED configuramos el bróker MQTT. Como A y B están en regiones distintas no podíamos usar la IP privada
+de A (como indica la consigna), así que usamos su IP pública: <code>15.228.246.183:1883</code>. Con un nodo
+<i>mqtt in</i> suscripto a <code>sensor/distance</code> y un nodo <i>debug</i> comprobamos que llegan las lecturas
+del sensor del escenario garage, que bajan en escalones como corresponde al modo <code>ramp</code>.</p>
+
+<figure class="chica">
+  <img src="img/p1_mqtt_config.jpg">
+  <figcaption>nodo mqtt in con el bróker de SimuPi (IP pública de A, puerto 1883).</figcaption>
+</figure>
+<figure>
+  <img src="img/p1_debug_sensor.jpg">
+  <figcaption>lecturas de sensor/distance en el panel de debug.</figcaption>
+</figure>
+
+<p>Hicimos lo mismo con la entrada <code>gpio/in/17</code>: al presionar <i>Toggle</i> en SimuPi llegan los
+valores 1 y 0.</p>
+
+<figure>
+  <img src="img/p1_debug_gpio.jpg">
+  <figcaption>cambios de gpio/in/17 recibidos en Node-RED.</figcaption>
+</figure>
+
+<!-- ======================================================================= -->
+<h2 class="salto">Parte 2 – Dashboard con los escenarios preconfigurados</h2>
+
+<h3>1) Entradas GPIO</h3>
+<p>Empezamos por las entradas: un <i>mqtt in</i> por pin (<code>gpio/in/17</code> y <code>gpio/in/18</code>)
+conectado a un nodo <i>text</i> del dashboard, con un debug para verificar los mensajes.</p>
+
+<figure>
+  <img src="img/p2_inputs_flujo.jpg">
+  <figcaption>flujo de las entradas GPIO 17 y 18.</figcaption>
+</figure>
+<figure>
+  <img src="img/p2_inputs_dash.jpg">
+  <figcaption>primer dashboard con el estado de las entradas.</figcaption>
+</figure>
+
+<h3>2) Dashboard del escenario greenhouse</h3>
+<p>Elegimos el escenario <code>greenhouse</code> (temperatura en modo <code>wave</code> entre 15 y 40 °C, humedad en
+modo <code>walk</code> entre 30 y 90 %, ventilador en el GPIO 22 y bomba en el GPIO 24). El flujo tiene tres
+partes:</p>
+<ul>
+  <li><b>Sensores:</b> <code>sensor/temperature</code> y <code>sensor/humidity</code> van cada uno a un gauge
+  (valor actual) y a un chart (evolución en el tiempo).</li>
+  <li><b>Actuadores:</b> los switches <i>Fan</i> y <i>Pump</i> publican <code>"1"</code>/<code>"0"</code> en
+  <code>gpio/out/22</code> y <code>gpio/out/24</code>.</li>
+  <li><b>Estado:</b> las entradas <code>gpio/in/17</code> y <code>gpio/in/18</code> se muestran como texto. Como
+  SimuPi no publica el estado de las salidas, nos suscribimos también a <code>gpio/out/22</code> y
+  <code>gpio/out/24</code>: así el dashboard muestra el último comando que pasó por el bróker, venga de este
+  dashboard o de otro cliente.</li>
+</ul>
+
+<figure>
+  <img src="img/p2_flujo_gh.jpg">
+  <figcaption>flujo del escenario greenhouse: estado de salidas, switches de control y sensores.</figcaption>
+</figure>
+<figure>
+  <img src="img/p2_dash_gh.jpg">
+  <figcaption>dashboard de greenhouse: estado del ventilador (0) y de la bomba (1), gráficos y controles.</figcaption>
+</figure>
+
+<h3>3) Versión final</h3>
+<p>En la versión final reemplazamos los textos 0/1 de las salidas por switches de estado. Una función
+<i>1=True / 0=False Mapper</i> convierte el payload de <code>gpio/out/&lt;pin&gt;</code> en booleano, y los switches
+<i>Estado Ventilador</i> y <i>Estado Bomba</i> lo muestran encendido o apagado.</p>
+
+<figure>
+  <img src="img/p2_flujo_final.jpg">
+  <figcaption>flujo final: gpio/out/22 y gpio/out/24 pasan por el mapper hacia los switches de estado.</figcaption>
+</figure>
+<figure>
+  <img src="img/p2_dash_final.jpg">
+  <figcaption>dashboard final de greenhouse con el estado del ventilador y de la bomba.</figcaption>
+</figure>
+
+<p class="nota">El punto 7 (adaptar el dashboard a un segundo escenario) no se realizó: la cátedra nos indicó
+obviarlo por su complejidad para esta práctica.</p>
+
+<!-- ======================================================================= -->
+<h2 class="salto">Parte 3 – Escenario propio: sala de servidores</h2>
+
+<h3>1) Caso de uso</h3>
+<p>El escenario <code>sala_servidores</code> simula el monitoreo y control de una sala de servidores pequeña,
+donde la temperatura, la humedad y el consumo eléctrico deben mantenerse en rangos seguros para evitar fallas del
+hardware. El sistema mide esas tres variables, detecta la apertura de la puerta de la sala y actúa sobre dos
+salidas: un equipo de refrigeración adicional y una baliza de alarma. Los rangos siguen la recomendación habitual
+para salas de cómputo: temperatura de operación hasta 27 °C (alarma sobre 30 °C) y humedad relativa entre 40 % y
+60 %.</p>
+<p>El dashboard de Node-RED (<code>/dashboard/sala-servidores</code>) permite al operador ver los valores en tiempo
+real y su histórico, elegir entre modo MANUAL y AUTOMÁTICO, comandar las salidas a mano y ver las alarmas activas
+con su causa.</p>
+
+<h3>2) Entorno de ejecución</h3>
+<p>Como las instancias EC2 de las Partes 1 y 2 se terminaron al finalizar la clase, como pide la consigna,
+desarrollamos la Parte 3 con Docker en una computadora del grupo. Cada instancia se reemplazó por un contenedor,
+ambos definidos en un mismo <code>docker-compose.yml</code>:</p>
+
+<table>
+  <tr><th>Contenedor</th><th>Reemplaza a</th><th>Imagen</th><th>Puertos publicados</th></tr>
+  <tr><td><code>simupi</code></td><td>Instancia A</td><td>compilada desde el repositorio de SimuPi (Go) sobre <code>distroless/static</code>, sin usuario root</td><td>5000 (web/API), solo en <code>127.0.0.1</code></td></tr>
+  <tr><td><code>nodered</code></td><td>Instancia B</td><td><code>nodered/node-red:4.0</code> + <code>@flowfuse/node-red-dashboard</code></td><td>1880 (editor y dashboard), solo en <code>127.0.0.1</code></td></tr>
+</table>
+
+<pre>services:
+  simupi:
+    build: .
+    ports:
+      - "127.0.0.1:5000:5000"   # Web UI + API REST, solo local
+    # 1883 (MQTT) no se publica: Node-RED lo alcanza por la red interna como simupi:1883
+    volumes:
+      - simupi-data:/app/data
+  nodered:
+    image: nodered/node-red:4.0
+    ports:
+      - "127.0.0.1:1880:1880"
+    volumes:
+      - nodered-data:/data</pre>
+
+<p>Los contenedores comparten la red interna que crea Docker Compose, así que Node-RED llega al bróker por nombre,
+<code>simupi:1883</code>. El 1883 no se publica fuera de esa red y los puertos 5000 y 1880 quedan atados a
+<code>127.0.0.1</code>. Es el mismo criterio que los grupos de seguridad de AWS: el bróker sin usuario ni contraseña
+solo es accesible para Node-RED, y las interfaces web solo desde nuestra máquina.</p>
+
+<figure>
+  <img src="img/p3_broker.jpg">
+  <figcaption>bróker de Node-RED apuntando al contenedor de SimuPi por su nombre en la red de Docker.</figcaption>
+</figure>
+
+<h3>3) Sensores</h3>
+<p>El escenario tiene tres sensores con dos modos de simulación: <code>walk</code> (caminata aleatoria) para la
+temperatura y la humedad, que varían lentamente, y <code>triangle</code> para el consumo, que reproduce las rampas
+de carga eléctrica de los racks.</p>
+
+<table>
+  <tr><th>Sensor</th><th>Tópico MQTT</th><th>Modo</th><th>Rango simulado</th><th>Unidad</th><th>Intervalo</th><th>Parámetro</th><th>Rango seguro</th></tr>
+  <tr><td>temperatura</td><td><code>sensor/temperatura</code></td><td>walk</td><td>18 – 34</td><td>°C</td><td>1 s</td><td>step = 0,8 °C</td><td>≤ 30 °C</td></tr>
+  <tr><td>humedad</td><td><code>sensor/humedad</code></td><td>walk</td><td>30 – 70</td><td>%</td><td>2 s</td><td>step = 1,5 %</td><td>40 – 60 %</td></tr>
+  <tr><td>consumo</td><td><code>sensor/consumo</code></td><td>triangle</td><td>4 – 12</td><td>kW</td><td>2 s</td><td>period = 180 s</td><td>≤ 10,5 kW</td></tr>
+</table>
+
+<h3>4) Pines GPIO y tópicos MQTT</h3>
+<table>
+  <tr><th>Pin</th><th>Tipo</th><th>Alias</th><th>Tópico MQTT</th><th>Sentido</th><th>Valores</th></tr>
+  <tr><td>17</td><td>GPIO input</td><td><code>puerta_sala</code></td><td><code>gpio/in/17</code></td><td>SimuPi → Node-RED</td><td>1 = abierta, 0 = cerrada</td></tr>
+  <tr><td>22</td><td>GPIO output</td><td><code>refrigeracion</code></td><td><code>gpio/out/22</code></td><td>Node-RED → SimuPi</td><td>1 = encendida, 0 = apagada</td></tr>
+  <tr><td>24</td><td>GPIO output</td><td><code>baliza_alarma</code></td><td><code>gpio/out/24</code></td><td>Node-RED → SimuPi</td><td>1 = activa, 0 = apagada</td></tr>
+</table>
+
+<h3>5) Creación del escenario en SimuPi</h3>
+<p>Escribimos la definición en <code>sala_servidores.json</code> (se entrega junto con el informe) y la guardamos con
+la misma operación que usa el botón <i>Guardar como escenario</i> de la ventana Configuración:</p>
+<pre>curl -X POST localhost:5000/api/config/save/sala_servidores \
+     -H "Content-Type: application/json" -d @sala_servidores.json</pre>
+<p>El escenario aparece en el selector, y al cargarlo SimuPi muestra la entrada <code>puerta_sala</code>, las salidas
+<code>refrigeracion</code> y <code>baliza_alarma</code> y los tres sensores con su modo.</p>
+
+<figure>
+  <img src="img/p3_config.jpg">
+  <figcaption>ventana Configuración de SimuPi con los alias del escenario y el botón Guardar como escenario.</figcaption>
+</figure>
+<figure>
+  <img src="img/p3_simupi.jpg">
+  <figcaption>escenario sala_servidores cargado: selector, pines con sus alias y modos de cada sensor.</figcaption>
+</figure>
+
+<h3>6) Flujo de Node-RED</h3>
+<p>El flujo tiene 21 nodos. Los tres <i>mqtt in</i> de sensores alimentan los gauges y el gráfico histórico, y además
+entran a la lógica. Toda la lógica está en tres nodos function: <i>guardar modo</i>,
+<i>Refrigeración (histéresis 27/24 °C)</i> y <i>Alarma y baliza</i>. Cada actuador recibe en la misma función su
+switch manual y los sensores, y el modo decide cuál de los dos manda. El estado se guarda en el contexto del flujo
+(<code>modo_auto</code>, <code>refrig</code>, <code>baliza</code>, <code>valores</code>).</p>
+<p>Cada función devuelve también el estado real de la salida al switch manual correspondiente. Así, si el modo
+automático enciende la refrigeración y el operador pasa a MANUAL, el switch ya aparece encendido; y si en AUTOMÁTICO
+se toca un switch, vuelve solo a su posición.</p>
+
+<figure>
+  <img src="img/p3_flujo.jpg">
+  <figcaption>flujo de la sala de servidores; resaltadas las tres funciones con la lógica.</figcaption>
+</figure>
+<figure>
+  <img src="img/p3_fn_refrig.jpg">
+  <figcaption>función de refrigeración: enciende sobre 27 °C, apaga bajo 24 °C y publica solo si el estado cambia.</figcaption>
+</figure>
+<figure>
+  <img src="img/p3_fn_alarma.jpg">
+  <figcaption>función de alarma: condiciones fuera de rango y baliza siguiendo a la alarma en modo automático.</figcaption>
+</figure>
+
+<h3>7) Reglas de automatización</h3>
+<table>
+  <tr><th>Regla</th><th>Condición</th><th>Acción</th><th>Modo</th></tr>
+  <tr><td>Refrigeración con histéresis</td><td>T &gt; 27 °C enciende; T &lt; 24 °C apaga; entre 24 y 27 °C mantiene el estado</td><td><code>gpio/out/22</code> = 1 / 0</td><td>Solo AUTOMÁTICO</td></tr>
+  <tr><td>Alarma fuera de rango</td><td>T &gt; 30 °C, humedad &lt; 40 % o &gt; 60 %, consumo &gt; 10,5 kW, o puerta abierta</td><td>Texto de alarma con la causa; <code>gpio/out/24</code> = 1 mientras dure</td><td>Texto: siempre. Baliza: solo AUTOMÁTICO</td></tr>
+  <tr><td>Modo MANUAL / AUTOMÁTICO</td><td>Interruptor “Modo automático” del dashboard</td><td>Habilita la lógica automática o los switches manuales</td><td>—</td></tr>
+  <tr><td>Control manual</td><td>Switches “Refrigeración (manual)” y “Baliza (manual)”</td><td>Publican 1 / 0 en <code>gpio/out/22</code> y <code>gpio/out/24</code></td><td>Solo MANUAL</td></tr>
+</table>
+<p>La banda de histéresis de 3 °C evita que la refrigeración arranque y pare en cada lectura cuando la temperatura
+oscila alrededor de un único umbral. Las salidas se publican solo cuando su estado cambia.</p>
+
+<h3>8) Dashboard</h3>
+<p>El dashboard tiene tres grupos: <i>Condiciones de la sala</i> (gauges con franjas verde, amarilla y roja según el
+rango seguro de cada variable), <i>Control y alarmas</i> (modo, switches manuales, estado de las salidas, alarma y
+puerta) e <i>Histórico</i> (las tres series en un gráfico). En la figura, en modo manual y con los valores de la
+simulación, la humedad está por debajo de 40 % y el dashboard lo informa como alarma.</p>
+
+<figure>
+  <img src="img/p3_dash_vivo.jpg">
+  <figcaption>dashboard de la sala de servidores con los valores de la simulación.</figcaption>
+</figure>
+
+<h3>9) Pruebas</h3>
+<p>Para no depender del ciclo de la simulación forzamos cada caso con la API de SimuPi. Antes de empezar fijamos la
+humedad en 50 % y el consumo en 7 kW, para que solo cambie la variable de cada prueba. En cada caso mostramos el
+dashboard y, a la derecha, la interfaz de SimuPi, donde se ve el estado real de los pines.</p>
+
+<h4>a) Control manual</h4>
+<p>En modo MANUAL encendimos el switch <i>Refrigeración (manual)</i>: el dashboard informa ENCENDIDA y SimuPi pone
+el GPIO 22 en 1.</p>
+<figure>
+  <div class="par"><img src="img/p3_manual_dash.jpg"><img src="img/p3_manual_simupi.jpg"></div>
+  <figcaption>control manual de la refrigeración: dashboard y GPIO 22 en SimuPi.</figcaption>
+</figure>
+
+<h4>b) Histéresis: encendido, mantenimiento y apagado</h4>
+<p>Con el modo AUTOMÁTICO activo fijamos la temperatura en 28 °C, después en 25,5 °C y por último en 23 °C:</p>
+<pre>curl -X POST localhost:5000/api/sensor/temperatura -H "Content-Type: application/json" -d '{"value": 28}'</pre>
+<p>A 28 °C la refrigeración se enciende; a 25,5 °C, dentro de la banda, sigue encendida; a 23 °C se apaga.</p>
+<figure>
+  <div class="par"><img src="img/p3_t28_dash.jpg"><img src="img/p3_t28_simupi.jpg"></div>
+  <figcaption>T = 28 °C en modo automático: la refrigeración se enciende.</figcaption>
+</figure>
+<figure class="chica">
+  <img src="img/p3_t25_dash.jpg">
+  <figcaption>T = 25,5 °C: dentro de la banda de histéresis la refrigeración sigue encendida.</figcaption>
+</figure>
+<figure>
+  <div class="par"><img src="img/p3_t23_dash.jpg"><img src="img/p3_t23_simupi.jpg"></div>
+  <figcaption>T = 23 °C: la refrigeración se apaga.</figcaption>
+</figure>
+
+<h4>c) Alarma por temperatura</h4>
+<p>Con la temperatura en 31,5 °C el dashboard muestra “ALARMA: temperatura alta”, la baliza se activa y SimuPi pone
+en 1 los GPIO 22 y 24.</p>
+<figure>
+  <div class="par"><img src="img/p3_alarma_t_dash.jpg"><img src="img/p3_alarma_t_simupi.jpg"></div>
+  <figcaption>alarma por temperatura alta con la baliza activa.</figcaption>
+</figure>
+
+<h4>d) Alarma por puerta abierta</h4>
+<p>Volvimos la temperatura a 22 °C y abrimos la puerta con <code>curl -X POST localhost:5000/api/gpio/17/toggle</code>.
+La alarma cambia de causa a “puerta abierta” y la baliza vuelve a activarse.</p>
+<figure>
+  <div class="par"><img src="img/p3_puerta_dash.jpg"><img src="img/p3_puerta_simupi.jpg"></div>
+  <figcaption>alarma por puerta abierta: GPIO 17 en 1 y baliza activa.</figcaption>
+</figure>
+
+<h4>e) Vuelta a la normalidad</h4>
+<p>Al cerrar la puerta, con todos los valores dentro de rango, la alarma vuelve a “Normal” y la baliza se apaga.</p>
+<figure class="chica">
+  <img src="img/p3_normal_dash.jpg">
+  <figcaption>sin condiciones fuera de rango: alarma normal y baliza apagada.</figcaption>
+</figure>
+
+<h4>f) Alarma en modo MANUAL</h4>
+<p>Repetimos la temperatura alta en modo MANUAL: aparece el texto de alarma, pero la baliza no se activa sola. Eso
+muestra que la automatización depende del modo, mientras que la alarma visible está siempre activa.</p>
+<figure>
+  <div class="par"><img src="img/p3_manual_alarma.jpg"><img src="img/p3_manual_alarma_simupi.jpg"></div>
+  <figcaption>temperatura alta en modo manual: alarma visible y baliza apagada.</figcaption>
+</figure>
+
+<!-- ======================================================================= -->
+<h2>Conclusiones</h2>
+<ul>
+  <li>El bróker embebido de SimuPi cumple el mismo rol que AWS IoT en la Actividad 2: Node-RED no se comunica
+  directamente con el simulador, sino que publica y se suscribe a tópicos en común.</li>
+  <li>El límite de vCPU de la cuenta nos obligó a usar dos regiones. Eso impidió referenciar el grupo de seguridad
+  de B desde A y nos obligó a usar la IP pública de A como bróker, lo que muestra por qué la consigna pide ambas
+  instancias en la misma VPC y subred.</li>
+  <li>Como SimuPi no publica el estado de las salidas, el dashboard refleja los comandos. Suscribirse a
+  <code>gpio/out/#</code> y devolver el estado a los switches mantiene el dashboard coherente con lo que se mandó.</li>
+  <li>La histéresis evita que la refrigeración se encienda y apague en cada lectura cerca del umbral, y separar la
+  alarma visible de la baliza permite que el modo MANUAL siga informando sin actuar.</li>
+  <li>Reemplazar las instancias por contenedores Docker permitió reproducir la arquitectura de la actividad (dos
+  servicios, bróker accesible solo para Node-RED) sin depender de AWS.</li>
+</ul>
+
+</body>
+</html>

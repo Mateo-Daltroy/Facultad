@@ -1,0 +1,18 @@
+services:
+  nodered:
+    image: nodered/node-red:latest
+    container_name: nodered
+    restart: unless-stopped
+    ports:
+      # Si sólo querés acceso local/túnel SSH seguro, usá "127.0.0.1:1880:1880"
+      # Si vas a usar Nginx reverse proxy o abrir el Security Group, dejalo así:
+      - "1880:1880"
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
+    volumes:
+      - ./data:/data
+    # Limitar memoria (opcional pero muy recomendado en instancias pequeñas de EC2)
+    deploy:
+      resources:
+        limits:
+          memory: 512M
