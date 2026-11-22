@@ -1,0 +1,986 @@
+{
+ "flows": [
+  {
+   "id": "b0d25a1cf450683d",
+   "type": "tab",
+   "label": "Flow 1",
+   "disabled": false,
+   "info": "",
+   "env": []
+  },
+  {
+   "id": "a0a0000000000g01",
+   "type": "group",
+   "z": "b0d25a1cf450683d",
+   "name": "Control manual",
+   "style": {
+    "label": true,
+    "fill": "#e3f3d3",
+    "fill-opacity": "0.4"
+   },
+   "nodes": [
+    "4a52b344098d1068",
+    "5a116c1a32b357b5",
+    "a0a0000000000c01",
+    "a0a0000000000n01"
+   ],
+   "x": 14,
+   "y": 19,
+   "w": 492,
+   "h": 182
+  },
+  {
+   "id": "a0a0000000000g02",
+   "type": "group",
+   "z": "b0d25a1cf450683d",
+   "name": "Sensores",
+   "style": {
+    "label": true,
+    "fill": "#dbcbe7",
+    "fill-opacity": "0.4"
+   },
+   "nodes": [
+    "c713c30206c85e91",
+    "9d660a212ee71cc2",
+    "a0a0000000000c02",
+    "a0a0000000000n02"
+   ],
+   "x": 54,
+   "y": 219,
+   "w": 682,
+   "h": 162
+  },
+  {
+   "id": "a0a0000000000g03",
+   "type": "group",
+   "z": "b0d25a1cf450683d",
+   "name": "Autonomía",
+   "style": {
+    "label": true,
+    "fill": "#ffefbf",
+    "fill-opacity": "0.4"
+   },
+   "nodes": [
+    "a0a0000000000c03",
+    "a0a0000000000n03",
+    "a0a0000000000n04",
+    "a0a0000000000n05",
+    "a0a0000000000n06",
+    "a0a0000000000n07"
+   ],
+   "x": 34,
+   "y": 379,
+   "w": 1002,
+   "h": 189.5
+  },
+  {
+   "id": "a0a0000000000g04",
+   "type": "group",
+   "z": "b0d25a1cf450683d",
+   "name": "Actuadores",
+   "style": {
+    "label": true,
+    "fill": "#ffdf7f",
+    "fill-opacity": "0.4"
+   },
+   "nodes": [
+    "837ff0481221fb76",
+    "638cfbfc54837839",
+    "dd66e0ecf244d5d4",
+    "d5889b47af29aa30",
+    "ecf0ce9c6cdf3406",
+    "bd0729e1096c8a28",
+    "f86932a49f54f859",
+    "0e41e380269df966",
+    "bz0000000000x001",
+    "bz0000000000x002",
+    "a0a0000000000c04",
+    "a0a0000000000n08"
+   ],
+   "x": 34,
+   "y": 559,
+   "w": 1102,
+   "h": 269.5
+  },
+  {
+   "id": "a0a0000000000g05",
+   "type": "group",
+   "z": "b0d25a1cf450683d",
+   "name": "Dashboard",
+   "style": {
+    "label": true,
+    "fill": "#bfdbef",
+    "fill-opacity": "0.4"
+   },
+   "nodes": [
+    "a0a0000000000c05",
+    "a0a0000000000u01",
+    "a0a0000000000n09",
+    "a0a0000000000u02",
+    "a0a0000000000u03",
+    "a0a0000000000u04"
+   ],
+   "x": 54,
+   "y": 839,
+   "w": 912,
+   "h": 162
+  },
+  {
+   "id": "dad59c81877c9278",
+   "type": "mqtt-broker",
+   "name": "",
+   "broker": "localhost",
+   "port": 1883,
+   "clientid": "",
+   "autoConnect": true,
+   "usetls": false,
+   "protocolVersion": 4,
+   "keepalive": 60,
+   "cleansession": true,
+   "autoUnsubscribe": true,
+   "birthTopic": "",
+   "birthQos": "0",
+   "birthRetain": "false",
+   "birthPayload": "",
+   "birthMsg": {},
+   "closeTopic": "",
+   "closeQos": "0",
+   "closeRetain": "false",
+   "closePayload": "",
+   "closeMsg": {},
+   "willTopic": "",
+   "willQos": "0",
+   "willRetain": "false",
+   "willPayload": "",
+   "willMsg": {},
+   "userProps": "",
+   "sessionExpiry": ""
+  },
+  {
+   "id": "a0a0000000000b01",
+   "type": "ui-base",
+   "name": "Robot",
+   "path": "/dashboard",
+   "appIcon": "",
+   "includeClientData": true,
+   "acceptsClientConfig": [
+    "ui-notification",
+    "ui-control"
+   ],
+   "showPathInSidebar": false,
+   "headerContent": "page",
+   "navigationStyle": "default",
+   "titleBarStyle": "default",
+   "showReconnectNotification": true,
+   "notificationDisplayTime": 1,
+   "showDisconnectNotification": true,
+   "allowInstall": false
+  },
+  {
+   "id": "a0a0000000000b02",
+   "type": "ui-theme",
+   "name": "Robot",
+   "colors": {
+    "surface": "#fcfcfd",
+    "primary": "#0d74ce",
+    "bgPage": "#f9f9fb",
+    "groupBg": "#ffffff",
+    "groupOutline": "#d9d9e0"
+   },
+   "sizes": {
+    "density": "default",
+    "pagePadding": "12px",
+    "groupGap": "12px",
+    "groupBorderRadius": "4px",
+    "widgetGap": "12px"
+   }
+  },
+  {
+   "id": "a0a0000000000b03",
+   "type": "ui-page",
+   "name": "Robot",
+   "ui": "a0a0000000000b01",
+   "path": "/robot",
+   "icon": "robot",
+   "layout": "grid",
+   "theme": "a0a0000000000b02",
+   "breakpoints": [
+    {
+     "name": "Default",
+     "px": 0,
+     "cols": 3
+    },
+    {
+     "name": "Tablet",
+     "px": 576,
+     "cols": 6
+    },
+    {
+     "name": "Small Desktop",
+     "px": 768,
+     "cols": 9
+    },
+    {
+     "name": "Desktop",
+     "px": 1024,
+     "cols": 12
+    }
+   ],
+   "order": 1,
+   "className": "",
+   "visible": "true",
+   "disabled": "false"
+  },
+  {
+   "id": "a0a0000000000b04",
+   "type": "ui-group",
+   "name": "Autonomía",
+   "page": "a0a0000000000b03",
+   "width": 6,
+   "height": 1,
+   "order": 1,
+   "showTitle": true,
+   "className": "",
+   "visible": "true",
+   "disabled": "false",
+   "groupType": "default"
+  },
+  {
+   "id": "837ff0481221fb76",
+   "type": "function",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g04",
+   "name": "Aceleracion",
+   "func": "const VEL_MAX  = 100;  // velocidad con el gatillo a fondo (0 a 100)\nconst ARRANQUE = 15;   // mínimo con el que el motor empieza a girar\nconst PASO     = 5;    // cuánto sube o baja en cada paso\nconst TIEMPO   = 100;  // milisegundos entre pasos\n\nif (msg.topic === \"pedal\") context.set(\"pedal\", msg.payload);\nelse if (msg.topic === \"boton\") context.set(\"boton\", msg.payload === 1);\nelse if (msg.topic === \"obstaculo\") context.set(\"obstaculo\", msg.payload);\nelse throw new Error(`Topic desconocido: ${msg.topic}`);\n\nconst pedal = context.get(\"pedal\") || 0;\nconst boton = context.get(\"boton\") || false;\nconst obstaculo = context.get(\"obstaculo\") || false;\n\n// El sensor bloquea el avance, pero deja retroceder para salir\n// Durante el arco de esquive (flow \"maniobra\") Autonomía frena sola a 20 cm\nconst maniobra = flow.get(\"maniobra\") || false;\nconst frenar = boton || (obstaculo && pedal >= 0 && !maniobra);\n\nif (frenar) {\n    if (context.get(\"frenando\")) return null;\n    clearInterval(context.get(\"timer\"));\n    context.set(\"timer\", null);\n    context.set(\"frenando\", true);\n    context.set(\"vel\", 0);\n    context.set(\"dir\", \"parar\");\n    return [{ payload: 1 }, { payload: 1 }, { payload: 100 }];\n}\n\nif (context.get(\"frenando\")) {\n    context.set(\"frenando\", false);\n    node.send([{ payload: 0 }, { payload: 0 }, { payload: 0 }]);\n}\n\ncontext.set(\"destino\", pedal > 0 ? \"adelante\" : pedal < 0 ? \"atras\" : \"parar\");\ncontext.set(\"velDestino\", pedal === 0\n    ? 0\n    : Math.round(ARRANQUE + Math.abs(pedal) * (VEL_MAX - ARRANQUE)));\n\n// Si la rampa ya está corriendo, va a tomar el nuevo destino sola\nif (context.get(\"timer\")) return null;\n\nconst pines = (d) => d === \"adelante\" ? [1, 0]\n                   : d === \"atras\"    ? [0, 1]\n                   :                    [0, 0];\n\nconst timer = setInterval(() => {\n    const destino = context.get(\"destino\");\n    const velDestino = context.get(\"velDestino\");\n    let actual = context.get(\"vel\") || 0;\n    let dir = context.get(\"dir\") || \"parar\";\n\n    if (actual === 0 && destino !== dir) {\n        dir = destino;\n        const [a, b] = pines(dir);\n        node.send([{ payload: a }, { payload: b }, null]);\n        context.set(\"dir\", dir);\n    }\n\n    const objetivo = destino === dir ? velDestino : 0;\n\n    if (actual < objetivo) {\n        actual = Math.max(Math.min(actual + PASO, objetivo), ARRANQUE);\n    } else if (actual > objetivo) {\n        actual = Math.max(actual - PASO, objetivo);\n        if (actual < ARRANQUE) actual = objetivo;\n    }\n    context.set(\"vel\", Math.min(actual, 75));\n    node.send([null, null, { payload: actual }]);\n\n    if (actual === objetivo && destino === dir) {\n        clearInterval(timer);\n        context.set(\"timer\", null);\n    }\n}, TIEMPO);\n\ncontext.set(\"timer\", timer);\nreturn null;",
+   "outputs": 3,
+   "timeout": 0,
+   "noerr": 0,
+   "initialize": "",
+   "finalize": "\nclearInterval(context.get(\"timer\"));\ncontext.set(\"timer\", null);\ncontext.set(\"vel\", 0);\ncontext.set(\"dir\", \"parar\");\ncontext.set(\"frenando\", false);",
+   "libs": [],
+   "x": 830,
+   "y": 640,
+   "wires": [
+    [
+     "dd66e0ecf244d5d4"
+    ],
+    [
+     "d5889b47af29aa30"
+    ],
+    [
+     "638cfbfc54837839"
+    ]
+   ]
+  },
+  {
+   "id": "638cfbfc54837839",
+   "type": "rpi-gpio out",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g04",
+   "name": "ENA",
+   "pin": "12",
+   "set": "",
+   "level": "0",
+   "freq": "100",
+   "out": "pwm",
+   "bcm": true,
+   "x": 1060,
+   "y": 680,
+   "wires": []
+  },
+  {
+   "id": "dd66e0ecf244d5d4",
+   "type": "rpi-gpio out",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g04",
+   "name": "IN2",
+   "pin": "27",
+   "set": true,
+   "level": "0",
+   "freq": "",
+   "out": "out",
+   "bcm": true,
+   "x": 1060,
+   "y": 600,
+   "wires": []
+  },
+  {
+   "id": "d5889b47af29aa30",
+   "type": "rpi-gpio out",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g04",
+   "name": "IN1",
+   "pin": "17",
+   "set": true,
+   "level": "0",
+   "freq": "",
+   "out": "out",
+   "bcm": true,
+   "x": 1060,
+   "y": 640,
+   "wires": []
+  },
+  {
+   "id": "4a52b344098d1068",
+   "type": "mqtt in",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g01",
+   "name": "",
+   "topic": "control/gamepad",
+   "qos": "2",
+   "datatype": "auto-detect",
+   "broker": "dad59c81877c9278",
+   "nl": false,
+   "rap": true,
+   "rh": 0,
+   "inputs": 0,
+   "x": 150,
+   "y": 100,
+   "wires": [
+    [
+     "5a116c1a32b357b5",
+     "bz0000000000x001",
+     "a0a0000000000n01"
+    ]
+   ]
+  },
+  {
+   "id": "ecf0ce9c6cdf3406",
+   "type": "rpi-gpio out",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g04",
+   "name": "servo",
+   "pin": "18",
+   "set": "",
+   "level": "0",
+   "freq": "50",
+   "out": "pwm",
+   "bcm": true,
+   "x": 1060,
+   "y": 720,
+   "wires": []
+  },
+  {
+   "id": "5a116c1a32b357b5",
+   "type": "function",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g01",
+   "name": "Dividir input",
+   "func": "// Traduce el gamepad (MQTT control/gamepad) a pedal, freno y dirección.\n// En modo \"auto\" solo deja pasar el freno (cuadrado): pedal y dirección los manda Autonomía.\nconst UMBRAL = 0.1;       // evita que un roce del gatillo mueva el motor\nconst ZONA_MUERTA = 0.1;  // ignora el ruido del stick\n\nconst { axes, buttons } = msg.payload;\nconst boton = { topic: \"boton\", payload: buttons[3] };  // cuadrado\n\nif ((flow.get(\"modo\") || \"manual\") === \"auto\") return [[boton], null];\n\nconst l2 = (axes[2] + 1) / 2;\nconst r2 = (axes[5] + 1) / 2;\n\nconst pedal = r2 >= l2 ? r2 : -l2;\nconst acel = Math.abs(pedal) < UMBRAL ? 0 : Math.round(pedal * 20) / 20;\n\nconst x = Math.abs(axes[0]) < ZONA_MUERTA ? 0 : Math.round(axes[0] * 10) / 10;\n\nreturn [\n    [\n        { topic: \"pedal\", payload: acel },\n        boton,\n    ],\n    { payload: x },\n];\n",
+   "outputs": 2,
+   "timeout": 0,
+   "noerr": 0,
+   "initialize": "",
+   "finalize": "",
+   "libs": [],
+   "x": 390,
+   "y": 100,
+   "wires": [
+    [
+     "bd0729e1096c8a28"
+    ],
+    [
+     "f86932a49f54f859"
+    ]
+   ]
+  },
+  {
+   "id": "bd0729e1096c8a28",
+   "type": "rbe",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g04",
+   "name": "",
+   "func": "rbe",
+   "gap": "",
+   "start": "",
+   "inout": "out",
+   "septopics": true,
+   "property": "payload",
+   "topi": "topic",
+   "x": 620,
+   "y": 640,
+   "wires": [
+    [
+     "837ff0481221fb76"
+    ]
+   ]
+  },
+  {
+   "id": "ff7c3985cc7ef911",
+   "type": "inject",
+   "z": "b0d25a1cf450683d",
+   "d": true,
+   "name": "",
+   "props": [
+    {
+     "p": "payload"
+    },
+    {
+     "p": "topic",
+     "vt": "str"
+    }
+   ],
+   "repeat": "",
+   "crontab": "",
+   "once": false,
+   "onceDelay": 0.1,
+   "topic": "",
+   "payload": "",
+   "payloadType": "date",
+   "x": 150,
+   "y": 1020,
+   "wires": [
+    [
+     "1958ab3e9b1f159f"
+    ]
+   ]
+  },
+  {
+   "id": "1958ab3e9b1f159f",
+   "type": "trigger",
+   "z": "b0d25a1cf450683d",
+   "d": true,
+   "name": "",
+   "op1": "50",
+   "op2": "0",
+   "op1type": "str",
+   "op2type": "str",
+   "duration": "500",
+   "extend": false,
+   "overrideDelay": false,
+   "units": "ms",
+   "reset": "",
+   "bytopic": "all",
+   "topic": "topic",
+   "outputs": 1,
+   "x": 370,
+   "y": 1020,
+   "wires": [
+    [
+     "cc43ba46e8464c80"
+    ]
+   ]
+  },
+  {
+   "id": "cc43ba46e8464c80",
+   "type": "rpi-gpio out",
+   "z": "b0d25a1cf450683d",
+   "d": true,
+   "name": "",
+   "pin": "22",
+   "set": "",
+   "level": "0",
+   "freq": "1000",
+   "out": "pwm",
+   "bcm": true,
+   "x": 590,
+   "y": 1020,
+   "wires": []
+  },
+  {
+   "id": "c713c30206c85e91",
+   "type": "rpi-srf",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g02",
+   "name": "Ultrasonido",
+   "topic": "SRF",
+   "pulse": "0.1",
+   "pins": "16,18",
+   "precision": "0",
+   "x": 150,
+   "y": 300,
+   "wires": [
+    [
+     "a0a0000000000n02"
+    ]
+   ]
+  },
+  {
+   "id": "f86932a49f54f859",
+   "type": "rbe",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g04",
+   "name": "",
+   "func": "rbe",
+   "gap": "",
+   "start": "",
+   "inout": "out",
+   "septopics": true,
+   "property": "payload",
+   "topi": "topic",
+   "x": 620,
+   "y": 700,
+   "wires": [
+    [
+     "0e41e380269df966"
+    ]
+   ]
+  },
+  {
+   "id": "0e41e380269df966",
+   "type": "function",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g04",
+   "name": "Direccion",
+   "func": "const ESPERA_MS = 500;  // tiempo para que el servo llegue al centro\nconst x = msg.payload;\n\nclearTimeout(context.get(\"apagado\"));\n\nif (x === 0) {\n    const apagado = setTimeout(() => node.send({ payload: 0 }), ESPERA_MS);\n    context.set(\"apagado\", apagado);\n}\n\n// izquierda = 5, centro = 7, derecha = 10\nmsg.payload = x < 0 ? 7 + x * 2 : 7 + x * 3;\nreturn msg;",
+   "outputs": 1,
+   "timeout": 0,
+   "noerr": 0,
+   "initialize": "",
+   "finalize": "\nclearTimeout(context.get(\"apagado\"));\n// Code added here will be run when the\n// node is being stopped or re-deployed.\n",
+   "libs": [],
+   "x": 830,
+   "y": 700,
+   "wires": [
+    [
+     "ecf0ce9c6cdf3406"
+    ]
+   ]
+  },
+  {
+   "id": "9d660a212ee71cc2",
+   "type": "function",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g02",
+   "name": "Obstaculo",
+   "func": "// Freno de seguridad: marca obstáculo bajo FRENO_CM y lo libera sobre LIBRE_CM.\n// Aceleracion bloquea el avance (no la marcha atrás) mientras haya obstáculo.\nconst FRENO_CM = 50;\nconst LIBRE_CM = 55;  // margen para que no alterne al rondar los 50 cm\nconst SIN_LECTURA_MS = 2000;  // si el sensor deja de responder, no dejar el auto trabado\n\nconst cm = Number(msg.payload);\nlet obstaculo = context.get(\"obstaculo\") || false;\n\nif (cm < FRENO_CM) obstaculo = true;\nelse if (cm > LIBRE_CM) obstaculo = false;\n\ncontext.set(\"obstaculo\", obstaculo);\ncontext.set(\"cm\", cm);\nnode.status({ fill: obstaculo ? \"red\" : \"green\", shape: \"dot\", text: `${cm} cm` });\n// El driver del sensor solo informa cuando la distancia cambia y no avisa\n// si deja de responder: sin lecturas nuevas, el obstáculo se libera solo\nclearTimeout(context.get(\"vigia\"));\nif (obstaculo) {\n    context.set(\"vigia\", setTimeout(() => {\n        context.set(\"obstaculo\", false);\n        node.status({ fill: \"yellow\", shape: \"ring\", text: `sin lecturas desde ${cm} cm, libero` });\n        node.send({ topic: \"obstaculo\", payload: false });\n    }, SIN_LECTURA_MS));\n}\n\nreturn { topic: \"obstaculo\", payload: obstaculo };\n",
+   "outputs": 1,
+   "timeout": 0,
+   "noerr": 0,
+   "initialize": "",
+   "finalize": "clearTimeout(context.get(\"vigia\"));",
+   "libs": [],
+   "x": 650,
+   "y": 340,
+   "wires": [
+    [
+     "bd0729e1096c8a28"
+    ]
+   ]
+  },
+  {
+   "id": "bz0000000000x001",
+   "type": "function",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g04",
+   "name": "Boton X / Cuadrado",
+   "func": "const CANCION = \"/home/pi/tonos/alarma.txt\";\n\n// Fin de la reproducción (salida de código de retorno del exec)\nif (typeof msg.payload === \"object\" && \"code\" in msg.payload) {\n    context.set(\"sonando\", false);\n    return null;\n}\n\nconst { buttons } = msg.payload;\nconst x = buttons[0] === 1;         // X (cruz)\nconst cuadrado = buttons[3] === 1;  // cuadrado (además frena el motor)\n\n// Solo cuenta al apretar, no mientras se mantiene\nconst xApretado = x && !context.get(\"x\");\nconst cuadradoApretado = cuadrado && !context.get(\"cuadrado\");\ncontext.set(\"x\", x);\ncontext.set(\"cuadrado\", cuadrado);\n\nconst sonando = context.get(\"sonando\");\nconst parar = { kill: \"SIGTERM\", payload: \"\" };\n\nif (cuadradoApretado && sonando) return parar;\nif (!xApretado) return null;\nif (sonando) return parar;  // X mientras suena también la corta\n\ncontext.set(\"sonando\", true);\nreturn { payload: CANCION };",
+   "outputs": 1,
+   "timeout": 0,
+   "noerr": 0,
+   "initialize": "",
+   "finalize": "",
+   "libs": [],
+   "x": 620,
+   "y": 780,
+   "wires": [
+    [
+     "bz0000000000x002"
+    ]
+   ]
+  },
+  {
+   "id": "bz0000000000x002",
+   "type": "exec",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g04",
+   "command": "node /home/pi/buzzer.js",
+   "addpay": "payload",
+   "append": "",
+   "useSpawn": "true",
+   "timer": "",
+   "winHide": false,
+   "oldrc": false,
+   "name": "buzzer.js",
+   "x": 830,
+   "y": 780,
+   "wires": [
+    [],
+    [],
+    [
+     "bz0000000000x001"
+    ]
+   ]
+  },
+  {
+   "id": "a0a0000000000c01",
+   "type": "comment",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g01",
+   "name": "Control manual por MQTT",
+   "info": "Recibe el gamepad por MQTT (`control/gamepad`, broker local de la Pi).\n\n- R2 avanza, L2 retrocede, stick izquierdo dirige, cuadrado frena.\n- Options alterna manual/auto.\n- En modo auto, pedal y dirección los ignora (solo pasa el freno).",
+   "x": 150,
+   "y": 60,
+   "wires": []
+  },
+  {
+   "id": "a0a0000000000n01",
+   "type": "function",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g01",
+   "name": "Options → modo",
+   "func": "// Options (botón 9) alterna entre modo manual y automático.\n// Solo cuenta el flanco de subida, no mientras se mantiene apretado.\nconst apretado = msg.payload.buttons[9] === 1;\nconst antes = context.get(\"apretado\") || false;\ncontext.set(\"apretado\", apretado);\nif (!apretado || antes) return null;\nreturn { topic: \"toggle\", payload: \"toggle\" };\n",
+   "outputs": 1,
+   "timeout": 0,
+   "noerr": 0,
+   "initialize": "",
+   "finalize": "",
+   "libs": [],
+   "x": 390,
+   "y": 160,
+   "wires": [
+    [
+     "a0a0000000000n05"
+    ]
+   ]
+  },
+  {
+   "id": "a0a0000000000c02",
+   "type": "comment",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g02",
+   "name": "Sensores",
+   "info": "Ultrasónico frontal (pines físicos 16 y 18).\n\n- `Normalizar distancia` descarta 0, NaN y fuera de rango y guarda flow `dist` = {cm, t}.\n- `Obstaculo` es el freno de seguridad (50 cm) que usa Aceleracion en ambos modos.\n- El driver solo emite cuando la distancia cambia y no emite sin eco (> 4 m).",
+   "x": 150,
+   "y": 260,
+   "wires": []
+  },
+  {
+   "id": "a0a0000000000n02",
+   "type": "function",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g02",
+   "name": "Normalizar distancia",
+   "func": "// Normaliza la lectura del ultrasónico.\n// Descarta 0, NaN y valores fuera de rango (el driver manda \"0.0\" si falla una lectura).\n// Guarda la última lectura válida con su hora en flow \"dist\" para Autonomía.\nconst MIN_CM = 2, MAX_CM = 400;\nconst cm = Number(msg.payload);\nif (!Number.isFinite(cm) || cm <= MIN_CM || cm >= MAX_CM) return null;\n\nflow.set(\"dist\", { cm, t: Date.now() });\nreturn { topic: \"distancia\", payload: cm };\n",
+   "outputs": 1,
+   "timeout": 0,
+   "noerr": 0,
+   "initialize": "",
+   "finalize": "",
+   "libs": [],
+   "x": 390,
+   "y": 300,
+   "wires": [
+    [
+     "9d660a212ee71cc2",
+     "a0a0000000000n09"
+    ]
+   ]
+  },
+  {
+   "id": "a0a0000000000c03",
+   "type": "comment",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g03",
+   "name": "Autonomía: esquive de obstáculos",
+   "info": "Máquina de estados: AVANZAR → FRENAR → RETRO → ARCO (izq) → MEDIR → AVANZAR, o VOLVER → ARCO (der) → MEDIR → AVANZAR / BUZZER.\n\n- Solo corre con flow `modo` = `auto`.\n- Sin lecturas por 1 s pasa a SIN_SENSOR (detenido).\n- Cada transición se agrega a `/home/pi/autonomia_log.csv`.",
+   "x": 200,
+   "y": 420,
+   "wires": []
+  },
+  {
+   "id": "a0a0000000000n03",
+   "type": "inject",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g03",
+   "name": "Tick 100 ms",
+   "props": [
+    {
+     "p": "payload"
+    }
+   ],
+   "repeat": "0.1",
+   "crontab": "",
+   "once": true,
+   "onceDelay": "1",
+   "topic": "",
+   "payload": "",
+   "payloadType": "date",
+   "x": 210,
+   "y": 460,
+   "wires": [
+    [
+     "a0a0000000000n04"
+    ]
+   ]
+  },
+  {
+   "id": "a0a0000000000n04",
+   "type": "function",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g03",
+   "name": "Autonomía",
+   "func": "// Máquina de estados de esquive. La dispara \"Tick\" cada 100 ms.\n// Lee la distancia de flow \"dist\" (la guarda \"Normalizar distancia\").\n// Salida 1: comando {vel, steer, buzzer} -> Actuadores (vel y steer de -1 a 1, steer -1 = izquierda).\n// Salida 2: una transición por mensaje -> registro y dashboard.\nconst D = 50;               // cm: obstáculo / camino libre (igual al freno de \"Obstaculo\")\nconst D_RETRO = 80;         // cm: la marcha atrás sigue hasta ganar esta distancia...\nconst T_BACK_MAX = 2000;    // ms: ...o hasta este tope (marcha atrás ciega)\nconst D_CRITICA = 20;       // cm: durante el arco solo frena si algo queda más cerca que esto\nconst V = 0.3;              // velocidad de avance (subir de a poco tras probar)\nconst V_BACK = 0.45;        // velocidad de marcha atrás (0.2 no movía el auto en el piso)\nconst V_ARC = 0.45;         // velocidad de arcos y de deshacerlos\nconst T_WAIT = 300;         // ms quieto para que el sensor se asiente\nconst T_SERVO = 300;        // ms para que el servo gire antes de mover el motor\nconst T_ARC = 1200;         // ms: duración de cada arco\nconst T_SIN_DATO = 1000;    // ms sin lecturas válidas -> detenido\n\n// Durante el arco el sensor todavía ve el obstáculo (< 50 cm): flow \"maniobra\" le avisa a\n// Aceleracion que no aplique su freno de 50 cm. Autonomía frena sola bajo D_CRITICA.\nconst maniobra = (activa) => flow.set(\"maniobra\", activa);\n\nif ((flow.get(\"modo\") || \"manual\") !== \"auto\") {\n    context.set(\"s\", null);  // al volver a auto arranca de cero\n    maniobra(false);\n    return null;\n}\n\nconst ahora = Date.now();\nconst lectura = flow.get(\"dist\");\nconst d = lectura && ahora - lectura.t <= T_SIN_DATO ? lectura.cm : null;\n\nconst transiciones = [];\nlet s = context.get(\"s\");\nconst go = (st, extra = {}) => {\n    transiciones.push({ payload: { ts: new Date(ahora).toISOString(), de: s.st, a: st, dist: d, lado: s.side, ...extra } });\n    s.st = st;\n    s.t0 = ahora;\n};\nif (!s) {\n    s = { st: \"INICIO\", t0: ahora, side: -1, arcMs: 0, tDeteccion: null };\n    go(\"AVANZAR\");\n}\n\nif (d === null && s.st !== \"SIN_SENSOR\" && s.st !== \"BUZZER\") go(\"SIN_SENSOR\");\n\nconst el = ahora - s.t0;\nconst PARADO = { vel: 0, steer: 0, buzzer: false };\nlet cmd = PARADO;\n\nswitch (s.st) {\n    case \"AVANZAR\":\n        cmd = { vel: V, steer: 0, buzzer: false };\n        if (d < D) {\n            s.side = -1;\n            s.tDeteccion = ahora;\n            cmd = PARADO;\n            go(\"FRENAR\");\n        }\n        break;\n    case \"FRENAR\":  // quieto, deja asentar el sensor\n        if (el > T_WAIT) go(d > D + 5 ? \"AVANZAR\" : \"RETRO\");\n        break;\n    case \"RETRO\":  // marcha atrás recta para ganar espacio para el arco\n        cmd = { vel: -V_BACK, steer: 0, buzzer: false };\n        if (d >= D_RETRO || el > T_BACK_MAX) {\n            cmd = PARADO;\n            go(\"ARCO\");\n        }\n        break;\n    case \"ARCO\":  // gira el servo y avanza hacia s.side, usando el espacio ganado\n        if (el < T_SERVO) {\n            cmd = { vel: 0, steer: s.side, buzzer: false };\n            break;\n        }\n        cmd = { vel: V_ARC, steer: s.side, buzzer: false };\n        if (el - T_SERVO > T_ARC || d < D_CRITICA) {\n            s.arcMs = el - T_SERVO;\n            cmd = { vel: 0, steer: s.side, buzzer: false };\n            go(\"MEDIR\", { arcoMs: s.arcMs });\n        }\n        break;\n    case \"MEDIR\":  // quieto, mide hacia donde quedó apuntando\n        cmd = { vel: 0, steer: s.side, buzzer: false };\n        if (el > T_WAIT) {\n            if (d >= D) go(\"AVANZAR\", { esquiveMs: ahora - s.tDeteccion });\n            else go(\"VOLVER\");\n        }\n        break;\n    case \"VOLVER\":  // deshace el arco: misma dirección, marcha atrás\n        cmd = { vel: -V_ARC, steer: s.side, buzzer: false };\n        if (el > s.arcMs) {\n            cmd = { vel: 0, steer: s.side, buzzer: false };\n            if (s.side === -1) {\n                s.side = 1;\n                go(\"ARCO\");\n            } else {\n                go(\"BUZZER\");\n            }\n        }\n        break;\n    case \"BUZZER\":  // sin salida: detenido con alarma hasta pasar a manual\n        cmd = { vel: 0, steer: 0, buzzer: true };\n        break;\n    case \"SIN_SENSOR\":  // sin lecturas: detenido hasta que vuelvan\n        if (d !== null) go(d >= D ? \"AVANZAR\" : \"FRENAR\");\n        break;\n    default:\n        throw new Error(`Estado desconocido: ${s.st}`);\n}\n\n// Solo el arco hacia adelante esquiva el freno de 50 cm; cualquier otro estado lo vuelve a activar\nmaniobra(s.st === \"ARCO\" && cmd.vel > 0);\ncontext.set(\"s\", s);\nnode.status({ fill: s.st === \"AVANZAR\" ? \"green\" : \"yellow\", shape: \"dot\", text: `${s.st} · ${d ?? \"-\"} cm` });\nreturn [{ payload: cmd }, transiciones];\n",
+   "outputs": 2,
+   "timeout": 0,
+   "noerr": 0,
+   "initialize": "",
+   "finalize": "",
+   "libs": [],
+   "x": 440,
+   "y": 460,
+   "wires": [
+    [
+     "a0a0000000000n08"
+    ],
+    [
+     "a0a0000000000n06",
+     "a0a0000000000u03",
+     "a0a0000000000u04"
+    ]
+   ]
+  },
+  {
+   "id": "a0a0000000000n05",
+   "type": "function",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g03",
+   "name": "Modo manual/auto",
+   "func": "// Cambia flow \"modo\" entre \"manual\" y \"auto\".\n// Entradas: el switch del dashboard (\"manual\"/\"auto\") o Options del gamepad (topic \"toggle\").\n// Salida 1: al pasar a manual, comando de detención para Actuadores.\n// Salida 2: estado para sincronizar el switch.  Salida 3: registro.\nconst actual = flow.get(\"modo\") || \"manual\";\nconst nuevo = msg.topic === \"toggle\" ? (actual === \"auto\" ? \"manual\" : \"auto\") : msg.payload;\nif (nuevo !== \"manual\" && nuevo !== \"auto\") throw new Error(`Modo inválido: ${nuevo}`);\nif (nuevo === actual) return null;\n\nflow.set(\"modo\", nuevo);\nnode.status({ fill: nuevo === \"auto\" ? \"green\" : \"grey\", shape: \"dot\", text: nuevo });\n\nconst parar = nuevo === \"manual\" ? { payload: { vel: 0, steer: 0, buzzer: false } } : null;\nconst registro = { payload: { ts: new Date().toISOString(), de: `modo ${actual}`, a: `modo ${nuevo}`, dist: null, lado: null } };\nreturn [parar, { payload: nuevo }, registro];\n",
+   "outputs": 3,
+   "timeout": 0,
+   "noerr": 0,
+   "initialize": "",
+   "finalize": "",
+   "libs": [],
+   "x": 440,
+   "y": 520,
+   "wires": [
+    [
+     "a0a0000000000n08"
+    ],
+    [
+     "a0a0000000000u01"
+    ],
+    [
+     "a0a0000000000n06"
+    ]
+   ]
+  },
+  {
+   "id": "a0a0000000000n06",
+   "type": "function",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g03",
+   "name": "Registro CSV",
+   "func": "// Arma una línea CSV por transición para las métricas del informe:\n// ts, de, a, dist_cm, lado, arco_ms, esquive_ms\nconst { ts, de, a, dist, lado, arcoMs, esquiveMs } = msg.payload;\nconst v = (x) => (x === null || x === undefined ? \"\" : x);\nreturn { payload: [ts, de, a, v(dist), v(lado), v(arcoMs), v(esquiveMs)].join(\",\") };\n",
+   "outputs": 1,
+   "timeout": 0,
+   "noerr": 0,
+   "initialize": "",
+   "finalize": "",
+   "libs": [],
+   "x": 690,
+   "y": 500,
+   "wires": [
+    [
+     "a0a0000000000n07"
+    ]
+   ]
+  },
+  {
+   "id": "a0a0000000000n07",
+   "type": "file",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g03",
+   "name": "autonomia_log.csv",
+   "filename": "/home/pi/autonomia_log.csv",
+   "filenameType": "str",
+   "appendNewline": true,
+   "createDir": false,
+   "overwriteFile": "false",
+   "encoding": "none",
+   "x": 920,
+   "y": 500,
+   "wires": [
+    []
+   ]
+  },
+  {
+   "id": "a0a0000000000c04",
+   "type": "comment",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g04",
+   "name": "Actuadores",
+   "info": "`Comando a actuadores` recibe {vel, steer, buzzer} (-1..1) de Autonomía y Modo y los manda por el mismo camino que el manual:\n\n- pedal → filtro → Aceleracion (rampa, IN1/IN2/ENA).\n- dirección → filtro → Direccion (servo 5/7/10).\n- buzzer → buzzer.js con `/home/pi/tonos/sin_salida.txt`.",
+   "x": 130,
+   "y": 600,
+   "wires": []
+  },
+  {
+   "id": "a0a0000000000n08",
+   "type": "function",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g04",
+   "name": "Comando a actuadores",
+   "func": "// Traduce {vel, steer, buzzer} al mismo camino que usa el control manual:\n// salida 1 -> pedal (-1..1) hacia Aceleracion, salida 2 -> dirección (-1..1) hacia Direccion,\n// salida 3 -> buzzer.js (arranca la alarma al activarse y la corta al desactivarse).\n// Direccion ya convierte -1..1 al rango del servo (5 izquierda, 7 centro, 10 derecha).\nconst TONO = \"/home/pi/tonos/sin_salida.txt\";\nconst { vel, steer, buzzer } = msg.payload;\nif (typeof vel !== \"number\" || typeof steer !== \"number\" || typeof buzzer !== \"boolean\") {\n    throw new Error(`Comando inválido: ${JSON.stringify(msg.payload)}`);\n}\nconst limitar = (x) => Math.max(-1, Math.min(1, x));\n\nconst pedal = { topic: \"pedal\", payload: Math.round(limitar(vel) * 20) / 20 };\nconst direccion = { payload: Math.round(limitar(steer) * 10) / 10 };\n\nlet alarma = null;\nconst sonando = context.get(\"buzzer\") || false;\nif (buzzer && !sonando) alarma = { payload: TONO };\nelse if (!buzzer && sonando) alarma = { kill: \"SIGTERM\", payload: \"\" };\ncontext.set(\"buzzer\", buzzer);\n\nreturn [pedal, direccion, alarma];\n",
+   "outputs": 3,
+   "timeout": 0,
+   "noerr": 0,
+   "initialize": "",
+   "finalize": "",
+   "libs": [],
+   "x": 370,
+   "y": 680,
+   "wires": [
+    [
+     "bd0729e1096c8a28"
+    ],
+    [
+     "f86932a49f54f859"
+    ],
+    [
+     "bz0000000000x002"
+    ]
+   ]
+  },
+  {
+   "id": "a0a0000000000c05",
+   "type": "comment",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g05",
+   "name": "Dashboard",
+   "info": "Dashboard 2.0 en `/dashboard/robot`: switch manual/auto, distancia (máx. 4 por segundo), estado y última transición.",
+   "x": 150,
+   "y": 880,
+   "wires": []
+  },
+  {
+   "id": "a0a0000000000u01",
+   "type": "ui-switch",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g05",
+   "name": "Modo automático",
+   "label": "Modo automático",
+   "group": "a0a0000000000b04",
+   "order": 1,
+   "width": 0,
+   "height": 0,
+   "passthru": false,
+   "decouple": false,
+   "topic": "modo",
+   "topicType": "str",
+   "style": "",
+   "className": "",
+   "layout": "row-spread",
+   "clickableArea": "switch",
+   "onvalue": "auto",
+   "onvalueType": "str",
+   "onicon": "",
+   "oncolor": "",
+   "offvalue": "manual",
+   "offvalueType": "str",
+   "officon": "",
+   "offcolor": "",
+   "x": 170,
+   "y": 920,
+   "wires": [
+    [
+     "a0a0000000000n05"
+    ]
+   ]
+  },
+  {
+   "id": "a0a0000000000n09",
+   "type": "delay",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g05",
+   "name": "4 por segundo",
+   "pauseType": "rate",
+   "timeout": "5",
+   "timeoutUnits": "seconds",
+   "rate": "4",
+   "nbRateUnits": "1",
+   "rateUnits": "second",
+   "randomFirst": "1",
+   "randomLast": "5",
+   "randomUnits": "seconds",
+   "drop": true,
+   "allowrate": false,
+   "outputs": 1,
+   "x": 390,
+   "y": 960,
+   "wires": [
+    [
+     "a0a0000000000u02"
+    ]
+   ]
+  },
+  {
+   "id": "a0a0000000000u02",
+   "type": "ui-text",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g05",
+   "group": "a0a0000000000b04",
+   "order": 2,
+   "width": 0,
+   "height": 0,
+   "name": "Distancia",
+   "label": "Distancia",
+   "format": "{{msg.payload}} cm",
+   "layout": "row-spread",
+   "style": false,
+   "font": "",
+   "fontSize": 16,
+   "color": "#717171",
+   "wrapText": false,
+   "className": "",
+   "value": "payload",
+   "valueType": "msg",
+   "x": 620,
+   "y": 960,
+   "wires": []
+  },
+  {
+   "id": "a0a0000000000u03",
+   "type": "ui-text",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g05",
+   "group": "a0a0000000000b04",
+   "order": 3,
+   "width": 0,
+   "height": 0,
+   "name": "Estado",
+   "label": "Estado",
+   "format": "{{msg.payload.a}}",
+   "layout": "row-spread",
+   "style": false,
+   "font": "",
+   "fontSize": 16,
+   "color": "#717171",
+   "wrapText": false,
+   "className": "",
+   "value": "payload",
+   "valueType": "msg",
+   "x": 620,
+   "y": 920,
+   "wires": []
+  },
+  {
+   "id": "a0a0000000000u04",
+   "type": "ui-text",
+   "z": "b0d25a1cf450683d",
+   "g": "a0a0000000000g05",
+   "group": "a0a0000000000b04",
+   "order": 4,
+   "width": 0,
+   "height": 0,
+   "name": "Última transición",
+   "label": "Última transición",
+   "format": "{{msg.payload.de}} → {{msg.payload.a}} ({{msg.payload.ts}})",
+   "layout": "row-spread",
+   "style": false,
+   "font": "",
+   "fontSize": 16,
+   "color": "#717171",
+   "wrapText": false,
+   "className": "",
+   "value": "payload",
+   "valueType": "msg",
+   "x": 860,
+   "y": 920,
+   "wires": []
+  }
+ ],
+ "rev": "b630c41edc136e786fbe5184a37b38c0f60c2e6c84bd721af414cc6cc3cd26de"
+}

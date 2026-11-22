@@ -1,0 +1,28 @@
+2026-11-20 19:06:43.015     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^ 
+2026-11-20 19:06:43.015         e, str_statement, effective_parameters, cursor, context 
+2026-11-20 19:06:43.015         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+2026-11-20 19:06:43.015     ) 
+2026-11-20 19:06:43.015     ^ 
+2026-11-20 19:06:43.015   File "/home/grupo24/app/releases/20261120214400/admin/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2335, in _handle_dbapi_exception 
+2026-11-20 19:06:43.015     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e 
+2026-11-20 19:06:43.015   File "/home/grupo24/app/releases/20261120214400/admin/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1946, in _exec_single_context 
+2026-11-20 19:06:43.015     self.dialect.do_execute( 
+2026-11-20 19:06:43.015     ~~~~~~~~~~~~~~~~~~~~~~~^ 
+2026-11-20 19:06:43.015         cursor, str_statement, effective_parameters, context 
+2026-11-20 19:06:43.016         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+2026-11-20 19:06:43.016     ) 
+2026-11-20 19:06:43.016     ^ 
+2026-11-20 19:06:43.016   File "/home/grupo24/app/releases/20261120214400/admin/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 1192, in do_execute 
+2026-11-20 19:06:43.016     cursor.execute(statement, parameters) 
+2026-11-20 19:06:43.016     ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^ 
+2026-11-20 19:06:43.016   File "/home/grupo24/app/releases/20261120214400/admin/.venv/lib/python3.14/site-packages/psycopg/cursor.py", line 117, in execute 
+2026-11-20 19:06:43.016     raise ex.with_traceback(None) 
+2026-11-20 19:06:43.016 sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedColumn) column pedidos.modificado_en does not exist 
+2026-11-20 19:06:43.016 LINE 1: ...ado, pedidos.motivo_rechazo, pedidos.revisado_en, pedidos.mo... 
+2026-11-20 19:06:43.016                                                              ^ 
+2026-11-20 19:06:43.016 [SQL: SELECT pedidos.id, pedidos.creado_por, pedidos.revisado_por, pedidos.sector_id, pedidos.periodicidad, pedidos.fecha_desde, pedidos.fecha_hasta, pedidos.estado, pedidos.motivo_rechazo, pedidos.revisado_en, pedidos.modificado_en, pedidos.created_at, pedidos.updated_at  
+2026-11-20 19:06:43.016 FROM pedidos  
+2026-11-20 19:06:43.016 WHERE pedidos.id = %(pk_1)s::INTEGER] 
+2026-11-20 19:06:43.016 [parameters: {'pk_1': 6}] 
+2026-11-20 19:06:43.016 error (Background on this error at: https://sqlalche.me/e/21/f405) 
+2026-11-20 19:06:43.016 [pid: 2980790|app: 0|req: 153/153] 190.247.154.22 () {62 vars in 1245 bytes} [Fri Nov 20 22:06:42 2026] GET /api/authorizations/6 => generated 0 bytes in 34 msecs (HTTP/1.1 500) 0 headers in 0 bytes (0 switches on core 0) 
